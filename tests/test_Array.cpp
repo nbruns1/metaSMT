@@ -1,5 +1,6 @@
 #include <metaSMT/frontend/Array.hpp>
 #include <metaSMT/frontend/QF_BV.hpp>
+#include <metaSMT/support/array_equal.hpp>
 #include <boost/test/unit_test.hpp>
 #include <string>
 
@@ -7,6 +8,8 @@ using namespace metaSMT;
 using namespace metaSMT::logic;
 using namespace metaSMT::logic::Array;
 using namespace metaSMT::logic::QF_BV;
+using metaSMT::support::array_equal;
+using metaSMT::support::array_nequal;
 
 BOOST_FIXTURE_TEST_SUITE(Array, Solver_Fixture )
 
@@ -60,24 +63,24 @@ BOOST_AUTO_TEST_CASE( store_t ) {
   bitvector i = new_bitvector(index_width);
   bitvector j = new_bitvector(index_width);
 
-  //assumption( ctx, array_equal(store(a, i, e), store(a, i, e), index_width) );
-  //BOOST_REQUIRE( solve(ctx) );
+  assumption( ctx, array_equal(store(a, i, e), store(a, i, e), index_width) );
+  BOOST_REQUIRE( solve(ctx) );
 
-  //assumption( ctx, array_equal(a, b, index_width) );
-  //assumption( ctx, array_equal(store(a, i, e), store(b, i, e), index_width) );
-  //BOOST_REQUIRE( solve(ctx) );
+  assumption( ctx, array_equal(a, b, index_width) );
+  assumption( ctx, array_equal(store(a, i, e), store(b, i, e), index_width) );
+  BOOST_REQUIRE( solve(ctx) );
 
-  //assumption( ctx, array_equal(a, b, index_width) );
-  //assumption( ctx, array_nequal(store(a, i, e), store(b, i, e), index_width) );
-  //BOOST_REQUIRE( !solve(ctx) );
+  assumption( ctx, array_equal(a, b, index_width) );
+  assumption( ctx, array_nequal(store(a, i, e), store(b, i, e), index_width) );
+  BOOST_REQUIRE( !solve(ctx) );
 
-  //assumption( ctx, equal(i, j) );
-  //assumption( ctx, array_equal(store(a, i, e), store(a, j, e), index_width) );
-  //BOOST_REQUIRE( solve(ctx) );
+  assumption( ctx, equal(i, j) );
+  assumption( ctx, array_equal(store(a, i, e), store(a, j, e), index_width) );
+  BOOST_REQUIRE( solve(ctx) );
 
-  //assumption( ctx, equal(i, j) );
-  //assumption( ctx, array_nequal(store(a, i, e), store(a, j, e), index_width) );
-  //BOOST_REQUIRE( !solve(ctx) );  
+  assumption( ctx, equal(i, j) );
+  assumption( ctx, array_nequal(store(a, i, e), store(a, j, e), index_width) );
+  BOOST_REQUIRE( !solve(ctx) );  
 }
 
 BOOST_AUTO_TEST_CASE( select_t ) {
@@ -97,17 +100,17 @@ BOOST_AUTO_TEST_CASE( select_t ) {
   assumption( ctx, equal(select(a, i), select(a, i)) );
   BOOST_REQUIRE( solve(ctx) );
 
-  //assumption( ctx, array_equal(a, b, index_width) );
-  //assumption( ctx, equal(select(a, i), select(b, i)) );
-  //BOOST_REQUIRE( solve(ctx) );
+  assumption( ctx, array_equal(a, b, index_width) );
+  assumption( ctx, equal(select(a, i), select(b, i)) );
+  BOOST_REQUIRE( solve(ctx) );
 
-  //assumption( ctx, array_equal(a, b, index_width) );
-  //assumption( ctx, nequal(select(a, i), select(b, i)) );
-  //BOOST_REQUIRE( !solve(ctx) );
+  assumption( ctx, array_equal(a, b, index_width) );
+  assumption( ctx, nequal(select(a, i), select(b, i)) );
+  BOOST_REQUIRE( !solve(ctx) );
 
-  //assumption( ctx, array_nequal(a, b, index_width) );
-  //assumption( ctx, nequal(select(a, i), select(b, i)) );
-  //BOOST_REQUIRE( solve(ctx) );
+  assumption( ctx, array_nequal(a, b, index_width) );
+  assumption( ctx, nequal(select(a, i), select(b, i)) );
+  BOOST_REQUIRE( solve(ctx) );
 
   assumption( ctx, equal(i, j) );
   assumption( ctx, equal(select(a, i), select(a, j)) );
