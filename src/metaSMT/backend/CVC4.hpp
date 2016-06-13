@@ -39,11 +39,13 @@
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <list>
+#include "../tags/Array.hpp"
 
 namespace metaSMT {
   namespace solver {
     namespace predtags = ::metaSMT::logic::tag;
     namespace bvtags = ::metaSMT::logic::QF_BV::tag;
+    namespace arraytags = ::metaSMT::logic::Array::tag;
 
     /**
      * @ingroup Backend
@@ -66,6 +68,18 @@ namespace metaSMT {
 
       ~CVC4() {
       }
+
+	result_type operator() (arraytags::array_var_tag const &var,
+                              boost::any const & ) {}
+
+	result_type operator() (arraytags::select_tag const &
+                              , result_type const &array
+                              , result_type const &index) {}
+
+	result_type operator() (arraytags::store_tag const &
+                              , result_type const &array
+                              , result_type const &index
+                              , result_type const &value) {}
 
       void assertion( result_type e ) {
         assertions_.push_back( e );
