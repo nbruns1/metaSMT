@@ -12,14 +12,7 @@ ACADEMIC="
 "
 
 FREE="
-  Z3-4.4.1
   cvc4-unstable
-  stp-git-basic
-  cryptominisat-git
-  minisat-git
-  aiger-20071012
-  picosat-936
-  cudd-2.4.2
 "
 
 NONFREE="
