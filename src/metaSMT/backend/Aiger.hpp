@@ -25,17 +25,17 @@ namespace metaSMT
         aiger_reset ( aig ); 
       }
 
-      result_type operator() (logic::tag::var_tag const& var, boost::any args)
+      result_type operator() (logic::tag::var_tag const& , boost::any )
       {
         return new_var(); 
       }
 
-      result_type operator() (logic::tag::true_tag const& , boost::any args)
+      result_type operator() (logic::tag::true_tag const& , boost::any )
       {
         return aiger_true;
       }
        
-      result_type operator() (logic::tag::false_tag const& , boost::any args)
+      result_type operator() (logic::tag::false_tag const& , boost::any )
       {
         return aiger_false; 
       }
@@ -106,21 +106,21 @@ namespace metaSMT
 
 
       template<typename T>
-        result_type operator() (T const& , result_type lhs, result_type rhs )
+        result_type operator() (T const& , result_type , result_type )
         {
           assert ( false ); 
           return aiger_false; 
         }
 
       template<typename T, typename Arg>
-        result_type operator() (T const& var, Arg lhs )
+        result_type operator() (T const& , Arg )
         {
           assert ( false ); 
           return aiger_false; 
         }
 
       template<typename T>
-        result_type operator() (T const& var, result_type op1, result_type op2, result_type op3  )
+        result_type operator() (T const& , result_type , result_type , result_type )
         {
           assert ( false ); 
           return aiger_false; 

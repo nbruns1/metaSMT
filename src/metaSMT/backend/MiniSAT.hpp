@@ -13,13 +13,8 @@
 #include <boost/variant.hpp>
 #include <boost/any.hpp> 
 #include <boost/foreach.hpp>
- 
-#include "../support/disable_warnings.hpp"
 
 #include <minisat/core/Solver.h>
-
-#include "../support/enable_warnings.hpp"
-
 
 namespace metaSMT {
 

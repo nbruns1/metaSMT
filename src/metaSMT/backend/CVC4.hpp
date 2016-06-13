@@ -3,7 +3,37 @@
 #include "../tags/QF_BV.hpp"
 #include "../result_wrapper.hpp"
 
+#ifdef __clang__
+#define _BACKWARD_BACKWARD_WARNING_H
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wvariadic-macros"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
+
+#ifdef __GNUC__
+# if __GNUC__ >= 4 and __GNUC_MINOR__ > 4
+// with this definitions gcc 4.4 creates executables with random segfaults
+#define _BACKWARD_BACKWARD_WARNING_H
+#pragma GCC push_options
+#pragma GCC diagnostic ignored "-Wvariadic-macros"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+#endif
+
 #include <cvc4/cvc4.h>
+
+#ifdef __GNUC__
+# if __GNUC__ >= 4 and __GNUC_MINOR__ > 4
+// this makes gcc 4.4 corrupt executables and cause random segfaults
+#pragma GCC pop_options
+#undef _BACKWARD_BACKWARD_WARNING_H
+#endif
+#endif
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#undef _BACKWARD_BACKWARD_WARNING_H
+#endif
 
 #include <boost/mpl/map/map40.hpp>
 #include <boost/any.hpp>
@@ -69,15 +99,15 @@ namespace metaSMT {
       }
 
       // predtags
-      result_type operator()( predtags::var_tag const & var, boost::any args ) {
+      result_type operator()( predtags::var_tag const & , boost::any ) {
         return exprManager_.mkVar(exprManager_.booleanType());
       }
 
-      result_type operator()( predtags::false_tag , boost::any arg ) {
+      result_type operator()( predtags::false_tag , boost::any ) {
         return exprManager_.mkConst(false);
       }
 
-      result_type operator()( predtags::true_tag , boost::any arg ) {
+      result_type operator()( predtags::true_tag , boost::any ) {
         return exprManager_.mkConst(true);
       }
 
@@ -85,23 +115,22 @@ namespace metaSMT {
         return exprManager_.mkExpr(::CVC4::kind::NOT, e);
       }
 
-      result_type operator()( predtags::ite_tag tag
-                              , result_type a, result_type b, result_type c ) {
+      result_type operator()( predtags::ite_tag , result_type a, result_type b, result_type c ) {
         return exprManager_.mkExpr(::CVC4::kind::ITE, a, b, c);
       }
 
       // bvtags
-      result_type operator()( bvtags::var_tag const & var, boost::any args ) {
+      result_type operator()( bvtags::var_tag const & var, boost::any ) {
         assert ( var.width != 0 );
         ::CVC4::Type bv_ty = exprManager_.mkBitVectorType(var.width);
         return exprManager_.mkVar(bv_ty);
       }
 
-      result_type operator()( bvtags::bit0_tag , boost::any arg ) {
+      result_type operator()( bvtags::bit0_tag , boost::any ) {
         return exprManager_.mkConst(::CVC4::BitVector(1u, 0u));
       }
 
-      result_type operator()( bvtags::bit1_tag , boost::any arg ) {
+      result_type operator()( bvtags::bit1_tag , boost::any ) {
         return exprManager_.mkConst(::CVC4::BitVector(1u, 1u));
       }
 
@@ -196,7 +225,7 @@ namespace metaSMT {
       ////////////////////////
 
       template <typename TagT>
-      result_type operator() (TagT tag, boost::any args ) {
+      result_type operator() (TagT , boost::any ) {
         assert( false );
         return exprManager_.mkConst(false);
       }
@@ -220,7 +249,7 @@ namespace metaSMT {
       };
 
       template <typename TagT>
-      result_type operator() (TagT tag, result_type a, result_type b) {
+      result_type operator() (TagT , result_type a, result_type b) {
         namespace mpl = boost::mpl;
         using namespace ::CVC4::kind;
 
@@ -282,13 +311,13 @@ namespace metaSMT {
       }
 
       template <typename TagT>
-      result_type operator() (TagT tag, result_type a, result_type b, result_type c) {
+      result_type operator() (TagT , result_type , result_type , result_type ) {
         assert( false );
         return exprManager_.mkConst(false);
       }
 
       // pseudo command
-      void command ( CVC4 const & ) { };
+      void command ( CVC4 const & ) { }
 
     private:
       void removeOldAssumptions() {

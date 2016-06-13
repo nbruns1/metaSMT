@@ -13,7 +13,7 @@ namespace metaSMT {
       namespace tag {
 
 #define PRINT(Tag, body) template<typename STREAM> \
-  friend STREAM & operator<< (STREAM & out, Tag const & self) \
+  friend STREAM & operator<< (STREAM & out, Tag const & ) \
   { return (out << body); }
 #define TAG( NAME, ATTR ) struct NAME##_tag { \
   typedef attr::ATTR attribute; \
@@ -28,7 +28,12 @@ namespace metaSMT {
           unsigned id;
           unsigned elem_width;
           unsigned index_width;
-          PRINT(array_var_tag, "array_var_tag[" << self.id  << ',' << self.elem_width << ',' << self.index_width << "]")
+
+          template<typename STREAM>
+          friend STREAM & operator<< (STREAM & out, array_var_tag const & self) {
+            return (out << "array_var_tag[" << self.id  << ',' << self.elem_width << ',' << self.index_width << "]");
+          }
+
           bool operator< (array_var_tag const & other) const {
             return id < other.id;
           }

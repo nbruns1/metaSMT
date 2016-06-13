@@ -27,7 +27,7 @@ namespace metaSMT {
 
     template <typename T>
     typename boost::disable_if< boost::is_same<type::Array, T>, bool>::type
-    operator== (type::Array const &a , T const &b)  \
+    operator== (type::Array const & , T const & )  \
     { return false; }
 
   } // type

@@ -1,6 +1,14 @@
 PROJECT(metaSMT)
 cmake_minimum_required(VERSION 2.8.9)
 
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+	add_definitions(-std=c++11)
+else()
+	message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} does not support -std=c++11. Please use a different C++ compiler.")
+endif()
+
 include(CheckIncludeFileCXX)
 include(FeatureSummary)
 
@@ -11,7 +19,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules )
 set(Boost_NO_BOOST_CMAKE true)
 set(Boost_NO_SYSTEM_PATHS true)
 set(Boost_ADDITIONAL_VERSIONS "1.50.0")
-find_package(Boost COMPONENTS iostreams thread system python filesystem)
+find_package(Boost)
 
 if(NOT ${Boost_FOUND})
   message(FATAL_ERROR "Boost could not be found.")
@@ -36,7 +44,6 @@ include(cmake/config_file.cmake)
 # set all solvers to "on" with good support and experimental or
 # work in progress to "off"
 ###
-option(metaSMT_USE_SMT2       "try to use SMTLIB2 solver" on)
 option(metaSMT_USE_SWORD      "try to use SWORD solver" on)
 option(metaSMT_USE_Boolector  "try to use Boolector solver" on)
 option(metaSMT_USE_Z3         "try to use Z3 solver" on)
@@ -48,12 +55,9 @@ option(metaSMT_USE_picosat    "try to use picosat SAT solver" on)
 option(metaSMT_USE_lingeling  "try to use lingeling SAT solver" on)
 option(metaSMT_USE_Aiger      "try to use aiger" on)
 option(metaSMT_USE_CW         "try to use clause writers" on)
-option(metaSMT_USE_ExprSolver "try to use expression solver" on)
 
 option(metaSMT_DOC_Doxygen    "try to build doxygen documentation" off)
 option(metaSMT_ENABLE_TESTS   "build tests (recommended)" on)
-option(metaSMT_ENABLE_BINDINGS "build bindings" on)
-option(metaSMT_ENABLE_TOOLBOX "build toolbox projects" on)
 
 set(metaSMT_CONFIG_DIR "share/metaSMT" CACHE PATH 
   "where to install CMake and Make Config files")
@@ -88,7 +92,6 @@ set_package_info(Z3 "solver for various SMT theories")
 
 if(metaSMT_USE_STP)
   find_package(STP QUIET)
-  find_package(cryptominisat4 QUIET)
 else()
   set(STP_FOUND 0)
 endif()
@@ -143,35 +146,19 @@ else()
   set(GMPXX_LIBRARIES "")
 endif()
 
-find_package(OMP QUIET)
-set_package_info(OMP "optional, required by some backends")
-## later versions of GMP link against libomp
-if(NOT OMP_FOUND)
-  find_library(OMP_LIBRARIES gomp PATHS ${OMP_DIR})
-else()
-  set(OMP_LIBRARIES "")
-endif()
-
 if(Z3_FOUND)
   if( GMPXX_LIBRARIES )
     set(Z3_LIBRARIES ${Z3_LIBRARIES} ${GMPXX_LIBRARIES})
-  else ()
-    set(Z3_LIBRARIES ${Z3_LIBRARIES} gmpxx)
   endif()
 
   if( GMP_LIBRARIES )
     set(Z3_LIBRARIES ${Z3_LIBRARIES} ${GMP_LIBRARIES})
-  else ()
-    set(Z3_LIBRARIES ${Z3_LIBRARIES} gmp)
   endif()
-
-  if( OMP_LIBRARIES )
-    set(Z3_LIBRARIES ${Z3_LIBRARIES} ${OMP_LIBRARIES})
-  else ()
-    set(Z3_LIBRARIES ${Z3_LIBRARIES} gomp)
-  endif()
-
-  set(Z3_LIBRARIES ${Z3_LIBRARIES} rt)
+ 
+  find_package(OpenMP QUIET)
+  find_package(Threads QUIET)
+  find_library(RT_LIB rt)
+  set(Z3_LIBRARIES ${Z3_LIBRARIES} ${OpenMP_CXX_FLAGS} ${RT_LIB} ${CMAKE_THREAD_LIBS_INIT})
 
   include(CheckCXXSourceRuns)
 
@@ -188,7 +175,7 @@ int main(int argc, const char *argv[]) {
   Z3_WORKS)
 
   if( NOT Z3_WORKS )
-    message(WARNING "Disabling Z3. A version of Z3 >= 4.0 is required.")
+    message(WARNING "Disabling Z3 due to linking errors.")
     set( Z3_FOUND 0)
   endif()
 endif()
@@ -196,14 +183,10 @@ endif()
 if(CVC4_FOUND)
   if( GMPXX_LIBRARIES )
     set(CVC4_LIBRARIES ${CVC4_LIBRARIES} ${GMPXX_LIBRARIES})
-  else ()
-    set(CVC4_LIBRARIES ${CVC4_LIBRARIES} gmpxx)
   endif()
 
   if( GMP_LIBRARIES )
     set(CVC4_LIBRARIES ${CVC4_LIBRARIES} ${GMP_LIBRARIES})
-  else ()
-    set(CVC4_LIBRARIES ${CVC4_LIBRARIES} gmp)
   endif()
 
 endif()
@@ -227,6 +210,13 @@ if(Boolector_FOUND)
   config_find(Boolector ${Boolector_DIR})
   list(APPEND metaSMT_LIBS ${Boolector_LIBRARIES})
   list(APPEND metaSMT_INCLUDES ${Boolector_INCLUDE_DIR})
+  if ((Boolector_VERSION VERSION_GREATER 2) OR (Boolector_VERSION VERSION_EQUAL 2))
+    message( STATUS "Use Boolector v2" )
+  else()
+    message( STATUS "Use Boolector v1" )
+    set(Boolector_CXXFLAGS "${Boolector_CXXFLAGS} -DmetaSMT_BOOLECTOR_1_API")
+  endif()
+  set(metaSMT_CXXFLAGS "${metaSMT_CXXFLAGS} ${Boolector_CXXFLAGS}")
 endif()
 
 if(Z3_FOUND)
@@ -235,11 +225,10 @@ if(Z3_FOUND)
   list(APPEND metaSMT_INCLUDES ${Z3_INCLUDE_DIR})
 endif()
 
-if(STP_FOUND AND cryptominisat4_FOUND)
+if(STP_FOUND)
   config_find(STP ${STP_DIR})
-  config_find(cryptominisat4 ${cryptominisat4_DIR})
-  message( STATUS "STP_LIBRARIES: ${STP_SHARED_LIBRARY} ${CRYPTOMINISAT4_LIBRARIES}" )
-  list(APPEND metaSMT_LIBS ${STP_SHARED_LIBRARY} ${CRYPTOMINISAT4_LIBRARIES})
+  message( STATUS "STP_LIBRARIES: ${STP_SHARED_LIBRARY}" )
+  list(APPEND metaSMT_LIBS ${STP_SHARED_LIBRARY})
   message( STATUS "STP_INCLUDE_DIR: ${STP_INCLUDE_DIRS}" )
   list(APPEND metaSMT_INCLUDES ${STP_INCLUDE_DIRS})
 else()
@@ -260,7 +249,7 @@ endif()
 
 if(CUDD_FOUND)
   config_find(CUDD ${CUDD_DIR})
-  list(APPEND metaSMT_LIBS CUDD_obj CUDD_cudd )
+  list(APPEND metaSMT_LIBS CUDD_obj CUDD_cudd CUDD_dddmp CUDD_epd CUDD_mtr CUDD_st CUDD_util)
   list(APPEND metaSMT_INCLUDES ${CUDD_INCLUDE_DIR} ${cudd_INCLUDE_DIRS})
 endif()
 
@@ -268,7 +257,7 @@ if(MiniSat_FOUND)
   config_find(MiniSat ${MiniSat_DIR})
   list(APPEND metaSMT_LIBS ${MiniSat_LIBRARIES})
   list(APPEND metaSMT_INCLUDES ${MiniSat_INCLUDE_DIR})
-  list(APPEND metaSMT_CXXFLAGS "${MiniSat_CXXFLAGS}")
+  set(metaSMT_CXXFLAGS "${metaSMT_CXXFLAGS} ${MiniSat_CXXFLAGS}")
 endif()
 
 if (PicoSAT_FOUND)
@@ -282,18 +271,6 @@ if (Lingeling_FOUND)
   list(APPEND metaSMT_LIBS ${Lingeling_LIBRARIES})
   list(APPEND metaSMT_INCLUDES ${Lingeling_INCLUDE_DIR})
 endif ()
-
-if( Boost_IOSTREAMS_FOUND )
-  list(APPEND metaSMT_LIBS ${Boost_IOSTREAMS_LIBRARY})
-endif()
-
-if( Boost_THREAD_FOUND )
-  list(APPEND metaSMT_LIBS ${Boost_THREAD_LIBRARY})
-endif()
-
-if( Boost_SYSTEM_FOUND )
-  list(APPEND metaSMT_LIBS ${Boost_SYSTEM_LIBRARY})
-endif()
 
 ############################################################
 ############# RPATH ########################################
@@ -313,14 +290,6 @@ add_subdirectory(doc)
 if(metaSMT_ENABLE_TESTS)
   enable_testing()
   add_subdirectory(tests)
-endif()
-
-if(metaSMT_ENABLE_BINDINGS)
-  add_subdirectory(bindings)
-endif()
-
-if(metaSMT_ENABLE_TOOLBOX)
-  add_subdirectory(toolbox)
 endif()
 
 ############################################################

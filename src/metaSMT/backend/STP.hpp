@@ -118,11 +118,15 @@ namespace metaSMT {
           break;
         case BITVECTOR_TYPE:
           {
-            unsigned long long const value = getBVUnsignedLongLong(cex);
             unsigned const width = getBVLength(cex);
-            boost::dynamic_bitset<> bv(width, value);
-            std::string str; to_string(bv, str);
-            return result_wrapper(str);
+            if (width <= sizeof(unsigned long long) * 8) {
+              return result_wrapper(getBVUnsignedLongLong(cex), width);
+            } else {
+              std::string str = exprString(cex);
+              assert(str.find("0b") == 0);
+              size_t pos = str.find_first_of(' '); // find trailing space
+              return result_wrapper(pos != std::string::npos ? str.substr(2, pos - 2) : str.substr(2));
+            }
           }
           break;
         case ARRAY_TYPE:
@@ -134,18 +138,18 @@ namespace metaSMT {
       }
 
       // predtags
-      result_type operator()( predtags::var_tag const & var, boost::any args ) {
+      result_type operator()( predtags::var_tag const & var, boost::any ) {
         Type bool_ty = vc_boolType(vc);
         char buf[64];
         sprintf(buf, "var_%u", var.id);
         return ptr(vc_varExpr(vc, buf, bool_ty));
       }
 
-      result_type operator()( predtags::false_tag , boost::any arg ) {
+      result_type operator()( predtags::false_tag , boost::any ) {
         return ptr(vc_falseExpr(vc));
       }
 
-      result_type operator()( predtags::true_tag , boost::any arg ) {
+      result_type operator()( predtags::true_tag , boost::any ) {
         return ptr(vc_trueExpr(vc));
       }
 
@@ -171,13 +175,13 @@ namespace metaSMT {
         return ptr(vc_orExprN(vc, exprs, num_elm));
       }
 
-      result_type operator()( predtags::ite_tag tag
+      result_type operator()( predtags::ite_tag
                               , result_type a, result_type b, result_type c ) {
         return ptr(vc_iteExpr(vc, a, b, c));
       }
 
       // bvtags
-      result_type operator()( bvtags::var_tag const & var, boost::any args ) {
+      result_type operator()( bvtags::var_tag const & var, boost::any ) {
         assert ( var.width != 0 );
         Type bv_ty = vc_bvType(vc, var.width);
         char buf[64];
@@ -185,11 +189,11 @@ namespace metaSMT {
         return ptr(vc_varExpr(vc, buf, bv_ty));
       }
 
-      result_type operator()( bvtags::bit0_tag , boost::any arg ) {
+      result_type operator()( bvtags::bit0_tag , boost::any ) {
         return (vc_bvConstExprFromInt(vc, 1, 0)); // No ptr()
       }
 
-      result_type operator()( bvtags::bit1_tag , boost::any arg ) {
+      result_type operator()( bvtags::bit1_tag , boost::any ) {
         return (vc_bvConstExprFromInt(vc, 1, 1)); // No ptr()
       }
 
@@ -377,7 +381,7 @@ namespace metaSMT {
       
     
       result_type operator() (arraytags::array_var_tag const & var
-                              , boost::any args )
+                              , boost::any )
       {
         if (var.id == 0 ) {
           throw std::runtime_error("uninitialized array used");
@@ -420,7 +424,7 @@ namespace metaSMT {
       ////////////////////////
 
       template <typename TagT>
-      result_type operator() (TagT tag, boost::any args ) {
+      result_type operator() (TagT , boost::any ) {
         assert( false );
         return ptr(vc_falseExpr(vc));
       }
@@ -457,7 +461,7 @@ namespace metaSMT {
       };
 
       template <typename TagT>
-      result_type operator() (TagT tag, result_type a, result_type b) {
+      result_type operator() (TagT , result_type a, result_type b) {
         namespace mpl = boost::mpl;
 
         typedef mpl::map29<
@@ -515,13 +519,13 @@ namespace metaSMT {
       }
 
       template <typename TagT>
-      result_type operator() (TagT tag, result_type a, result_type b, result_type c) {
+      result_type operator() (TagT , result_type , result_type , result_type ) {
         assert( false );
         return ptr(vc_falseExpr(vc));
       }
 
       // pseudo command
-      void command ( STP const & ) { };
+      void command ( STP const & ) { }
 
       VC vc;
       Exprs assertions;
