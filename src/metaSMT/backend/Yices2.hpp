@@ -23,13 +23,16 @@ namespace metaSMT {
     class Yices2 {
     public:
       typedef term_t result_type;
-      //typedef std::list< ::CVC4::Expr > Exprs;
+      typedef std::list< term_t > Exprs;
 
       Yices2()
       {
+	yices_init();
+	ctx = yices_new_context(NULL);
       }
 
       ~Yices2() {
+	yices_exit();
       }
 
 	result_type operator() (arraytags::array_var_tag const &var,
@@ -40,12 +43,20 @@ namespace metaSMT {
                               , result_type const &index) {}
 
       void assertion( result_type e ) {
+	assertions_.push_back( e );
       }
 
       void assumption( result_type e ) {
+	assumptions_.push_back( e );
       }
 
-      bool solve() {}
+      bool solve() {
+	removeOldAssumptions();
+        pushAssertions();
+        pushAssumptions();
+        
+        return (yices_check_context(ctx, NULL) == STATUS_SAT);
+	}
 
       result_wrapper read_value(result_type var) {}
 
@@ -123,6 +134,37 @@ namespace metaSMT {
 
 
     private:
+
+     void removeOldAssumptions() {
+        if (isPushed_) {
+          //engine_.pop();
+          isPushed_ = false;
+        }
+      }
+
+      void pushAssumptions() {
+        //engine_.push();
+        isPushed_ = true;
+
+        applyAssertions(assumptions_);
+        assumptions_.clear();
+      }
+
+      void pushAssertions() {
+        applyAssertions(assertions_);
+        assertions_.clear();
+      }
+
+      void applyAssertions(Exprs const& expressions) {
+        for ( Exprs::const_iterator it = expressions.begin(),
+              ie = expressions.end(); it != ie; ++it ) {
+          yices_assert_formula(ctx, *it);
+        }
+      }
+    Exprs assumptions_;
+    Exprs assertions_;
+    bool isPushed_;
+    context_t *ctx;
     }; // class Yices2
 
   } // solver
