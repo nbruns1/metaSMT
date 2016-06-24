@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE direct_CVC4
+#define BOOST_TEST_MODULE direct_Yices2
 #include <metaSMT/DirectSolver_Context.hpp>
 #include <metaSMT/backend/Yices2.hpp>
 
