@@ -69,7 +69,7 @@ namespace metaSMT {
       ~CVC4() {
       }
 
-	result_type operator() (arraytags::array_var_tag const &var,
+      result_type operator() (arraytags::array_var_tag const &var,
                               boost::any const & ) {
 		if (var.id == 0 ) {
 		  throw std::runtime_error("uninitialized array used");
