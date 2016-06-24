@@ -1,6 +1,5 @@
 #pragma once
 
-#include <metaSMT/support/disable_warnings.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/variant.hpp>
 #include <boost/concept_check.hpp>
@@ -11,7 +10,6 @@
 #include <boost/optional.hpp>
 #include <boost/function.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <metaSMT/support/enable_warnings.hpp>
 
 #include <vector>
 
@@ -318,7 +316,7 @@ namespace metaSMT {
       typedef bool result_type; 
 
       template<typename T>
-      result_type operator() ( T const & v ) const {
+      result_type operator() ( T const & ) const {
         return false;
       }
 

@@ -12,11 +12,22 @@
 #include "API/BoolEvaluator.hpp"
 #include "support/Options.hpp"
 
+#if __cplusplus <= 199711L
+
+#include <tr1/unordered_map>
+#define unordered_map std::tr1::unordered_map
+
+#else
+
+#include <unordered_map>
+#define unordered_map std::unordered_map
+
+#endif
+
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/proto/core.hpp>
 #include <boost/proto/context.hpp>
-#include <boost/tr1/unordered_map.hpp>
 
 namespace metaSMT {
   /**
@@ -315,7 +326,7 @@ namespace metaSMT {
       SolverContext::assumption(e);
     }
 
-    void command( set_option_cmd const &tag, std::string const &key, std::string const &value ) {
+    void command( set_option_cmd const & , std::string const &key, std::string const &value ) {
       opt.set(key, value);
       typedef typename boost::mpl::if_<
         /* if   = */ typename features::supports< SolverContext, set_option_cmd >::type
@@ -336,7 +347,8 @@ namespace metaSMT {
     using SolverContext::command;
 
     private:
-      typedef typename std::tr1::unordered_map<unsigned, result_type> VariableLookupT;
+      typedef typename unordered_map<unsigned, result_type> VariableLookupT;
+#undef unordered_map
       VariableLookupT _variables;
       Options opt;
 
@@ -369,7 +381,7 @@ namespace metaSMT {
 
   template < typename SolverType >
   typename DirectSolver_Context<SolverType>::result_type
-  evaluate( DirectSolver_Context<SolverType> &ctx,
+  evaluate( DirectSolver_Context<SolverType> & ,
             typename DirectSolver_Context<SolverType>::result_type r ) {
     return r;
   }

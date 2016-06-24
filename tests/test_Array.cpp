@@ -1,17 +1,15 @@
-#include <metaSMT/support/array_equal.hpp>
 #include <metaSMT/frontend/Array.hpp>
 #include <metaSMT/frontend/QF_BV.hpp>
+#include <metaSMT/support/array_equal.hpp>
 #include <boost/test/unit_test.hpp>
 #include <string>
 
-using namespace std;
 using namespace metaSMT;
 using namespace metaSMT::logic;
 using namespace metaSMT::logic::Array;
 using namespace metaSMT::logic::QF_BV;
 using metaSMT::support::array_equal;
 using metaSMT::support::array_nequal;
-
 
 BOOST_FIXTURE_TEST_SUITE(Array, Solver_Fixture )
 
@@ -49,17 +47,6 @@ BOOST_AUTO_TEST_CASE( supports_exensibilty_with_equality_of_arrays ) {
   assumption( ctx, equal(a, b) );
   assumption( ctx, nequal(a, b) );
   BOOST_REQUIRE( !solve(ctx) );
-}
-
-BOOST_AUTO_TEST_CASE( supports_array_equal_helper ) {
-  unsigned const elem_width = 8;
-  unsigned const index_width = 4;
-
-  array a = new_array(elem_width, index_width);
-  array b = new_array(elem_width, index_width);
-
-  assumption( ctx, array_equal(a, b, index_width) );
-  BOOST_REQUIRE( solve(ctx) );
 }
 
 BOOST_AUTO_TEST_CASE( store_t ) {
@@ -102,9 +89,6 @@ BOOST_AUTO_TEST_CASE( select_t ) {
 
   array a = new_array(elem_width, index_width);
   array b = new_array(elem_width, index_width);
-
-  // element
-  bitvector e = new_bitvector(elem_width);
 
   // indices
   bitvector i = new_bitvector(index_width);
@@ -171,7 +155,7 @@ BOOST_AUTO_TEST_CASE( read_value_from_select ) {
   array a = new_array(elem_width, index_width);
 
   // initialize array: a[i] == i for all i
-  unsigned const size = 1 << index_width - 1;
+  unsigned const size = (1 << index_width) - 1;
   for ( unsigned u = 0; u < size; ++u ) {
     assertion( ctx, equal(bvuint(u, elem_width), select(a, bvuint(u, index_width))) );
   }

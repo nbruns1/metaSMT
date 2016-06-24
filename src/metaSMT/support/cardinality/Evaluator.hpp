@@ -153,7 +153,7 @@ namespace metaSMT {
     // Empty Template to match. Just returns an empty optional
     template < typename Context, typename Tag, typename Boolean >
     boost::optional< typename Context::result_type >
-    cardinality_simplify(Context &ctx, cardinality::Cardinality<Tag , Boolean> const &c) {
+    cardinality_simplify(Context & , cardinality::Cardinality<Tag , Boolean> const & ) {
       return boost::optional< typename Context::result_type >();
     }
   } // cardinality

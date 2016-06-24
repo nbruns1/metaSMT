@@ -34,30 +34,30 @@ namespace metaSMT
       }
 
       template<typename Tag, typename Any>
-      result_type operator() (Tag const& tag, Any arg )
+      result_type operator() (Tag const& , Any )
       {
         return true_lit; 
       }
 
-      result_type operator() (logic::tag::var_tag const& tag, boost::any arg )
+      result_type operator() (logic::tag::var_tag const& , boost::any )
       {
         result_type lit = { int(impl::new_var_id()) };
         return lit; 
       }
 
-      result_type operator() (logic::tag::true_tag const& tag, boost::any arg )
+      result_type operator() (logic::tag::true_tag const& , boost::any )
       {
         //std::cout << "true " << true_lit << std::endl;
         return true_lit; 
       }
 
-      result_type operator() (logic::tag::false_tag const& tag, boost::any arg )
+      result_type operator() (logic::tag::false_tag const& , boost::any )
       {
         //std::cout << "false " << -true_lit << std::endl;
         return -true_lit; 
       }
            
-      result_type operator() (logic::tag::and_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::and_tag const& , result_type lhs, result_type rhs )
       {
         result_type out = { int(impl::new_var_id()) };
         clause3(-lhs,-rhs, out);
@@ -66,7 +66,7 @@ namespace metaSMT
         return out;
       }
 
-      result_type operator() (logic::tag::or_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::or_tag const& , result_type lhs, result_type rhs )
       {
         result_type out = { int(impl::new_var_id()) };
         clause3( lhs, rhs,-out);
@@ -75,7 +75,7 @@ namespace metaSMT
         return out;
       }
 
-      result_type operator() (logic::tag::nor_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::nor_tag const& , result_type lhs, result_type rhs )
       {
         result_type out = { int(impl::new_var_id()) };
         clause3( lhs, rhs, out);
@@ -84,12 +84,12 @@ namespace metaSMT
         return out;
       }
 
-      result_type operator() (logic::tag::implies_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::implies_tag const& , result_type lhs, result_type rhs )
       {
         return operator()(logic::tag::ite_tag(), lhs, rhs, true_lit);
       }
 
-      result_type operator() (logic::tag::nand_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::nand_tag const& , result_type lhs, result_type rhs )
       {
         result_type out = { int(impl::new_var_id()) };
         clause3(-lhs,-rhs,-out);
@@ -98,7 +98,7 @@ namespace metaSMT
         return out;
       }
 
-      result_type operator() (logic::tag::xnor_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::xnor_tag const& , result_type lhs, result_type rhs )
       {
         result_type out = { int(impl::new_var_id()) };
         clause3( lhs, rhs, out);
@@ -108,7 +108,7 @@ namespace metaSMT
         return out;
       }
 
-      result_type operator() (logic::tag::xor_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::xor_tag const& , result_type lhs, result_type rhs )
       {
         result_type out = { int(impl::new_var_id()) };
         clause3( lhs, rhs,-out);
@@ -119,39 +119,39 @@ namespace metaSMT
       }
 
 
-      result_type operator() (logic::tag::equal_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::equal_tag const& , result_type lhs, result_type rhs )
       {
         return operator()(logic::tag::xnor_tag(), lhs, rhs);
       }
 
-      result_type operator() (logic::tag::nequal_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::nequal_tag const& , result_type lhs, result_type rhs )
       {
         return operator()(logic::tag::xor_tag(), lhs, rhs);
       }
 
-      result_type operator() (logic::tag::distinct_tag const& tag, result_type lhs, result_type rhs )
+      result_type operator() (logic::tag::distinct_tag const& , result_type lhs, result_type rhs )
       {
         return operator()(logic::tag::xor_tag(), lhs, rhs);        
       }
 
       template<typename T>
-      result_type operator() (T const& tag, result_type lhs, result_type rhs )
+      result_type operator() (T const& , result_type , result_type )
       {
         return true_lit;
       }
 
-      result_type operator() (logic::tag::not_tag const& tag, result_type lhs )
+      result_type operator() (logic::tag::not_tag const& , result_type lhs )
       {
         return -lhs;
       }
 
       template<typename T>
-      result_type operator() (T const& tag, result_type lhs )
+      result_type operator() (T const& , result_type )
       {
         return true_lit;
       }
 
-      result_type operator() (logic::tag::ite_tag const& tag, result_type op1, result_type op2, result_type op3  )
+      result_type operator() (logic::tag::ite_tag const& , result_type op1, result_type op2, result_type op3  )
       {
         result_type out = { int(impl::new_var_id()) };
         clause3( op1, op3, -out);
@@ -162,7 +162,7 @@ namespace metaSMT
       }
 
       template<typename T>
-      result_type operator() (T const& tag, result_type op1, result_type op2, result_type op3  )
+      result_type operator() (T const& , result_type , result_type , result_type )
       {
         return true_lit;
       }

@@ -3,7 +3,6 @@
 #include <boost/dynamic_bitset.hpp>
 #include <string>
 
-using namespace std;
 using namespace metaSMT;
 using namespace metaSMT::logic;
 using namespace metaSMT::logic::QF_BV;
@@ -287,16 +286,16 @@ BOOST_AUTO_TEST_CASE( read_value_eq_t )
   BOOST_CHECK_EQUAL( xb, yb );
 
   // vector bool
-  vector<bool> xvb = read_value(ctx, x);
-  vector<bool> yvb = read_value(ctx, y);
+  std::vector<bool> xvb = read_value(ctx, x);
+  std::vector<bool> yvb = read_value(ctx, y);
 
   BOOST_CHECK( xvb.size() == 1u );
   BOOST_CHECK( yvb.size() == 1u );
   BOOST_CHECK_EQUAL( xvb.at(0), yvb.at(0) );
 
   // vector tribool
-  vector<tribool> xvt = read_value(ctx, x);
-  vector<tribool> yvt = read_value(ctx, y);
+  std::vector<tribool> xvt = read_value(ctx, x);
+  std::vector<tribool> yvt = read_value(ctx, y);
  
   BOOST_CHECK_EQUAL( xvt.size(), 1u );
   BOOST_CHECK_EQUAL( yvt.size(), 1u );
@@ -310,8 +309,8 @@ BOOST_AUTO_TEST_CASE( read_value_eq_t )
   BOOST_CHECK_EQUAL( xd[0], yvt[0] );
 
   // string
-  string xs = read_value(ctx, x);
-  string ys = read_value(ctx, y);
+  std::string xs = read_value(ctx, x);
+  std::string ys = read_value(ctx, y);
   BOOST_CHECK_EQUAL( xs, ys );
 }
 
@@ -335,16 +334,16 @@ BOOST_AUTO_TEST_CASE( read_value_t )
   BOOST_CHECK_NE( xb, yb );
 
   // vector bool
-  vector<bool> xvb = read_value(ctx, x);
-  vector<bool> yvb = read_value(ctx, y);
+  std::vector<bool> xvb = read_value(ctx, x);
+  std::vector<bool> yvb = read_value(ctx, y);
 
   BOOST_CHECK_EQUAL( xvb.size(), 1u );
   BOOST_CHECK_EQUAL( yvb.size(), 1u );
   BOOST_CHECK_NE( xvb.at(0), yvb.at(0) );
 
   // vector tribool
-  vector<tribool> xvt = read_value(ctx, x);
-  vector<tribool> yvt = read_value(ctx, y);
+  std::vector<tribool> xvt = read_value(ctx, x);
+  std::vector<tribool> yvt = read_value(ctx, y);
  
   BOOST_CHECK_EQUAL( xvt.size(), 1u );
   BOOST_CHECK_EQUAL( yvt.size(), 1u );
@@ -358,8 +357,8 @@ BOOST_AUTO_TEST_CASE( read_value_t )
   BOOST_CHECK_NE( xd[0], yvt[0] );
 
   // string
-  string xs = read_value(ctx, x);
-  string ys = read_value(ctx, y);
+  std::string xs = read_value(ctx, x);
+  std::string ys = read_value(ctx, y);
   BOOST_CHECK_NE( xs, ys );
 }
 

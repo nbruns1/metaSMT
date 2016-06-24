@@ -5,7 +5,6 @@
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
 #include <iostream>
 #include <boost/mpl/for_each.hpp>
-//#include "API/Assumption.hpp"
 #include <metaSMT/support/cardinality.hpp>
 #include <metaSMT/transform/rewrite.hpp>
 #include <metaSMT/frontend/Logic.hpp>
@@ -72,7 +71,6 @@ namespace metaSMT {
       std::vector< std::vector<unsigned> > results;  //Fürs Endergebnis 
       std::map<unsigned, logic::predicate> s; //Vector für si's 1.version
       std::vector<logic::predicate> sv;// s im vector sv
-      typedef std::pair<unsigned, logic::predicate> Si_Pair;
 
       typename Context::result_type c = evaluate(ctx, True);
 
@@ -103,7 +101,8 @@ namespace metaSMT {
       typedef std::pair<unsigned, BooleanType> Si_Pair;
       std::vector<BooleanType> sv;
       metaSMT::assumption( ctx,  c  );
-      BOOST_FOREACH(Si_Pair si, s)
+      //BOOST_FOREACH(Si_Pair si, s)
+      for(Si_Pair si : s)
       {
         metaSMT::assumption( ctx,  si.second  );
       }
@@ -144,14 +143,16 @@ namespace metaSMT {
 
         std::vector<BooleanType> sv;
 
-        BOOST_FOREACH(Si_Pair si, enable_vars)
+        //BOOST_FOREACH(Si_Pair si, enable_vars)
+        for(Si_Pair si : enable_vars)
         {
           sv.push_back(si.second); // ::iterator
       //    std::cout  << indent << " " << si.first << std::endl;
         }
 
         typename Context::result_type custom_c = c;
-        BOOST_FOREACH(Si_Pair si, confl_vars)
+        //BOOST_FOREACH(Si_Pair si, confl_vars)
+        for(Si_Pair si : confl_vars)
         {
           custom_c = evaluate(ctx, And(custom_c, si.second));
         //  std::cout  << indent << " " << si.first << std::endl;
@@ -162,7 +163,8 @@ namespace metaSMT {
         if( !solve(ctx) ) {
           // confl_vars is a complete conflict
           std::vector<unsigned> result;
-          BOOST_FOREACH( Si_Pair si, confl_vars) {
+          //BOOST_FOREACH( Si_Pair si, confl_vars)
+          for( Si_Pair si : confl_vars) {
             result.push_back(si.first);
           }
           results.push_back(result);
@@ -183,7 +185,8 @@ namespace metaSMT {
 
           //sammel alle abgeschalteten si in conflicting
           std::map<unsigned, BooleanType> conflicting;
-          BOOST_FOREACH(Si_Pair si, enable_vars)
+          //BOOST_FOREACH(Si_Pair si, enable_vars)
+          for(Si_Pair si : enable_vars)
           {
             bool tmp = read_value( ctx, si.second );
             if(!tmp) {
@@ -191,7 +194,8 @@ namespace metaSMT {
               custom_enab.erase(si.first);
             }
           }
-          BOOST_FOREACH(Si_Pair si, conflicting)
+          //BOOST_FOREACH(Si_Pair si, conflicting)
+          for(Si_Pair si : conflicting)
           {
             custom_conf.insert(si);
             analyze_multiple_conflict(ctx, c, custom_enab, custom_conf, results);

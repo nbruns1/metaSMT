@@ -6,10 +6,11 @@
 #include <string>
 #include <limits>
 
-using namespace std;
 using namespace metaSMT;
 using boost::dynamic_bitset;
 using boost::logic::tribool;
+using std::vector;
+using std::string;
 
 class Fixture {
   public:
@@ -43,11 +44,11 @@ void check_conversion_XXX( result_wrapper const & rw)
   BOOST_REQUIRE_EQUAL( ul, 0ul);
 
   vector<bool> a, b(3, false);
-  a = rw;
+  a = rw.operator std::vector<bool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
   vector<tribool> ta, tb(3, indeterminate);
-  ta = rw;
+  ta = rw.operator std::vector<boost::logic::tribool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(ta.begin(), ta.end(), tb.begin(), tb.end());
 
   unsigned char uc = rw;
@@ -55,7 +56,6 @@ void check_conversion_XXX( result_wrapper const & rw)
 
   signed char sc = rw;
   BOOST_REQUIRE_EQUAL( sc, 0);
-
 
   dynamic_bitset<> bs = rw;
   BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(3, 0u));
@@ -82,10 +82,10 @@ void check_conversion_0_in_8bit( result_wrapper const & rw)
   BOOST_REQUIRE_EQUAL( ul, 0ul);
 
   vector<bool> a, b(8, false);
-  a = rw;
+  a = rw.operator std::vector<bool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
-  vector<tribool> tb = rw;
+  vector<tribool> tb = rw.operator std::vector<boost::logic::tribool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(tb.begin(), tb.end(), b.begin(), b.end());
 
   unsigned char uc = rw;
@@ -121,10 +121,10 @@ void check_conversion_1_in_8bit( result_wrapper const & rw)
 
   vector<bool> a, b(8, false);
   b[0] = true;
-  a = rw;
+  a = rw.operator std::vector<bool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
-  vector<tribool> tb = rw;
+  vector<tribool> tb = rw.operator std::vector<boost::logic::tribool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(tb.begin(), tb.end(), b.begin(), b.end());
 
   unsigned char uc = rw;
@@ -151,10 +151,10 @@ void check_conversion_128_in_8bit( result_wrapper const & rw)
 
   vector<bool> a, b(8, false);
   b[7] = true;
-  a = rw;
+  a = rw.operator std::vector<bool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
-  vector<tribool> tb = rw;
+  vector<tribool> tb = rw.operator std::vector<boost::logic::tribool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(tb.begin(), tb.end(), b.begin(), b.end());
 
   unsigned char uc = rw;
@@ -169,7 +169,7 @@ void check_conversion_128_in_8bit( result_wrapper const & rw)
   unsigned u = rw;
   BOOST_REQUIRE_EQUAL( u, 128u);
 
-  unsigned long ul = rw;
+  unsigned long ul = rw.operator unsigned long();
   BOOST_REQUIRE_EQUAL( ul, 128ul);
 
   dynamic_bitset<> bs = rw;
@@ -190,10 +190,10 @@ void check_conversion_ULONG_MAX_in_64bit( result_wrapper const &rw ) {
   BOOST_REQUIRE_EQUAL( s, "1111111111111111111111111111111111111111111111111111111111111111" );
 
   vector<bool> a, b(64, true);
-  a = rw;
+  a = rw.operator std::vector<bool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
-  vector<tribool> tb = rw;
+  vector<tribool> tb = rw.operator std::vector<boost::logic::tribool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(tb.begin(), tb.end(), b.begin(), b.end());
 
   unsigned u = rw;
@@ -221,10 +221,10 @@ void check_conversion_13_in_8bit( result_wrapper const & rw)
   b[0] = true;
   b[2] = true;
   b[3] = true;
-  a = rw;
+  a = rw.operator std::vector<bool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
-  vector<tribool> tb = rw;
+  vector<tribool> tb = rw.operator std::vector<boost::logic::tribool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(tb.begin(), tb.end(), b.begin(), b.end());
 
   unsigned char uc = rw;
@@ -261,10 +261,10 @@ void check_conversion_true( result_wrapper const & rw)
   BOOST_REQUIRE_EQUAL( s, "1" );
 
   vector<bool> a, b(1, true);
-  a = rw;
+  a = rw.operator std::vector<bool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
-  vector<tribool> tb = rw;
+  vector<tribool> tb = rw.operator std::vector<boost::logic::tribool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(tb.begin(), tb.end(), b.begin(), b.end());
 
   int i = rw;
@@ -300,10 +300,10 @@ void check_conversion_false( result_wrapper const & rw)
   BOOST_REQUIRE_EQUAL( s, "0" );
 
   vector<bool> a, b(1, false);
-  a = rw;
+  a = rw.operator std::vector<bool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
-  vector<tribool> tb = rw;
+  vector<tribool> tb = rw.operator std::vector<boost::logic::tribool>();
   BOOST_REQUIRE_EQUAL_COLLECTIONS(tb.begin(), tb.end(), b.begin(), b.end());
 
   unsigned char uc = rw;
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE( from_string )
   const std::string val = "1101";
 	result_wrapper rw(val);
 
-  string s = rw;
+  std::string s = rw;
   BOOST_REQUIRE_EQUAL(s, val);
 
   unsigned u = rw;

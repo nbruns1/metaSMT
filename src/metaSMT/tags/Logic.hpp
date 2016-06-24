@@ -16,24 +16,28 @@ namespace metaSMT {
   namespace logic {
     namespace tag {
 
+    // variable tag
+    struct var_tag { unsigned id;
+      typedef attr::ignore attribute;
+
+      template<typename STREAM>
+      friend STREAM & operator<< (STREAM & out, var_tag const & self) {
+        return (out << "var_tag[" << self.id  << "]");
+      }
+
+      bool operator< (var_tag const & other) const {
+        return id < other.id;
+      }
+    };
+
 #define PRINT(Tag, body) template<typename STREAM> \
-  friend STREAM & operator<< (STREAM & out, Tag const & self) \
+  friend STREAM & operator<< (STREAM & out, Tag const & ) \
   {  out << body; return out; }
 #define TAG( NAME, ATTR ) struct NAME##_tag { \
   typedef attr::ATTR attribute; \
   bool operator<(NAME##_tag const &) const {return false;} \
   PRINT(NAME##_tag, #NAME) \
 };
-      
-    // variable tag
-    struct var_tag { unsigned id; 
-      typedef attr::ignore attribute;
-
-      PRINT(var_tag, "var_tag[" << self.id  << "]")
-      bool operator< (var_tag const & other) const {
-        return id < other.id;
-      }
-    };
 
     // constants
     TAG(true, constant)
