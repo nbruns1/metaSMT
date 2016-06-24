@@ -10,7 +10,7 @@ namespace metaSMT {
       namespace tag {
 
 #define PRINT(Tag, body) template<typename STREAM> \
-  friend STREAM & operator<< (STREAM & out, Tag const & self) \
+  friend STREAM & operator<< (STREAM & out, Tag const & ) \
   {  out << body; return out; }
 #define TAG( NAME, ATTR ) struct NAME##_tag { \
   typedef attr::ATTR attribute; \

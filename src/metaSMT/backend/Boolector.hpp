@@ -28,40 +28,76 @@ namespace metaSMT {
      * @brief The Boolector backend 
      */
     class Boolector {
+#ifndef metaSMT_BOOLECTOR_1_API
+    public:
+      typedef BoolectorNode* result_type;
+
+      Boolector()
+      {
+        _btor = boolector_new();
+        boolector_set_opt(_btor, "model_gen", 1);
+        boolector_set_opt(_btor, "incremental", 1);
+      }
+
+      ~Boolector() {
+        boolector_release_all(_btor);
+        boolector_delete(_btor);
+      }
+
+      result_wrapper read_value(result_type var)
+      {
+        const char* value = boolector_bv_assignment(_btor, var);
+        std::string s(value);
+        boolector_free_bv_assignment(_btor, value);
+        return result_wrapper(s);
+      }
+
+      result_type ptr(result_type expr) { return expr; }
+#else
+    public:
+      typedef BtorNode* result_type;
 
       struct BoolectorAssertion : public std::runtime_error {
         BoolectorAssertion(const char* what)
           : std::runtime_error(what) {}
       };
 
-      static void _boolector_error(int ec) {
+      static void _boolector_error(int ) {
         throw BoolectorAssertion("internal error in boolector");
       }
 
-      public:
-        typedef BtorNode* result_type;
+      Boolector()
+      {
+        _btor = boolector_new();
+        boolector_enable_model_gen(_btor);
+        boolector_enable_inc_usage(_btor);
+        boolector_abort_function(&Boolector::_boolector_error);
+      }
 
-        result_type ptr(result_type expr) {
-          _exprs.push_back(expr);
-          return expr;
-        }
-      
-        Boolector ()
-        {
-          _btor = boolector_new();
-          boolector_enable_model_gen(_btor);
-          boolector_enable_inc_usage(_btor);
-          boolector_abort_function(&Boolector::_boolector_error);
-        }
+      ~Boolector() {
+        for (std::list<result_type>::iterator ite = _exprs.begin(); ite!=_exprs.end(); ++ite)
+           boolector_release(_btor, *ite);
+        boolector_delete(_btor);
+      }
 
-        ~Boolector() {
-          for( std::list<result_type>::iterator ite = _exprs.begin(); ite!=_exprs.end(); ++ite)
-          {
-            boolector_release(_btor, *ite);
-          }
-          boolector_delete(_btor);
-        }
+      result_wrapper read_value(result_type var)
+      {
+        char* value = boolector_bv_assignment(_btor, var);
+        std::string s(value);
+        boolector_free_bv_assignment(_btor, value);
+        return result_wrapper(s);
+      }
 
+      result_type ptr(result_type expr) {
+        _exprs.push_back(expr);
+        return expr;
+      }
+
+    private:
+      std::list<result_type> _exprs;
+#endif
+
+    public:
         void assertion( result_type e ) {
           boolector_assert(_btor, e);
         }
@@ -74,24 +110,16 @@ namespace metaSMT {
           return boolector_sat(_btor) == BOOLECTOR_SAT;
         }
 
-        result_wrapper read_value(result_type var)
-        {
-          char* value = boolector_bv_assignment(_btor, var);
-          std::string s(value);
-          boolector_free_bv_assignment(_btor, value);
-          return result_wrapper(s);
-        }
-
-        result_type operator() (predtags::var_tag const & var, boost::any args )
+        result_type operator() (predtags::var_tag const & , boost::any )
         {
           return ptr(boolector_var(_btor, 1, NULL));
         }
 
-        result_type operator() (predtags::false_tag , boost::any arg ) {
+        result_type operator() (predtags::false_tag , boost::any ) {
           return ptr(boolector_false(_btor));
         }
 
-        result_type operator() (predtags::true_tag , boost::any arg ) {
+        result_type operator() (predtags::true_tag , boost::any ) {
           return ptr(boolector_true(_btor));
         }
 
@@ -99,16 +127,16 @@ namespace metaSMT {
           return ptr(boolector_not(_btor, a) );
         }
 
-        result_type operator() (bvtags::var_tag const & var, boost::any args ) {
+        result_type operator() (bvtags::var_tag const & var, boost::any ) {
           assert ( var.width != 0 );
           return ptr(boolector_var(_btor, var.width, NULL));
         }
 
-        result_type operator() (bvtags::bit0_tag , boost::any arg ) {
+        result_type operator() (bvtags::bit0_tag , boost::any ) {
           return ptr(boolector_false(_btor));
         }
 
-        result_type operator() (bvtags::bit1_tag , boost::any arg ) {
+        result_type operator() (bvtags::bit1_tag , boost::any ) {
           return ptr(boolector_true(_btor));
         }
 
@@ -252,7 +280,7 @@ namespace metaSMT {
         }
 
         result_type operator() (arraytags::array_var_tag const & var
-                                , boost::any args )
+                                , boost::any )
         {
           return ptr(boolector_array(_btor, var.elem_width, var.index_width, NULL));
         }
@@ -270,7 +298,7 @@ namespace metaSMT {
           return ptr(boolector_write(_btor, array, index, value));
         }
 
-        result_type operator() (predtags::ite_tag tag, result_type a, result_type b, result_type c) {
+        result_type operator() (predtags::ite_tag , result_type a, result_type b, result_type c) {
           return ptr(boolector_cond(_btor, a, b, c));
         }
 
@@ -279,14 +307,14 @@ namespace metaSMT {
         ////////////////////////
 
         template <typename TagT>
-        result_type operator() (TagT tag, boost::any args ) {
+        result_type operator() (TagT , boost::any ) {
           assert(false && "unknown operator");
           return ptr(boolector_false(_btor));
         }
 
 
         template <typename TagT>
-        result_type operator() (TagT tag, result_type a ) {
+        result_type operator() (TagT , result_type ) {
           assert(false && "unknown operator");
           return ptr(boolector_false(_btor));
         }
@@ -381,18 +409,17 @@ namespace metaSMT {
 
 
         template <typename TagT>
-        result_type operator() (TagT tag, result_type a, result_type b, result_type c) {
+        result_type operator() (TagT , result_type , result_type , result_type ) {
           assert(false && "unknown operator");
           return ptr(boolector_false(_btor));
         }
 
 
         /* pseudo command */
-        void command ( Boolector const & ) { };
+        void command ( Boolector const & ) { }
 
-      private:
+      protected:
         Btor *_btor;
-        std::list<result_type> _exprs;
     };
 
     /**@}*/

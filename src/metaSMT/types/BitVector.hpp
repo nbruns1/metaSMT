@@ -30,7 +30,7 @@ namespace metaSMT {
 
     template <typename T>
     typename boost::disable_if< boost::is_same<BitVector, T>, bool>::type
-    operator== (BitVector const & a , T const & b)  \
+    operator== (BitVector const & , T const & )  \
     {  return false; }
 
   } /* type */

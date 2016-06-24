@@ -16,9 +16,7 @@ struct Solver_Fixture {
   : gen( time(NULL) )
   , rnd ( random_bit(gen) )
   {  }
-  //typedef DirectSolver_Context< Group < CUDD_Distributed > > ContextType;
   typedef DirectSolver_Context< BitBlast<CUDD_Distributed > > ContextType;
-  //typedef DirectSolver_Context< CUDD_Distributed > ContextType;
   ContextType ctx ;
 
   struct random_bit {
@@ -39,9 +37,6 @@ struct Solver_Fixture {
 
 #include "test_solver.cpp"
 #include "test_QF_BV.cpp"
-// #include "test_Array.cpp"
-//#include "test_group.cpp"
-//#include "test_unsat.cpp"
 
 static const unsigned repeat = 10000;
 BOOST_FIXTURE_TEST_SUITE(dist, Solver_Fixture )

@@ -6,7 +6,6 @@
 
 #include <boost/assign/std/vector.hpp>
 
-using namespace std;
 using namespace metaSMT;
 using namespace metaSMT::solver;
 using namespace metaSMT::logic;
@@ -138,7 +137,7 @@ void assumeFromUnsigned(Context &ctx, std::vector<Boolean> const &vec, unsigned 
 template <typename Context>
 void checkAllCombinations(Context &ctx) {
 
-  unsigned const width = 8;
+  unsigned const width = 6;
   std::vector<predicate> vec;
   for (unsigned u = 0; u < width; ++u) {
     vec.push_back(new_variable());

@@ -4,7 +4,6 @@
 #include <boost/dynamic_bitset.hpp>
 #include <string>
 
-using namespace std;
 using namespace metaSMT;
 using namespace metaSMT::logic;
 using namespace metaSMT::logic::QF_UF;
@@ -87,7 +86,6 @@ BOOST_AUTO_TEST_CASE( variable_equality ) {
   unsigned const w = 8;
   Uninterpreted_Function f = declare_function(Boolean())(BitVector(w));
   Uninterpreted_Function g = declare_function(Boolean())(BitVector(w));
-  bitvector x = new_bitvector(w);
 
   bool cmp = (f == f);
   BOOST_CHECK( cmp );

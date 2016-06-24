@@ -86,7 +86,7 @@ namespace metaSMT {
 
       template < typename Context, typename Boolean, typename Tag >
       typename Context::result_type
-      cardinality(Context &ctx, cardinality::Cardinality<Tag, Boolean> const &c) {
+      cardinality(Context & , cardinality::Cardinality<Tag, Boolean> const & ) {
         /** error: unknown tag **/
         BOOST_MPL_ASSERT_NOT( (boost::mpl::contains<cardtags::Cardinality_Tags, Tag>) );
       }
