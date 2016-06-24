@@ -8,6 +8,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <list>
 #include "../tags/Array.hpp"
+#include <iostream>
 
 namespace metaSMT {
   namespace solver {
@@ -51,11 +52,10 @@ namespace metaSMT {
       }
 
       bool solve() {
-	removeOldAssumptions();
-        pushAssertions();
-        pushAssumptions();
-        
-        return (yices_check_context(ctx, NULL) == STATUS_SAT);
+	//removeOldAssumptions();
+        //pushAssertions();
+        //pushAssumptions();
+        //return (yices_check_context(ctx, NULL) == STATUS_SAT);
 	}
 
       result_wrapper read_value(result_type var) {}
@@ -137,13 +137,13 @@ namespace metaSMT {
 
      void removeOldAssumptions() {
         if (isPushed_) {
-          //engine_.pop();
+          yices_pop(ctx);
           isPushed_ = false;
         }
       }
 
       void pushAssumptions() {
-        //engine_.push();
+	yices_push(ctx);
         isPushed_ = true;
 
         applyAssertions(assumptions_);
