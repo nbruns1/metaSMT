@@ -3,6 +3,7 @@
 #include "../result_wrapper.hpp"
 #include "../tags/Logic.hpp"
 #include "../tags/QF_BV.hpp"
+#include "../tags/QF_UF.hpp"
 #include <boost/mpl/map/map40.hpp>
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -15,6 +16,8 @@ namespace metaSMT {
   namespace solver {
     namespace predtags = ::metaSMT::logic::tag;
     namespace bvtags = ::metaSMT::logic::QF_BV::tag;
+    namespace uftags = ::metaSMT::logic::QF_UF::tag;
+
 
     class Yices2 {
     public:
@@ -54,16 +57,51 @@ namespace metaSMT {
         pushAssertions();
         pushAssumptions();
         return (yices_check_context(ctx, NULL) == STATUS_SAT);
-	}
+      }
 
-      result_wrapper read_value(result_type var) {}
+      result_wrapper read_value(result_type var) {
 
-	result_type operator()( predtags::var_tag const & , boost::any ) {
-	type_t bool_type = yices_bool_type();
-	return yices_new_uninterpreted_term(bool_type);
+      model_t* model = yices_get_model(ctx, true);
+      if (model == NULL) {throw std::runtime_error(std::string("CAN NOT GET THE MODEL"));}
+      if(yices_term_is_bool(var) == 1)
+      {
+	int32_t value = 0;
+        if(yices_get_bool_value(model,var,&value) != -1)
+        {
+		return result_wrapper((bool)value);
 	}
+	else
+	{
+		throw std::runtime_error(std::string("FAIL AT READ_VALUE BOOL"));
+	}
+      }
+      else if(yices_term_is_bitvector(var))
+      {
+	int32_t bits = yices_term_bitsize(var);
+	int32_t *array = new int32_t[bits];
+	std::vector<bool> booleans;
+	if(yices_bv_const_value(mode,var,&value) != -1)
+	{
+		for(int32_t i=0;i<bits;i++)
+		{
+			booleans.push_back(array[i]);
+		}
+		return result_wrapper(booleans);
+	}
+	else
+	{
+		throw std::runtime_error(std::string("FAIL AT READ_VALUE BITVECTOR"));
+	}
+      }
+      return result_wrapper( false );
+}
 
       // predtags
+
+     result_type operator()( predtags::var_tag const & , boost::any ) {
+	type_t bool_type = yices_bool_type();
+	return yices_new_uninterpreted_term(bool_type);
+     }
       result_type operator()( predtags::false_tag , boost::any ) {return yices_false();}
 
       result_type operator()( predtags::true_tag , boost::any ) {return yices_true();}
@@ -117,14 +155,114 @@ namespace metaSMT {
                              , result_type b) {return yices_implies(a,b);}
 
      result_type operator()( predtags::ite_tag , result_type a, result_type b, result_type c ) {return yices_ite(a,b,c);}
+     //BVTAG
+     result_type operator()( bvtags::bit0_tag , boost::any ) {return yices_bvconst_zero(1);}
+
+     result_type operator()( bvtags::bit1_tag , boost::any ) {return yices_bvconst_one(1);}
+
+     result_type operator()( bvtags::bvnot_tag , result_type e ) {return yices_bvnot(e);}
+
+     result_type operator()( bvtags::bvneg_tag , result_type e ) {return yices_bvneg(e);}
+
+     result_type operator()( bvtags::bvand_tag , result_type a, result_type b ) {return yices_bvand2(a,b);}
+
+     result_type operator()( bvtags::bvnand_tag , result_type a, result_type b ) {return yices_bvnand(a,b);}
+
+     result_type operator()( bvtags::bvor_tag , result_type a, result_type b ) {return yices_bvor2(a,b);}
+
+     result_type operator()( bvtags::bvnor_tag , result_type a, result_type b ) {return yices_bvnor(a,b);}
+
+     result_type operator()( bvtags::bvxor_tag , result_type a, result_type b ) {return yices_bvxor2(a,b);}
+
+     result_type operator()( bvtags::bvxnor_tag , result_type a, result_type b ) {return yices_bvxnor(a,b);}
+
+     result_type operator()( bvtags::bvcomp_tag , result_type a, result_type b ) {return yices_bveq_atom(a,b);}
+
+     result_type operator()( bvtags::bvadd_tag , result_type a, result_type b ) {return yices_bvadd(a,b);}
+
+     result_type operator()( bvtags::bvmul_tag , result_type a, result_type b ) {return yices_bvmul(a,b);}
+
+     result_type operator()( bvtags::bvsub_tag , result_type a, result_type b ) {return yices_bvsub(a,b);}
+
+     result_type operator()( bvtags::bvsrem_tag , result_type a, result_type b ) {return yices_bvsrem(a,b);}
+
+     result_type operator()( bvtags::bvsdiv_tag , result_type a, result_type b ) {return yices_bvsdiv(a,b);}
+
+     result_type operator()( bvtags::bvurem_tag , result_type a, result_type b ) {return yices_bvrem(a,b);}
+
+     result_type operator()( bvtags::bvudiv_tag , result_type a, result_type b ) {return yices_bvdiv(a,b);}
+
+     result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
+	typedef boost::tuple<unsigned long, unsigned long> Tuple;
+        Tuple tuple = boost::any_cast<Tuple>(arg);
+        unsigned long value = boost::get<0>(tuple);
+        unsigned long width = boost::get<1>(tuple);
+
+        return yices_bvconst_uint64(width,value);
+	}
+
+     result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
+	typedef boost::tuple<unsigned long, unsigned long> Tuple;
+        Tuple tuple = boost::any_cast<Tuple>(arg);
+        unsigned long value = boost::get<0>(tuple);
+        unsigned long width = boost::get<1>(tuple);
+	
+        return yices_bvconst_int64(width,value);
+      }
+
+     result_type operator()( bvtags::bvbin_tag , boost::any arg ) {
+	std::string val = boost::any_cast<std::string>(arg);
+	return yices_parse_bvbin(val.c_str());
+     }
+
+     result_type operator()( bvtags::bvhex_tag , boost::any arg ) {
+	std::string hex = boost::any_cast<std::string>(arg);
+	return yices_parse_bvhex(hex.c_str());
+     }
+
+    result_type operator()( bvtags::bvslt_tag , result_type a, result_type b ) {return yices_bvslt_atom(a,b);}
+
+    result_type operator()( bvtags::bvsgt_tag , result_type a, result_type b ) {return yices_bvsgt_atom(a,b);}
+
+    result_type operator()( bvtags::bvsle_tag , result_type a, result_type b ) {return yices_bvsle_atom(a,b);}
+
+    result_type operator()( bvtags::bvsge_tag , result_type a, result_type b ) {return yices_bvsge_atom(a,b);}
+
+    result_type operator()( bvtags::bvult_tag , result_type a, result_type b ) {return yices_bvlt_atom(a,b);}
+
+    result_type operator()( bvtags::bvugt_tag , result_type a, result_type b ) {return yices_bvgt_atom(a,b);}
+
+    result_type operator()( bvtags::bvule_tag , result_type a, result_type b ) {return yices_bvle_atom(a,b);}
+
+    result_type operator()( bvtags::bvuge_tag , result_type a, result_type b ) {return yices_bvge_atom(a,b);}
+
+    result_type operator()( bvtags::concat_tag , result_type a, result_type b ) {return yices_bvconcat2(a,b);}
+
+    result_type operator()( bvtags::extract_tag const &
+        , unsigned long upper, unsigned long lower
+        , result_type e) {return yices_bvextract(e,lower,upper);}
+
+    result_type operator()( bvtags::zero_extend_tag const &
+        , unsigned long width
+        , result_type e) {return yices_zero_extend(e,width);}
+
+      result_type operator()( bvtags::sign_extend_tag const &
+        , unsigned long width
+        , result_type e) {return yices_sign_extend(e,width);}
+
+     result_type operator()( bvtags::bvshl_tag , result_type a, result_type b ) {return yices_bvshl(a,b);}
+
+     result_type operator()( bvtags::bvshr_tag , result_type a, result_type b ) {return yices_bvlshr(a,b);}
+
+     result_type operator()( bvtags::bvashr_tag , result_type a, result_type b ) {return yices_bvashr(a,b);}
+
+     
 
 
-
-      
       ////////////////////////
       // Fallback operators //
       ////////////////////////
-/*
+
 	template< result_type (*FN) (result_type, result_type) >
         struct Yices_F2 {
           static result_type exec(result_type x, result_type y)
@@ -136,13 +274,13 @@ namespace metaSMT {
 	assert(false && "unknown operator");
         return yices_false();
 	}
-
+      /*
       template <typename TagT>
       result_type operator() (TagT , result_type a, result_type b) {}
 
       template <typename TagT>
-      result_type operator() (TagT , result_type , result_type , result_type ) {}
-*/
+      result_type operator() (TagT , result_type , result_type , result_type ) {}*/
+
    void command (Yices2 const & ) { }
 
 
