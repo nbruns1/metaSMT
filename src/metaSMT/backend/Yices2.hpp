@@ -80,12 +80,13 @@ namespace metaSMT {
 	int32_t bits = yices_term_bitsize(var);
 	int32_t *array = new int32_t[bits];
 	std::vector<bool> booleans;
-	if(yices_bv_const_value(mode,var,&value) != -1)
+	if(yices_get_bv_value(model,var,array) != -1)
 	{
 		for(int32_t i=0;i<bits;i++)
 		{
 			booleans.push_back(array[i]);
 		}
+		delete[] array;
 		return result_wrapper(booleans);
 	}
 	else
@@ -193,20 +194,18 @@ namespace metaSMT {
      result_type operator()( bvtags::bvudiv_tag , result_type a, result_type b ) {return yices_bvdiv(a,b);}
 
      result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
-	typedef boost::tuple<unsigned long, unsigned long> Tuple;
-        Tuple tuple = boost::any_cast<Tuple>(arg);
+	typedef boost::tuple<unsigned long, unsigned long> Tuple;        
+	Tuple tuple = boost::any_cast<Tuple>(arg);
         unsigned long value = boost::get<0>(tuple);
         unsigned long width = boost::get<1>(tuple);
-
         return yices_bvconst_uint64(width,value);
 	}
 
      result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
-	typedef boost::tuple<unsigned long, unsigned long> Tuple;
+        typedef boost::tuple<long, unsigned long> Tuple;
         Tuple tuple = boost::any_cast<Tuple>(arg);
-        unsigned long value = boost::get<0>(tuple);
+        long value = boost::get<0>(tuple);
         unsigned long width = boost::get<1>(tuple);
-	
         return yices_bvconst_int64(width,value);
       }
 
