@@ -26,6 +26,12 @@ namespace metaSMT {
       typedef term_t result_type;
       typedef std::list< term_t > Exprs;
 
+      private:
+      Exprs assumptions_;
+      Exprs assertions_;
+      bool isPushed_;
+      context_t *ctx;
+      public:
       Yices2()
       {
 	yices_init();
@@ -41,7 +47,9 @@ namespace metaSMT {
 
 	result_type operator() (arraytags::select_tag const &
                               , result_type const &array
-                              , result_type const &index) {}
+                              , result_type const &index) {
+		return yices_select(index,array);
+	}
 
       void assertion( result_type e ) {
 	assertions_.push_back( e );
@@ -56,73 +64,109 @@ namespace metaSMT {
         //pushAssertions();
         //pushAssumptions();
         //return (yices_check_context(ctx, NULL) == STATUS_SAT);
+	return false;
 	}
 
       result_wrapper read_value(result_type var) {}
 
       // predtags
-      result_type operator()( predtags::var_tag const & , boost::any ) {}
+      result_type operator()( predtags::var_tag const & , boost::any ) {
+	type_t bool_type = yices_bool_type();
+	return yices_new_uninterpreted_term(bool_type);
+	}
 
-      result_type operator()( predtags::false_tag , boost::any ) {}
+      result_type operator()( predtags::false_tag , boost::any ) {return yices_false();}
 
-      result_type operator()( predtags::true_tag , boost::any ) {}
+      result_type operator()( predtags::true_tag , boost::any ) {return yices_true();}
 
-      result_type operator()( predtags::not_tag , result_type e ) {}
+      result_type operator()( predtags::not_tag , result_type e ) {return yices_not(e);}
 
-      result_type operator()( predtags::ite_tag , result_type a, result_type b, result_type c ) {}
+      result_type operator()( predtags::ite_tag , result_type a, result_type b, result_type c ) {return yices_ite(a,b,c);}
 
       // bvtags
-      result_type operator()( bvtags::var_tag const & var, boost::any ) {}
+      result_type operator()( bvtags::var_tag const & var, boost::any ) {
+	assert ( var.width != 0 );
+	return yices_bv_type(var.width);
+      }
 
-      result_type operator()( bvtags::bit0_tag , boost::any ) {}
+      result_type operator()( bvtags::bit0_tag , boost::any ) {return yices_bvconst_zero(1);}
 
-      result_type operator()( bvtags::bit1_tag , boost::any ) {}
+      result_type operator()( bvtags::bit1_tag , boost::any ) {return yices_bvconst_one(1);}
 
-      result_type operator()( bvtags::bvuint_tag , boost::any arg ) {}
+      result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
+	typedef boost::tuple<unsigned long, unsigned long> Tuple;
+        Tuple tuple = boost::any_cast<Tuple>(arg);
+        unsigned long value = boost::get<0>(tuple);
+        unsigned long width = boost::get<1>(tuple);
 
-      result_type operator()( bvtags::bvsint_tag , boost::any arg ) {}
+        return yices_bvconst_uint64(width,value);
+	}
 
-      result_type operator()( bvtags::bvbin_tag , boost::any arg ) {}
+      result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
+	typedef boost::tuple<unsigned long, unsigned long> Tuple;
+        Tuple tuple = boost::any_cast<Tuple>(arg);
+        unsigned long value = boost::get<0>(tuple);
+        unsigned long width = boost::get<1>(tuple);
+	
+        return yices_bvconst_int64(width,value);
+}
 
-      result_type operator()( bvtags::bvhex_tag , boost::any arg ) {}
+      result_type operator()( bvtags::bvbin_tag , boost::any arg ) {
+	std::string val = boost::any_cast<std::string>(arg);
+	return yices_parse_bvbin(val.c_str());
+	}
 
-      result_type operator()( bvtags::bvnot_tag , result_type e ) {}
+      result_type operator()( bvtags::bvhex_tag , boost::any arg ) {
+	std::string hex = boost::any_cast<std::string>(arg);
+	return yices_parse_bvhex(hex.c_str());
+	}
 
-      result_type operator()( bvtags::bvneg_tag , result_type e ) {}
+      result_type operator()( bvtags::bvnot_tag , result_type e ) {return yices_bvnot(e);}
+
+      result_type operator()( bvtags::bvneg_tag , result_type e ) {return yices_bvneg(e);}
 
       result_type operator()( bvtags::extract_tag const &
         , unsigned long upper, unsigned long lower
         , result_type e)
-      {}
+      {return yices_bvextract(e,lower,upper);}
 
       result_type operator()( bvtags::zero_extend_tag const &
         , unsigned long width
         , result_type e)
-      {}
+      {return yices_zero_extend(e,width);}
 
       result_type operator()( bvtags::sign_extend_tag const &
         , unsigned long width
         , result_type e)
-      {}
+      {return yices_sign_extend(e,width);}
 
       result_type operator()( predtags::equal_tag const &
                              , result_type a
-                             , result_type b) {}
+                             , result_type b) {
+	if (yices_term_is_bool(a) && yices_term_is_bool(b) ) {
+          return yices_iff(a,b);
+        } else {
+          return yices_eq(a,b);
+        }
+	}
 
       result_type operator()( predtags::nequal_tag const &
                              , result_type a
-                             , result_type b) {}
+                             , result_type b) {return yices_neq(a,b);}
 
       result_type operator()( predtags::distinct_tag const &
                              , result_type a
-                             , result_type b) {}
+                             , result_type b) {return yices_neq(a,b);}
 
       ////////////////////////
       // Fallback operators //
       ////////////////////////
 
       template <typename TagT>
-      result_type operator() (TagT , boost::any ) {}
+      result_type operator() (TagT , boost::any ) {
+	assert(false && "unknown operator");
+        return yices_false();
+	}
 
       template <typename TagT>
       result_type operator() (TagT , result_type a, result_type b) {}
@@ -161,10 +205,7 @@ namespace metaSMT {
           yices_assert_formula(ctx, *it);
         }
       }
-    Exprs assumptions_;
-    Exprs assertions_;
-    bool isPushed_;
-    context_t *ctx;
+    
     }; // class Yices2
 
   } // solver
