@@ -35,7 +35,11 @@ namespace metaSMT {
       Yices2()
       {
 	yices_init();
-	ctx = yices_new_context(NULL);
+	ctx_config_t *config = yices_new_config();
+	yices_set_config(config, "mode", "interactive");
+	ctx = yices_new_context(config);
+	yices_free_config(config);
+	
       }
 
       ~Yices2() {
@@ -60,9 +64,9 @@ namespace metaSMT {
       }
 
       bool solve() {
-	//removeOldAssumptions();
-        //pushAssertions();
-        //pushAssumptions();
+	removeOldAssumptions();
+        pushAssertions();
+        pushAssumptions();
         //return (yices_check_context(ctx, NULL) == STATUS_SAT);
 	return false;
 	}
@@ -162,6 +166,12 @@ namespace metaSMT {
       // Fallback operators //
       ////////////////////////
 
+	template< result_type (*FN) (result_type, result_type) >
+        struct Yices_F2 {
+          static result_type exec(result_type x, result_type y)
+          { return (*FN)(x,y);}
+        };
+
       template <typename TagT>
       result_type operator() (TagT , boost::any ) {
 	assert(false && "unknown operator");
@@ -169,7 +179,44 @@ namespace metaSMT {
 	}
 
       template <typename TagT>
-      result_type operator() (TagT , result_type a, result_type b) {}
+      result_type operator() (TagT , result_type a, result_type b) {
+	/*
+	namespace mpl = boost::mpl;
+	        typedef mpl::map33<
+          // binary Logic tags
+          mpl::pair<predtags::and_tag,     Yices_F2<&yices_and2> >
+        , mpl::pair<predtags::or_tag,      Yices_F2<&yices_or2> >
+        , mpl::pair<predtags::xor_tag,     Yices_F2<&yices_xor2> >
+        , mpl::pair<predtags::implies_tag, Yices_F2<&yices_implies> >
+        // binary QF_BV tags
+        , mpl::pair<bvtags::bvand_tag,     Yices_F2<&yices_bvand2> >
+        , mpl::pair<bvtags::bvnand_tag,    Yices_F2<&yices_bvnand> >
+        , mpl::pair<bvtags::bvor_tag,      Yices_F2<&yices_bvor2> >
+        , mpl::pair<bvtags::bvnor_tag,     Yices_F2<&yices_bvnor> >
+        , mpl::pair<bvtags::bvxor_tag,     Yices_F2<&yices_bvxor2> >
+        , mpl::pair<bvtags::bvxnor_tag,    Yices_F2<&yices_bvxnor> >
+        , mpl::pair<bvtags::bvadd_tag,     Yices_F2<&yices_bvadd> >
+        , mpl::pair<bvtags::bvsub_tag,     Yices_F2<&yices_bvsub> >
+        , mpl::pair<bvtags::bvmul_tag,     Yices_F2<&yices_bvmul> >
+        , mpl::pair<bvtags::bvudiv_tag,    Yices_F2<&yices_bvdiv> >
+        , mpl::pair<bvtags::bvurem_tag,    Yices_F2<&yices_bvrem> >
+        , mpl::pair<bvtags::bvsdiv_tag,    Yices_F2<&yices_bvsdiv> >
+        , mpl::pair<bvtags::bvsrem_tag,    Yices_F2<&yices_bvsrem> >
+        , mpl::pair<bvtags::bvslt_tag,     Yices_F2<&yices_bvslt_atom> >
+        , mpl::pair<bvtags::bvsle_tag,     Yices_F2<&yices_bvsle_atom> >
+        , mpl::pair<bvtags::bvsgt_tag,     Yices_F2<&yices_bvsgt_atom> >
+        , mpl::pair<bvtags::bvsge_tag,     Yices_F2<&yices_bvsge_atom> >
+        //, mpl::pair<bvtags::bvult_tag,     Yices_F2<BITVECTOR_ULT> >
+        //, mpl::pair<bvtags::bvule_tag,     Yices_F2<BITVECTOR_ULE> >
+        //, mpl::pair<bvtags::bvugt_tag,     Yices_F2<BITVECTOR_UGT> >
+        //, mpl::pair<bvtags::bvuge_tag,     Yices_F2<BITVECTOR_UGE> >
+        //, mpl::pair<bvtags::concat_tag,    Yices_F2<&yices_bvconcat> >
+        //, mpl::pair<bvtags::bvcomp_tag,    Yices_F2<BITVECTOR_COMP> >
+        , mpl::pair<bvtags::bvshl_tag,     Yices_F2<&yices_bvshl> >
+        //, mpl::pair<bvtags::bvshr_tag,     Yices_F2<&yices_bvshr> >
+        , mpl::pair<bvtags::bvashr_tag,    Yices_F2<&yices_bvashr> >
+        > Opcode_Map;*/
+}
 
       template <typename TagT>
       result_type operator() (TagT , result_type , result_type , result_type ) {}
