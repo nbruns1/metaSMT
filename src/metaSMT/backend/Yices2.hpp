@@ -4,6 +4,7 @@
 #include "../tags/Logic.hpp"
 #include "../tags/QF_BV.hpp"
 #include "../tags/QF_UF.hpp"
+#include "../tags/Array.hpp"
 #include <boost/mpl/map/map40.hpp>
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -17,6 +18,7 @@ namespace metaSMT {
     namespace predtags = ::metaSMT::logic::tag;
     namespace bvtags = ::metaSMT::logic::QF_BV::tag;
     namespace uftags = ::metaSMT::logic::QF_UF::tag;
+    namespace arraytags = ::metaSMT::logic::Array::tag;
 
 
     class Yices2 {
@@ -63,19 +65,7 @@ namespace metaSMT {
 
       model_t* model = yices_get_model(ctx, true);
       if (model == NULL) {throw std::runtime_error(std::string("CAN NOT GET THE MODEL"));}
-      if(yices_term_is_bool(var) == 1)
-      {
-	int32_t value = 0;
-        if(yices_get_bool_value(model,var,&value) != -1)
-        {
-		return result_wrapper((bool)value);
-	}
-	else
-	{
-		throw std::runtime_error(std::string("FAIL AT READ_VALUE BOOL"));
-	}
-      }
-      else if(yices_term_is_bitvector(var))
+      if(yices_term_is_bitvector(var))
       {
 	int32_t bits = yices_term_bitsize(var);
 	int32_t *array = new int32_t[bits];
@@ -94,6 +84,21 @@ namespace metaSMT {
 		throw std::runtime_error(std::string("FAIL AT READ_VALUE BITVECTOR"));
 	}
       }
+      else if(yices_term_is_bool(var) == 1)
+      {
+	throw std::runtime_error(std::string("BOOL BRANCH!"));
+	int32_t value = 0;
+        if(yices_get_bool_value(model,var,&value) == 0)
+        {
+		return result_wrapper((bool)value);
+	}
+	else
+	{
+		throw std::runtime_error(std::string("FAIL AT READ_VALUE BOOL"));
+	}
+      }
+      
+      throw std::runtime_error(std::string("UNKNOWN!"));
       return result_wrapper( false );
 }
 
@@ -202,10 +207,10 @@ namespace metaSMT {
 	}
 
      result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
-        typedef boost::tuple<long, unsigned long> Tuple;
-        Tuple tuple = boost::any_cast<Tuple>(arg);
-        long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
+        typedef boost::tuple<long, unsigned long> P;
+        P const p = boost::any_cast<P>(arg);
+        long const value = boost::get<0>(p);
+        unsigned const width = boost::get<1>(p);
         return yices_bvconst_int64(width,value);
       }
 
@@ -255,7 +260,21 @@ namespace metaSMT {
 
      result_type operator()( bvtags::bvashr_tag , result_type a, result_type b ) {return yices_bvashr(a,b);}
 
-     
+     result_type operator() (arraytags::array_var_tag const &var,
+                              boost::any const & ) {
+	if (var.id == 0 ) {
+          throw std::runtime_error("uninitialized array used");
+        }
+     }
+
+     result_type operator() (arraytags::select_tag const &
+                              , result_type const &array
+                              , result_type const &index) {}
+
+     result_type operator() (arraytags::store_tag const &
+                              , result_type const &array
+                              , result_type const &index
+                              , result_type const &value) {}
 
 
       ////////////////////////
