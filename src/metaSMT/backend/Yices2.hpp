@@ -86,7 +86,6 @@ namespace metaSMT {
       }
       else if(yices_term_is_bool(var) == 1)
       {
-	throw std::runtime_error(std::string("BOOL BRANCH!"));
 	int32_t value = 0;
         if(yices_get_bool_value(model,var,&value) == 0)
         {
@@ -260,6 +259,11 @@ namespace metaSMT {
 
      result_type operator()( bvtags::bvashr_tag , result_type a, result_type b ) {return yices_bvashr(a,b);}
 
+     result_type operator() (bvtags::var_tag const & var, boost::any ) {
+	type_t bv_type = yices_bv_type(var.width);
+	return yices_new_uninterpreted_term(bv_type);       
+      }
+
      result_type operator() (arraytags::array_var_tag const &var,
                               boost::any const & ) {
 	if (var.id == 0 ) {
@@ -275,6 +279,10 @@ namespace metaSMT {
                               , result_type const &array
                               , result_type const &index
                               , result_type const &value) {}
+
+     result_type operator() (uftags::function_var_tag const & var,
+                                boost::any ) { }
+
 
 
       ////////////////////////
