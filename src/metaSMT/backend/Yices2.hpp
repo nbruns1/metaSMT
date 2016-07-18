@@ -181,7 +181,7 @@ namespace metaSMT {
 
      result_type operator()( bvtags::bvxnor_tag , result_type a, result_type b ) {return yices_bvxnor(a,b);}
 
-     result_type operator()( bvtags::bvcomp_tag , result_type a, result_type b ) {return yices_bveq_atom(a,b);}
+     result_type operator()( bvtags::bvcomp_tag , result_type a, result_type b ) {return yices_redcomp(a,b);}
 
      result_type operator()( bvtags::bvadd_tag , result_type a, result_type b ) {return yices_bvadd(a,b);}
 
