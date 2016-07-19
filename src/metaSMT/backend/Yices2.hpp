@@ -49,6 +49,19 @@ namespace detail {
       Exprs assertions_;
       bool isPushed_;
       context_t *ctx;
+
+      term_t throw_error(term_t value)
+      {
+	if(value == NULL_TERM) {
+	char* error = yices_error_string();
+      	std::stringstream ss;
+      	ss << "Error: ";
+      	ss << error;
+        throw std::runtime_error(ss.str()); 
+	}
+	return value;
+      }
+
       public:
       Yices2()
       {
@@ -114,8 +127,16 @@ namespace detail {
 		throw std::runtime_error(std::string("FAIL AT READ_VALUE BOOL"));
 	}
       }
+      else if(yices_term_is_tuple(var) == 1)
+      {
+	throw std::runtime_error(std::string("TUPLE!"));
+      }
+      char* error = yices_error_string();
+      std::stringstream ss;
+      ss << "Error:";
+      ss << error;
       
-      throw std::runtime_error(std::string("UNKNOWN!"));
+      throw std::runtime_error(ss.str());
       return result_wrapper( false );
 }
 
@@ -151,27 +172,35 @@ namespace detail {
 
      result_type operator()( predtags::and_tag const &
                              , result_type a
-                             , result_type b) {return yices_and2(a,b);}
+                             , result_type b) {
+	return throw_error(yices_and2(a,b));
+	}
 
      result_type operator()( predtags::nand_tag const &
                              , result_type a
-                             , result_type b) {return yices_not(yices_and2(a,b));}
+                             , result_type b) {
+	return throw_error(yices_not(yices_and2(a,b)));
+	}
 
      result_type operator()( predtags::or_tag const &
                              , result_type a
-                             , result_type b) {return yices_or2(a,b);}
+                             , result_type b) {
+	return throw_error(yices_or2(a,b));}
 
      result_type operator()( predtags::nor_tag const &
                              , result_type a
-                             , result_type b) {return yices_not(yices_or2(a,b));}
+                             , result_type b) {
+	return throw_error(yices_not(yices_or2(a,b)));}
 
      result_type operator()( predtags::xor_tag const &
                              , result_type a
-                             , result_type b) {return yices_xor2(a,b);}
+                             , result_type b) {
+	return throw_error(yices_xor2(a,b));}
 
      result_type operator()( predtags::xnor_tag const &
                              , result_type a
-                             , result_type b) {return yices_not(yices_xor2(a,b));}
+                             , result_type b) {
+	return throw_error(yices_not(yices_xor2(a,b)));}
 
      result_type operator()( predtags::implies_tag const &
                              , result_type a
@@ -233,12 +262,12 @@ namespace detail {
 
      result_type operator()( bvtags::bvbin_tag , boost::any arg ) {
 	std::string val = boost::any_cast<std::string>(arg);
-	return yices_parse_bvbin(val.c_str());
+	return throw_error(yices_parse_bvbin(val.c_str()));
      }
 
      result_type operator()( bvtags::bvhex_tag , boost::any arg ) {
 	std::string hex = boost::any_cast<std::string>(arg);
-	return yices_parse_bvhex(hex.c_str());
+	return throw_error(yices_parse_bvhex(hex.c_str()));
      }
 
     result_type operator()( bvtags::bvslt_tag , result_type a, result_type b ) {return yices_bvslt_atom(a,b);}
@@ -257,19 +286,19 @@ namespace detail {
 
     result_type operator()( bvtags::bvuge_tag , result_type a, result_type b ) {return yices_bvge_atom(a,b);}
 
-    result_type operator()( bvtags::concat_tag , result_type a, result_type b ) {return yices_bvconcat2(a,b);}
+    result_type operator()( bvtags::concat_tag , result_type a, result_type b ) {return throw_error(yices_bvconcat2(a,b));}
 
     result_type operator()( bvtags::extract_tag const &
         , unsigned long upper, unsigned long lower
-        , result_type e) {return yices_bvextract(e,lower,upper);}
+        , result_type e) {return throw_error(yices_bvextract(e,lower,upper));}
 
     result_type operator()( bvtags::zero_extend_tag const &
         , unsigned long width
-        , result_type e) {return yices_zero_extend(e,width);}
+        , result_type e) {return throw_error(yices_zero_extend(e,width));}
 
       result_type operator()( bvtags::sign_extend_tag const &
         , unsigned long width
-        , result_type e) {return yices_sign_extend(e,width);}
+        , result_type e) {return throw_error(yices_sign_extend(e,width));}
 
      result_type operator()( bvtags::bvshl_tag , result_type a, result_type b ) {return yices_bvshl(a,b);}
 
@@ -287,16 +316,28 @@ namespace detail {
 	if (var.id == 0 ) {
           throw std::runtime_error("uninitialized array used");
         }
+	unsigned int tuple_size = std::pow(2,var.index_width);
+	type_t *tuple_types = new type_t[tuple_size];
+	for(unsigned int i=0;i < tuple_size;i++)
+	{
+		tuple_types[i] = yices_bv_type(var.elem_width);
+	}
+	type_t tuple_type = yices_tuple_type(tuple_size,tuple_types);
+	return yices_new_uninterpreted_term(tuple_type);
      }
 
      result_type operator() (arraytags::select_tag const &
                               , result_type const &array
-                              , result_type const &index) {}
+                              , result_type const &index) {
+    	return throw_error(yices_select(index,array));
+    }
 
      result_type operator() (arraytags::store_tag const &
                               , result_type const &array
                               , result_type const &index
-                              , result_type const &value) {}
+                              , result_type const &value) {
+	return throw_error(yices_tuple_update(array,index,value));
+    }
 
      result_type operator() (uftags::function_var_tag const & var,
                                 boost::any ) {
@@ -318,14 +359,14 @@ namespace detail {
       result_type operator() (proto::tag::function,
                               result_type const &func_decl) {
 	term_t *arg_array = 0;
-	return yices_application(func_decl,0,arg_array);
+	return throw_error(yices_application(func_decl,0,arg_array));
       }
 
       result_type operator() (proto::tag::function,
                               result_type func_decl,
                               result_type arg) {
         term_t arg_array[] = {arg};
-	return yices_application(func_decl,1,arg_array);
+	return throw_error(yices_application(func_decl,1,arg_array));
       }
 
       result_type operator() (proto::tag::function,
@@ -333,7 +374,7 @@ namespace detail {
                               result_type arg1,
                               result_type arg2) {
         term_t arg_array[] = {arg1,arg2};
-	return yices_application(func_decl,2,arg_array);
+	return throw_error(yices_application(func_decl,2,arg_array));
       }
 
       result_type operator() (proto::tag::function,
@@ -342,7 +383,7 @@ namespace detail {
                               result_type arg2,
                               result_type arg3) {
 	term_t arg_array[] = {arg1,arg2,arg3};
-	return yices_application(func_decl,3,arg_array);
+	return throw_error(yices_application(func_decl,3,arg_array));
  }
 
 
