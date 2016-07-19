@@ -19,8 +19,26 @@ namespace metaSMT {
     namespace bvtags = ::metaSMT::logic::QF_BV::tag;
     namespace uftags = ::metaSMT::logic::QF_UF::tag;
     namespace arraytags = ::metaSMT::logic::Array::tag;
+namespace detail {
+    struct domain_sort_visitor : boost::static_visitor<type_t> {
+        domain_sort_visitor(context_t &ctx)
+          : ctx(ctx)
+        {}
 
+        type_t operator() (type::Boolean const & ) const {
+	return yices_bool_type();
+        }
 
+        type_t operator() (type::BitVector const &arg) const {
+	return yices_bv_type(arg.width);
+        }
+
+        type_t operator() (type::Array const &arg) const {
+        }
+
+        context_t &ctx;
+      }; // domain_sort_visitor
+}
     class Yices2 {
     public:
       typedef term_t result_type;
@@ -281,7 +299,51 @@ namespace metaSMT {
                               , result_type const &value) {}
 
      result_type operator() (uftags::function_var_tag const & var,
-                                boost::any ) { }
+                                boost::any ) {
+     unsigned const num_args = var.args.size();
+     type_t *domain_sort = new type_t[num_args];
+
+     type_t result_sort = boost::apply_visitor(
+          detail::domain_sort_visitor(*ctx), var.result_type);
+
+     for ( unsigned u = 0; u < num_args; ++u ) {
+	domain_sort[u] = boost::apply_visitor(
+            detail::domain_sort_visitor(*ctx), var.args[u]);
+     }
+     type_t function_type = yices_function_type(num_args,domain_sort,result_sort);
+     return yices_new_uninterpreted_term(function_type);
+
+ }
+
+      result_type operator() (proto::tag::function,
+                              result_type const &func_decl) {
+	term_t *arg_array = 0;
+	return yices_application(func_decl,0,arg_array);
+      }
+
+      result_type operator() (proto::tag::function,
+                              result_type func_decl,
+                              result_type arg) {
+        term_t arg_array[] = {arg};
+	return yices_application(func_decl,1,arg_array);
+      }
+
+      result_type operator() (proto::tag::function,
+                              result_type func_decl,
+                              result_type arg1,
+                              result_type arg2) {
+        term_t arg_array[] = {arg1,arg2};
+	return yices_application(func_decl,2,arg_array);
+      }
+
+      result_type operator() (proto::tag::function,
+                              result_type func_decl,
+                              result_type arg1,
+                              result_type arg2,
+                              result_type arg3) {
+	term_t arg_array[] = {arg1,arg2,arg3};
+	return yices_application(func_decl,3,arg_array);
+ }
 
 
 
