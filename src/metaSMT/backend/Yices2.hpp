@@ -384,8 +384,11 @@ namespace detail {
                               result_type arg3) {
 	term_t arg_array[] = {arg1,arg2,arg3};
 	return throw_error(yices_application(func_decl,3,arg_array));
- }
-
+      }
+ 
+      unsigned get_bv_width( result_type const& e ) {
+	throw std::runtime_error(std::string("NEED TO BE IMPLEMENTED"));
+      }
 
 
       ////////////////////////
