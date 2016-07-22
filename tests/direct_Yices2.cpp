@@ -11,5 +11,6 @@ struct Solver_Fixture {
 #include "test_solver.cpp"
 #include "test_result_wrapper.cpp"
 #include "test_unsat.cpp"
-//#include "test_QF_UF.cpp"
+#include "test_QF_UF.cpp"
 #include "test_QF_BV.cpp"
+#include "test_Array.cpp"
