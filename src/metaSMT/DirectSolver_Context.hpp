@@ -318,6 +318,10 @@ namespace metaSMT {
       return SolverContext::operator()( t, boost::any() );
     }
 
+    unsigned get_bv_width(result_type const &e) {
+      return SolverContext::get_bv_width(e);
+    }
+
     void command( assertion_cmd const &, result_type e) {
       SolverContext::assertion(e);
     }
