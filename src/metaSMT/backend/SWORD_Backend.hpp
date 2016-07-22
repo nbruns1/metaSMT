@@ -227,7 +227,11 @@ namespace metaSMT {
         void assumption( result_type e ) { 
           _sword.addAssumption(e);
         }
-        
+
+        unsigned get_bv_width( result_type const &e ) {
+          return 0; // unsupported
+        }
+
         bool solve() {
           return _sword.solve();
         }

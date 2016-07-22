@@ -162,6 +162,11 @@ namespace metaSMT {
         assumption_ = (*this)(predtags::and_tag(), assumption_, e);
       }
 
+      unsigned get_bv_width( result_type const &e ) {
+        z3::expr r = z3::expr(e);
+        return r.is_bv() ? r.get_sort().bv_size() : 0;
+      }
+
       bool solve() {
         solver_.push();
         assertion(assumption_);

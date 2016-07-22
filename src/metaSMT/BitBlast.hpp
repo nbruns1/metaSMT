@@ -46,6 +46,14 @@ namespace metaSMT {
           _solver.assumption( boost::get<result_base>(e) );
         }
         
+        unsigned get_bv_width( result_type const &e ) {
+          try {
+            return boost::get<bv_result>(e).size();
+          } catch ( boost::bad_get ) {
+            return 0;
+          }
+        }
+
         bool solve() {
           return _solver.solve();
         }

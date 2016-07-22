@@ -106,6 +106,10 @@ namespace metaSMT {
           boolector_assume(_btor, e);
         }
 
+        unsigned get_bv_width( result_type const& e ) {
+          return boolector_get_width(_btor, e);
+        }
+
         bool solve() {
           return boolector_sat(_btor) == BOOLECTOR_SAT;
         }
