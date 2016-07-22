@@ -2064,6 +2064,24 @@ BOOST_AUTO_TEST_CASE(extended_concat) {
   BOOST_REQUIRE_EQUAL( zv3, "0000000100000000" );
 }
 
+BOOST_AUTO_TEST_CASE( get_bv_width )
+{
+   const unsigned w = 8;
+
+   bitvector x = new_bitvector(w);
+   bitvector y = new_bitvector(w);
+
+   ContextType::result_type x_ = evaluate( ctx, x );
+   ContextType::result_type y_ = evaluate( ctx, y );
+   ContextType::result_type cc = evaluate( ctx, concat(x, y) );
+   ContextType::result_type ex = evaluate( ctx, extract(3, 0, concat(x, y)) );
+
+   BOOST_CHECK_EQUAL( ctx.get_bv_width(x_), w );
+   BOOST_CHECK_EQUAL( ctx.get_bv_width(y_), w );
+   BOOST_CHECK_EQUAL( ctx.get_bv_width(cc), w + w );
+   BOOST_CHECK_EQUAL( ctx.get_bv_width(ex), 4 );
+}
+
 BOOST_AUTO_TEST_SUITE_END() //QF_BV
 
 //  vim: ft=cpp:ts=2:sw=2:expandtab

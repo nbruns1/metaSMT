@@ -75,6 +75,11 @@ namespace metaSMT {
         assumptions_.push_back( e );
       }
 
+      unsigned get_bv_width( result_type const &e ) {
+        ::CVC4::Type type = e.getType();
+        return type.isBitVector() ? ((::CVC4::BitVectorType) type).getSize() : 0;
+      }
+
       bool solve() {
         removeOldAssumptions();
         pushAssertions();

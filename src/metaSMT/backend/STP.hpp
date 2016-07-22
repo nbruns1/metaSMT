@@ -56,6 +56,10 @@ namespace metaSMT {
         assumptions.push_back( e );
       }
 
+      unsigned get_bv_width( result_type const &e ) {
+        return getType(e) == BITVECTOR_TYPE ? getBVLength(e) : 0;
+      }
+
       bool solve() {
         enum SolverResult {
           INVALID = 0
