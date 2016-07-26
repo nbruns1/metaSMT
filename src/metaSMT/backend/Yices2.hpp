@@ -316,14 +316,10 @@ namespace detail {
 	if (var.id == 0 ) {
           throw std::runtime_error("uninitialized array used");
         }
-	unsigned int tuple_size = std::pow(2,var.index_width);
-	type_t *tuple_types = new type_t[tuple_size];
-	for(unsigned int i=0;i < tuple_size;i++)
-	{
-		tuple_types[i] = yices_bv_type(var.elem_width);
-	}
-	type_t tuple_type = yices_tuple_type(tuple_size,tuple_types);
-	return yices_new_uninterpreted_term(tuple_type);
+	type_t index_type = yices_bv_type(var.index_width);
+	type_t var_type = yices_bv_type(var.elem_width);
+	type_t function_type = yices_function_type(1,&index_type,var_type);
+     	return yices_new_uninterpreted_term(function_type);
      }
 
      result_type operator() (arraytags::select_tag const &
