@@ -325,14 +325,14 @@ namespace detail {
      result_type operator() (arraytags::select_tag const &
                               , result_type const &array
                               , result_type const &index) {
-    	return throw_error(yices_select(index,array));
+    	return throw_error(yices_application1(array,index));
     }
 
      result_type operator() (arraytags::store_tag const &
                               , result_type const &array
                               , result_type const &index
                               , result_type const &value) {
-	return throw_error(yices_tuple_update(array,index,value));
+	return throw_error(yices_update1(array, index, value));
     }
 
      result_type operator() (uftags::function_var_tag const & var,
@@ -383,7 +383,7 @@ namespace detail {
       }
  
       unsigned get_bv_width( result_type const& e ) {
-	throw std::runtime_error(std::string("NEED TO BE IMPLEMENTED"));
+	return yices_term_bitsize(e);
       }
 
 
