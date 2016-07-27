@@ -93,6 +93,8 @@ set_package_info(Z3 "solver for various SMT theories")
 
 if (metaSMT_USE_YICES2)
 	find_package(YICES2 QUIET)
+  list(APPEND metaSMT_LIBS ${YICES2_LIBRARIES})
+  list(APPEND metaSMT_INCLUDES ${YICES2_INCLUDE_DIR})
 else()
   set(YICES2_FOUND 0)
 endif()
