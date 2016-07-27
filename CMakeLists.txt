@@ -91,6 +91,13 @@ else()
 endif()
 set_package_info(Z3 "solver for various SMT theories")
 
+if (metaSMT_USE_YICES2)
+	find_package(YICES2 QUIET)
+else()
+  set(YICES2_FOUND 0)
+endif()
+set_package_info(YICES2 "solver for various SMT theories")
+
 if(metaSMT_USE_STP)
   find_package(STP QUIET)
 else()

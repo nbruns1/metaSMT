@@ -66,6 +66,8 @@ add_test_executable( direct_Boolector direct_Boolector.cpp
   PROPERTIES COMPILE_FLAGS "${Boolector_CXXFLAGS}"
   )
 
+add_test_executable( direct_Yices2 direct_Yices2.cpp REQUIRES YICES2_FOUND )
+
 add_test_executable( direct_Z3 direct_Z3.cpp REQUIRES Z3_FOUND )
 
 add_test_executable( direct_STP direct_STP.cpp REQUIRES STP_FOUND )
