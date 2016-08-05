@@ -482,6 +482,36 @@ BOOST_AUTO_TEST_CASE( read_value_after_assertion_still_valid )
   BOOST_REQUIRE( !solve(ctx) );
 }
 
+BOOST_AUTO_TEST_CASE( multiple_solver_instances )
+{
+  // If this test fails, only one instance of the underlying solver
+  // should be used
+  Solver_Fixture::ContextType ctx_;
+
+  predicate p = new_variable();
+  predicate q = new_variable();
+
+  BOOST_REQUIRE( solve(ctx ) );
+  BOOST_REQUIRE( solve(ctx_) );
+
+  assertion(ctx , nequal(p, q));
+  assertion(ctx_, nequal(p, q));
+
+  BOOST_REQUIRE( solve(ctx ) );
+  BOOST_REQUIRE( solve(ctx_) );
+
+  bool p_val = false;
+  bool q_val = false;
+
+  p_val = read_value(ctx , p);
+  q_val = read_value(ctx , q);
+  BOOST_REQUIRE( p_val != q_val );
+
+  p_val = read_value(ctx_, p);
+  q_val = read_value(ctx_, q);
+  BOOST_REQUIRE( p_val != q_val );
+}
+
 BOOST_AUTO_TEST_SUITE_END() //Solver
 
 //  vim: ft=cpp:ts=2:sw=2:expandtab
