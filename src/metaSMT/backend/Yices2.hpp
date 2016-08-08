@@ -72,11 +72,11 @@ class Yices2 {
     if(instance_counter == 0)
     {
     	yices_init();
-        ctx_config_t *config = yices_new_config();
-    	yices_set_config(config, "mode", "interactive");
-    	ctx = yices_new_context(config);
-    	yices_free_config(config);
     }
+    ctx_config_t *config = yices_new_config();
+    yices_set_config(config, "mode", "interactive");
+    ctx = yices_new_context(config);
+    yices_free_config(config);
     instance_counter++;
     
   }
@@ -84,7 +84,8 @@ class Yices2 {
   ~Yices2() {
    if(instance_counter == 1)
    {
-   	yices_exit();
+	yices_reset();
+   	//yices_exit();
    } 
    instance_counter--;
 }
