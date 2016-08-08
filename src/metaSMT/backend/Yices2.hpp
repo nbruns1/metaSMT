@@ -78,7 +78,8 @@ namespace detail {
       }
 
       ~Yices2() {
-	yices_exit();
+	yices_reset();
+	//yices_exit();
       }
 
       void assertion( result_type e ) {
