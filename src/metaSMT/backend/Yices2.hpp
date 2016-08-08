@@ -11,12 +11,14 @@
 
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/proto/proto.hpp>
 
 #include <yices.h>
 
 namespace metaSMT {
 namespace solver {
 
+namespace proto = ::boost::proto;
 namespace predtags = ::metaSMT::logic::tag;
 namespace bvtags = ::metaSMT::logic::QF_BV::tag;
 namespace uftags = ::metaSMT::logic::QF_UF::tag;

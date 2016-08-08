@@ -1,5 +1,7 @@
+include_directories(${metaSMT_INCLUDES})
 add_library(metaSMT STATIC
   _var_id.cpp
+  Yices2.cpp
 )
 
 target_link_libraries(metaSMT ${metaSMT_LIBS})
