@@ -54,6 +54,7 @@ class Yices2 {
   Exprs assertions_;
   bool isPushed_;
   context_t *ctx;
+  static unsigned int instance_counter;
 
   term_t throw_error(term_t value) {
     if (value == NULL_TERM) {
@@ -68,14 +69,25 @@ class Yices2 {
 
  public:
   Yices2() {
-    yices_init();
-    ctx_config_t *config = yices_new_config();
-    yices_set_config(config, "mode", "interactive");
-    ctx = yices_new_context(config);
-    yices_free_config(config);
+    if(instance_counter == 0)
+    {
+    	yices_init();
+        ctx_config_t *config = yices_new_config();
+    	yices_set_config(config, "mode", "interactive");
+    	ctx = yices_new_context(config);
+    	yices_free_config(config);
+    }
+    instance_counter++;
+    
   }
 
-  ~Yices2() { yices_exit(); }
+  ~Yices2() {
+   if(instance_counter == 1)
+   {
+   	yices_exit();
+   } 
+   instance_counter--;
+}
 
   void assertion(result_type e) { assertions_.push_back(e); }
 
