@@ -82,12 +82,12 @@ class Yices2 {
   }
 
   ~Yices2() {
-   if(instance_counter == 1)
-   {
-	yices_reset();
-   	//yices_exit();
-   } 
+   yices_free_context(ctx);
    instance_counter--;
+   if(instance_counter == 0)
+   {
+   	yices_exit();
+   } 
 }
 
   void assertion(result_type e) { assertions_.push_back(e); }
