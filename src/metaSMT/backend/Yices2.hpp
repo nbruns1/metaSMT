@@ -8,6 +8,7 @@
 
 #include <list>
 #include <sstream>
+#include <atomic>
 
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -54,7 +55,7 @@ class Yices2 {
   Exprs assertions_;
   bool isPushed_;
   context_t *ctx;
-  static unsigned int instance_counter;
+  static std::atomic<unsigned int> instance_counter;
 
   term_t throw_error(term_t value) {
     if (value == NULL_TERM) {

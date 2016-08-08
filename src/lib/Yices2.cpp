@@ -2,6 +2,6 @@
 
 namespace metaSMT {
 namespace solver {
-unsigned int Yices2::instance_counter = 0;
+std::atomic<unsigned int> Yices2::instance_counter = {0};
 }
 }
