@@ -8,6 +8,7 @@
 
 #include <list>
 #include <sstream>
+#include <iostream>
 
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -97,15 +98,59 @@ class Yices2 {
    } 
 }
 
-  void assertion(result_type e) { assertions_.push_back(e); }
+static void print_term(term_t term) {
+  int32_t code;
 
-  void assumption(result_type e) { assumptions_.push_back(e); }
+  code = yices_pp_term(stdout, term, 80, 20, 0);
+  if (code < 0) {
+    // An error occurred
+    fprintf(stderr, "Error in print_term: ");
+    yices_print_error(stderr);
+    exit(1);
+  }
+}
+
+  void assertion(result_type e) { assertions_.push_back(e);}
+
+  void assumption(result_type e) { assumptions_.push_back(e);}
+  
+  void print_status(smt_status_t status)
+  {
+	switch(status)
+	{
+	case STATUS_IDLE:
+	std::cerr << "STATUS_IDLE" << std::endl;
+	break;
+	case STATUS_SEARCHING:
+	std::cerr << "STATUS_SEARCHING" << std::endl;
+	break;
+	case STATUS_UNKNOWN:
+	std::cerr << "STATUS_UNKNOWN" << std::endl;
+	break;
+	case STATUS_SAT:
+	std::cerr << "STATUS_SAT" << std::endl;
+	break;
+	case STATUS_UNSAT:
+	std::cerr << "STATUS_UNSAT" << std::endl;
+	break;
+	case STATUS_INTERRUPTED:
+	std::cerr << "STATUS_INTERRUPTED" << std::endl;
+	break;
+	case STATUS_ERROR:
+	std::cerr << "STATUS_ERROR" << std::endl;
+	break;
+	default:
+	break;
+	}
+  }
 
   bool solve() {
     removeOldAssumptions();
     pushAssertions();
     pushAssumptions();
-    return (yices_check_context(ctx, NULL) == STATUS_SAT);
+    smt_status_t status = yices_check_context(ctx, NULL);
+    print_status(status);
+    return (status == STATUS_SAT);
   }
 
   result_wrapper read_value(result_type var) {
@@ -404,6 +449,7 @@ class Yices2 {
 
   void applyAssertions(Exprs const &expressions) {
     for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
+      print_term(*it);
       yices_assert_formula(ctx, *it);
     }
   }
