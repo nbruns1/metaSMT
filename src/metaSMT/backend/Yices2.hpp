@@ -8,7 +8,6 @@
 
 #include <list>
 #include <sstream>
-#include <atomic>
 
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -45,6 +44,14 @@ struct domain_sort_visitor : boost::static_visitor<type_t> {
 };  // domain_sort_visitor
 }
 
+template <class T>
+struct ObjectCounter {
+ static int count;
+};
+
+template<class T>
+int ObjectCounter<T>::count = 0; 
+
 class Yices2 {
  public:
   typedef term_t result_type;
@@ -55,7 +62,6 @@ class Yices2 {
   Exprs assertions_;
   bool isPushed_;
   context_t *ctx;
-  static std::atomic<unsigned int> instance_counter;
 
   term_t throw_error(term_t value) {
     if (value == NULL_TERM) {
@@ -70,7 +76,7 @@ class Yices2 {
 
  public:
   Yices2() {
-    if(instance_counter == 0)
+    if(ObjectCounter<Yices2>::count == 0)
     {
     	yices_init();
     }
@@ -78,14 +84,14 @@ class Yices2 {
     yices_set_config(config, "mode", "interactive");
     ctx = yices_new_context(config);
     yices_free_config(config);
-    instance_counter++;
+    ObjectCounter<Yices2>::count++;
     
   }
 
   ~Yices2() {
    yices_free_context(ctx);
-   instance_counter--;
-   if(instance_counter == 0)
+   ObjectCounter<Yices2>::count--;
+   if(ObjectCounter<Yices2>::count == 0)
    {
    	yices_exit();
    } 
