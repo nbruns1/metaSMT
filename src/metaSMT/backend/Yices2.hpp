@@ -82,7 +82,7 @@ class Yices2 {
     	yices_init();
     }
     ctx_config_t *config = yices_new_config();
-    yices_set_config(config, "mode", "interactive");
+    yices_set_config(config, "mode", "incremental");
     ctx = yices_new_context(config);
     yices_free_config(config);
     ObjectCounter<Yices2>::count++;
@@ -149,7 +149,7 @@ static void print_term(term_t term) {
     pushAssertions();
     pushAssumptions();
     smt_status_t status = yices_check_context(ctx, NULL);
-    print_status(status);
+    //print_status(status);
     return (status == STATUS_SAT);
   }
 
@@ -430,14 +430,28 @@ static void print_term(term_t term) {
   void removeOldAssumptions() {
 	printf("removeOldAssumptions");
     if (isPushed_) {
-      yices_pop(ctx);
+      if(yices_pop(ctx) == -1)
+      {
+	char *error = yices_error_string();
+      std::stringstream ss;
+      ss << "Error: ";
+      ss << error;
+      throw std::runtime_error(ss.str());
+      }
       isPushed_ = false;
     }
   }
 
   void pushAssumptions() {
 	printf("pushAssumptions");
-    yices_push(ctx);
+    if(yices_push(ctx) == -1)
+      {
+	char *error = yices_error_string();
+      std::stringstream ss;
+      ss << "Error: ";
+      ss << error;
+      throw std::runtime_error(ss.str());
+      }
     isPushed_ = true;
 
     applyAssertions(assumptions_);
@@ -452,7 +466,7 @@ static void print_term(term_t term) {
 
   void applyAssertions(Exprs const &expressions) {
     for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
-      print_term(*it);
+      //print_term(*it);
       yices_assert_formula(ctx, *it);
     }
   }
