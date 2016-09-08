@@ -82,7 +82,7 @@ class Yices2 {
     	yices_init();
     }
     ctx_config_t *config = yices_new_config();
-    yices_set_config(config, "mode", "incremental");
+	yices_set_config(config, "mode", "interactive");
     ctx = yices_new_context(config);
     yices_free_config(config);
     ObjectCounter<Yices2>::count++;
@@ -428,7 +428,7 @@ static void print_term(term_t term) {
 
  private:
   void removeOldAssumptions() {
-	printf("removeOldAssumptions");
+	printf("removeOldAssumptions\n");
     if (isPushed_) {
       if(yices_pop(ctx) == -1)
       {
@@ -443,7 +443,7 @@ static void print_term(term_t term) {
   }
 
   void pushAssumptions() {
-	printf("pushAssumptions");
+	printf("pushAssumptions\n");
     if(yices_push(ctx) == -1)
       {
 	char *error = yices_error_string();
@@ -459,7 +459,7 @@ static void print_term(term_t term) {
   }
 
   void pushAssertions() {
-	printf("pushAssertions");
+	printf("pushAssertions\n");
     applyAssertions(assertions_);
     assertions_.clear();
   }
