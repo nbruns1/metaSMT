@@ -101,7 +101,7 @@ class Yices2 {
 static void print_term(term_t term) {
   int32_t code;
 
-  code = yices_pp_term(stdout, term, 80, 20, 0);
+  code = yices_pp_term(stdout, term, UINT32_MAX, 1, 0);
   if (code < 0) {
     // An error occurred
     fprintf(stderr, "Error in print_term: ");
@@ -428,6 +428,7 @@ static void print_term(term_t term) {
 
  private:
   void removeOldAssumptions() {
+	printf("removeOldAssumptions");
     if (isPushed_) {
       yices_pop(ctx);
       isPushed_ = false;
@@ -435,6 +436,7 @@ static void print_term(term_t term) {
   }
 
   void pushAssumptions() {
+	printf("pushAssumptions");
     yices_push(ctx);
     isPushed_ = true;
 
@@ -443,6 +445,7 @@ static void print_term(term_t term) {
   }
 
   void pushAssertions() {
+	printf("pushAssertions");
     applyAssertions(assertions_);
     assertions_.clear();
   }
