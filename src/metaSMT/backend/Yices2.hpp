@@ -452,10 +452,11 @@ static void print_term(term_t term) {
       ss << error;
       throw std::runtime_error(ss.str());
       }
+      else{
     isPushed_ = true;
 
     applyAssertions(assumptions_);
-    assumptions_.clear();
+    assumptions_.clear();}
   }
 
   void pushAssertions() {
