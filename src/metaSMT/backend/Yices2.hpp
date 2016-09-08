@@ -184,7 +184,7 @@ static void print_term(term_t term) {
 
     char *error = yices_error_string();
     std::stringstream ss;
-    ss << "Error:";
+    ss << "Error at read_value:";
     ss << error;
 
     throw std::runtime_error(ss.str());
