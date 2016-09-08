@@ -149,14 +149,14 @@ static void print_term(term_t term) {
     pushAssertions();
     pushAssumptions();
     smt_status_t status = yices_check_context(ctx, NULL);
-    //print_status(status);
+    print_status(status);
     return (status == STATUS_SAT);
   }
 
   result_wrapper read_value(result_type var) {
     model_t *model = yices_get_model(ctx, true);
     if (!model) {
-      throw std::runtime_error(std::string("Cannot get model from Yices2"));
+      throw std::runtime_error(std::string("read_value: Cannot get model from Yices2"));
     }
     if (yices_term_is_bitvector(var)) {
       int32_t bits = yices_term_bitsize(var);
@@ -169,22 +169,22 @@ static void print_term(term_t term) {
         delete[] array;
         return result_wrapper(booleans);
       } else {
-        throw std::runtime_error(std::string("Failed to read bitvector from Yices2"));
+        throw std::runtime_error(std::string("read_value: Failed to read bitvector from Yices2"));
       }
     } else if (yices_term_is_bool(var)) {
       int32_t value = 0;
       if (yices_get_bool_value(model, var, &value) == 0) {
         return result_wrapper((bool)value);
       } else {
-        throw std::runtime_error(std::string("Failed to read bool from Yices2"));
+        throw std::runtime_error(std::string("read_value: Failed to read bool from Yices2"));
       }
     } else if (yices_term_is_tuple(var)) {
-      throw std::runtime_error(std::string("Reading tuple from Yices2 not yet supported"));
+      throw std::runtime_error(std::string("read_value: Reading tuple from Yices2 not yet supported"));
     }
 
     char *error = yices_error_string();
     std::stringstream ss;
-    ss << "Error at read_value:";
+    ss << "read_value: Error at read_value:";
     ss << error;
 
     throw std::runtime_error(ss.str());
