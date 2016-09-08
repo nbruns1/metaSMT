@@ -68,7 +68,7 @@ class Yices2 {
     if (value == NULL_TERM) {
       char *error = yices_error_string();
       std::stringstream ss;
-      ss << "Error: ";
+      ss << "throw_error: ";
       ss << error;
       throw std::runtime_error(ss.str());
     }
