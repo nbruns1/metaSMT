@@ -436,8 +436,6 @@ static void print_term(term_t term) {
       std::stringstream ss;
       ss << "removeOldAssumptions Error: ";
       ss << error;
-	  ss << "Number: ";
-	  ss <<  error_report_t.code;
       throw std::runtime_error(ss.str());
       }
       isPushed_ = false;
