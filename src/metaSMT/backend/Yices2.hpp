@@ -432,9 +432,9 @@ static void print_term(term_t term) {
     if (isPushed_) {
       if(yices_pop(ctx) == -1)
       {
-	char *error = yices_error_string();
+	  char *error = yices_error_string();
       std::stringstream ss;
-      ss << "Error: ";
+      ss << "removeOldAssumptions Error: ";
       ss << error;
       throw std::runtime_error(ss.str());
       }
@@ -448,7 +448,7 @@ static void print_term(term_t term) {
       {
 	char *error = yices_error_string();
       std::stringstream ss;
-      ss << "Error: ";
+      ss << "pushAssumptions Error: ";
       ss << error;
       throw std::runtime_error(ss.str());
       }
