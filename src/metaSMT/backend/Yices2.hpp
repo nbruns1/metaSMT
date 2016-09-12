@@ -455,17 +455,24 @@ static void print_term(term_t term) {
       else{
     isPushed_ = true;
 
-    applyAssertions(assumptions_);
+    applyAssertions0(assumptions_);
     assumptions_.clear();}
   }
 
   void pushAssertions() {
 	printf("pushAssertions\n");
-    applyAssertions(assertions_);
+    applyAssertions1(assertions_);
     assertions_.clear();
   }
 
-  void applyAssertions(Exprs const &expressions) {
+  void applyAssertions0(Exprs const &expressions) {
+    for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
+      print_term(*it);
+      yices_assert_formula(ctx, *it);
+    }
+  }
+
+void applyAssertions1(Exprs const &expressions) {
     for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
       //print_term(*it);
       yices_assert_formula(ctx, *it);
