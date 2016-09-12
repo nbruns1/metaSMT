@@ -531,8 +531,10 @@ namespace metaSMT {
             }
 
             void pushAssumptions() {
+                if(assumptions_.empty()){return;}
                 printf("pushAssumptions\n");
                 if (yices_push(ctx) == -1) {
+                    print_status(yices_context_status(ctx));
                     char *error = yices_error_string();
                     std::stringstream ss;
                     ss << "pushAssumptions Error: ";
@@ -540,7 +542,6 @@ namespace metaSMT {
                     throw std::runtime_error(ss.str());
                 } else {
                     isPushed_ = true;
-
                     applyAssertions0(assumptions_);
                     assumptions_.clear();
                 }
@@ -555,14 +556,26 @@ namespace metaSMT {
             void applyAssertions0(Exprs const &expressions) {
                 for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
                     print_term(*it);
-                    yices_assert_formula(ctx, *it);
+                    if(yices_assert_formula(ctx, *it) != 0)
+					{
+						char *error = yices_error_string();
+						std::string s;
+						s += "applyAssertions0: ";
+						s += error;
+					}
                 }
             }
 
             void applyAssertions1(Exprs const &expressions) {
                 for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
-                    //print_term(*it);
-                    yices_assert_formula(ctx, *it);
+                    print_term(*it);
+                    if(yices_assert_formula(ctx, *it) != 0)
+					{
+						char *error = yices_error_string();
+						std::string s;
+						s += "applyAssertions1: ";
+						s += error;
+					}
                 }
             }
 
