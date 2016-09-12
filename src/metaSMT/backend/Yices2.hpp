@@ -83,7 +83,7 @@ namespace metaSMT {
 
         public:
 
-            Yices2() {
+            Yices2() : isPushed_(false) {
                 if (ObjectCounter<Yices2>::count == 0) {
                     yices_init();
                 }
