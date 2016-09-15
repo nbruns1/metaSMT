@@ -531,8 +531,14 @@ namespace metaSMT {
             }
 
             void pushAssumptions() {
-                if(assumptions_.empty()){return;}
                 printf("pushAssumptions\n");
+				smt_status_t status = yices_context_status(ctx);
+				if(status != STATUS_IDLE && status != STATUS_SAT && status != STATUS_UNKNOWN)
+				{
+					printf("invalid State Status: ");
+					print_status(status);
+					return;
+				}
                 if (yices_push(ctx) == -1) {
                     print_status(yices_context_status(ctx));
                     char *error = yices_error_string();
