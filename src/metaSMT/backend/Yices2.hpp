@@ -152,7 +152,8 @@ namespace metaSMT {
             }
 
             bool solve() {
-                removeOldAssumptions();
+                //removeOldAssumptions();
+				yices_reset_context(ctx);
                 pushAssertions();
                 pushAssumptions();
                 smt_status_t status = yices_check_context(ctx, NULL);
@@ -532,31 +533,33 @@ namespace metaSMT {
 
             void pushAssumptions() {
                 printf("pushAssumptions\n");
-				smt_status_t status = yices_context_status(ctx);
-				if(status != STATUS_IDLE && status != STATUS_SAT && status != STATUS_UNKNOWN)
-				{
-					printf("invalid State Status: ");
-					print_status(status);
-					return;
-				}
-                if (yices_push(ctx) == -1) {
-                    print_status(yices_context_status(ctx));
-                    char *error = yices_error_string();
-                    std::stringstream ss;
-                    ss << "pushAssumptions Error: ";
-                    ss << error;
-                    throw std::runtime_error(ss.str());
-                } else {
-                    isPushed_ = true;
-                    applyAssertions0(assumptions_);
-                    assumptions_.clear();
-                }
+				//smt_status_t status = yices_context_status(ctx);
+				//if(status != STATUS_IDLE && status != STATUS_SAT && status != STATUS_UNKNOWN)
+				//{
+				//	printf("invalid State Status: ");
+				//	print_status(status);
+				//	return;
+				//}
+                //if (yices_push(ctx) == -1) {
+                //    print_status(yices_context_status(ctx));
+                //    char *error = yices_error_string();
+                //    std::stringstream ss;
+                //    ss << "pushAssumptions Error: ";
+                //    ss << error;
+                //    throw std::runtime_error(ss.str());
+                //} else {
+                //    isPushed_ = true;
+                //    applyAssertions0(assumptions_);
+                //    assumptions_.clear();
+                //}
+				applyAssertions0(assumptions_);
+                assumptions_.clear();
             }
 
             void pushAssertions() {
                 printf("pushAssertions\n");
                 applyAssertions1(assertions_);
-                assertions_.clear();
+                //assertions_.clear();
             }
 
             void applyAssertions0(Exprs const &expressions) {
