@@ -202,23 +202,28 @@ namespace metaSMT {
             // predtags
 
             result_type operator()(predtags::var_tag const &, boost::any) {
+				std::cout << "predtags::var_tag" << std::endl;
                 type_t bool_type = yices_bool_type();
                 return yices_new_uninterpreted_term(bool_type);
             }
 
             result_type operator()(predtags::false_tag, boost::any) {
+				std::cout << "predtags::false_tag" << std::endl;
                 return yices_false();
             }
 
             result_type operator()(predtags::true_tag, boost::any) {
+				std::cout << "predtags::true_tag" << std::endl;
                 return yices_true();
             }
 
             result_type operator()(predtags::not_tag, result_type e) {
+				std::cout << "predtags::not_tag" << std::endl;
                 return yices_not(e);
             }
 
             result_type operator()(predtags::equal_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::equal_tag" << std::endl;
                 if (yices_term_is_bool(a) && yices_term_is_bool(b)) {
                     return yices_iff(a, b);
                 } else {
@@ -227,119 +232,148 @@ namespace metaSMT {
             }
 
             result_type operator()(predtags::nequal_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::nequal_tag" << std::endl;
                 return yices_neq(a, b);
             }
 
             result_type operator()(predtags::distinct_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::distinct_tag" std::endl;
                 return yices_neq(a, b);
             }
 
             result_type operator()(predtags::and_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::and_tag" << std::endl;
                 return throw_error(yices_and2(a, b));
             }
 
             result_type operator()(predtags::nand_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::nand_tag" << std::endl;
                 return throw_error(yices_not(yices_and2(a, b)));
             }
 
             result_type operator()(predtags::or_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::or_tag" << std::endl;
                 return throw_error(yices_or2(a, b));
             }
 
             result_type operator()(predtags::nor_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::nor_tag" << std::endl;
                 return throw_error(yices_not(yices_or2(a, b)));
             }
 
             result_type operator()(predtags::xor_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::xor_tag" << std::endl;
                 return throw_error(yices_xor2(a, b));
             }
 
             result_type operator()(predtags::xnor_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::xnor_tag " << std::endl;
                 return throw_error(yices_not(yices_xor2(a, b)));
             }
 
             result_type operator()(predtags::implies_tag const &, result_type a, result_type b) {
+				std::cout << "predtags::implies_tag" << std::endl;
                 return yices_implies(a, b);
             }
 
             result_type operator()(predtags::ite_tag, result_type a, result_type b, result_type c) {
+				std::cout << "predtags::ite_tag" << std::endl;
                 return yices_ite(a, b, c);
             }
             // BVTAG
 
             result_type operator()(bvtags::bit0_tag, boost::any) {
+				std::cout << "bvtags::bit0_tag" << std::endl;
                 return yices_bvconst_zero(1);
             }
 
             result_type operator()(bvtags::bit1_tag, boost::any) {
+				std::cout << "bvtags::bit1_tag" << std::endl;
                 return yices_bvconst_one(1);
             }
 
             result_type operator()(bvtags::bvnot_tag, result_type e) {
+				std::cout << "bvtags::bvnot_tag" << std::endl;
                 return yices_bvnot(e);
             }
 
             result_type operator()(bvtags::bvneg_tag, result_type e) {
+				std::cout << "bvtags::bvneg_tag" << std::endl;
                 return yices_bvneg(e);
             }
 
             result_type operator()(bvtags::bvand_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvand_tag" << std::endl;
                 return yices_bvand2(a, b);
             }
 
             result_type operator()(bvtags::bvnand_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvnand_tag" << std::endl;
                 return yices_bvnand(a, b);
             }
 
             result_type operator()(bvtags::bvor_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvor_tag" << std::endl;
                 return yices_bvor2(a, b);
             }
 
             result_type operator()(bvtags::bvnor_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvnor_tag" << std::endl;
                 return yices_bvnor(a, b);
             }
 
             result_type operator()(bvtags::bvxor_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvxor_tag" << std::endl;
                 return yices_bvxor2(a, b);
             }
 
             result_type operator()(bvtags::bvxnor_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvxnor_tag" << std::endl;
                 return yices_bvxnor(a, b);
             }
 
             result_type operator()(bvtags::bvcomp_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvcomp_tag" << std::endl;
                 return yices_redcomp(a, b);
             }
 
             result_type operator()(bvtags::bvadd_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvadd_tag" << std::endl;
                 return yices_bvadd(a, b);
             }
 
             result_type operator()(bvtags::bvmul_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvmul_tag" << std::endl;
                 return yices_bvmul(a, b);
             }
 
             result_type operator()(bvtags::bvsub_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvmul_tag" << std::endl;
                 return yices_bvsub(a, b);
             }
 
             result_type operator()(bvtags::bvsrem_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvsrem_tag" << std::endl;
                 return yices_bvsrem(a, b);
             }
 
             result_type operator()(bvtags::bvsdiv_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvsdiv_tag" << std::endl;
                 return yices_bvsdiv(a, b);
             }
 
             result_type operator()(bvtags::bvurem_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvurem_tag" << std::endl;
                 return yices_bvrem(a, b);
             }
 
             result_type operator()(bvtags::bvudiv_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvudiv_tag" << std::endl;
                 return yices_bvdiv(a, b);
             }
 
             result_type operator()(bvtags::bvuint_tag, boost::any arg) {
+				std::cout << "bvtags::bvuint_tag" << std::endl;
                 typedef boost::tuple<unsigned long, unsigned long> Tuple;
                 Tuple tuple = boost::any_cast<Tuple>(arg);
                 unsigned long value = boost::get<0>(tuple);
@@ -348,6 +382,7 @@ namespace metaSMT {
             }
 
             result_type operator()(bvtags::bvsint_tag, boost::any arg) {
+				std::cout << "bvtags::bvsint_tag" << std::endl;
                 typedef boost::tuple<long, unsigned long> P;
                 P const p = boost::any_cast<P>(arg);
                 long const value = boost::get<0>(p);
@@ -356,81 +391,100 @@ namespace metaSMT {
             }
 
             result_type operator()(bvtags::bvbin_tag, boost::any arg) {
+				std::cout << "bvtags::bvbin_tag" << std::endl;
                 std::string val = boost::any_cast<std::string>(arg);
                 return throw_error(yices_parse_bvbin(val.c_str()));
             }
 
             result_type operator()(bvtags::bvhex_tag, boost::any arg) {
+				std::cout << "bvtags::bvbin_tag" << std::endl;
                 std::string hex = boost::any_cast<std::string>(arg);
                 return throw_error(yices_parse_bvhex(hex.c_str()));
             }
 
             result_type operator()(bvtags::bvslt_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvslt_tag" << std::endl;
                 return yices_bvslt_atom(a, b);
             }
 
             result_type operator()(bvtags::bvsgt_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvsgt_tag" << std::endl;
                 return yices_bvsgt_atom(a, b);
             }
 
             result_type operator()(bvtags::bvsle_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvsle_tag" << std::endl;
                 return yices_bvsle_atom(a, b);
             }
 
             result_type operator()(bvtags::bvsge_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvsge_tag" << std::endl;
                 return yices_bvsge_atom(a, b);
             }
 
             result_type operator()(bvtags::bvult_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvult_tag" << std::endl;
                 return yices_bvlt_atom(a, b);
             }
 
             result_type operator()(bvtags::bvugt_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvugt_tag" << std::endl;
                 return yices_bvgt_atom(a, b);
             }
 
             result_type operator()(bvtags::bvule_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvule_tag" << std::endl; 
                 return yices_bvle_atom(a, b);
             }
 
             result_type operator()(bvtags::bvuge_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvuge_tag" << std::endl;
                 return yices_bvge_atom(a, b);
             }
 
             result_type operator()(bvtags::concat_tag, result_type a, result_type b) {
+				std::cout << "bvtags::concat_tag" << std::endl;
                 return throw_error(yices_bvconcat2(a, b));
             }
 
             result_type operator()(bvtags::extract_tag const &, unsigned long upper, unsigned long lower, result_type e) {
+				std::cout << "bvtags::extract_tag" <<std::endl;
                 return throw_error(yices_bvextract(e, lower, upper));
             }
 
             result_type operator()(bvtags::zero_extend_tag const &, unsigned long width, result_type e) {
+				std::cout << "bvtags::zero_extend_tag" << std::endl;
                 return throw_error(yices_zero_extend(e, width));
             }
 
             result_type operator()(bvtags::sign_extend_tag const &, unsigned long width, result_type e) {
+				std::cout << "bvtags::sign_extend_tag" << std::endl;
                 return throw_error(yices_sign_extend(e, width));
             }
 
             result_type operator()(bvtags::bvshl_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvshl_tag" << std::endl;
                 return yices_bvshl(a, b);
             }
 
             result_type operator()(bvtags::bvshr_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvshr_tag" << std::endl;
                 return yices_bvlshr(a, b);
             }
 
             result_type operator()(bvtags::bvashr_tag, result_type a, result_type b) {
+				std::cout << "bvtags::bvashr_tag" << std::endl;
                 return yices_bvashr(a, b);
             }
 
             result_type operator()(bvtags::var_tag const &var, boost::any) {
+				std::cout << "bvtags::var_tag" << std::endl;
                 type_t bv_type = yices_bv_type(var.width);
                 return yices_new_uninterpreted_term(bv_type);
             }
 
             result_type operator()(arraytags::array_var_tag const &var, boost::any const &) {
+				std::cout << "arraytags::array_var_tag" << std::endl;
                 if (var.id == 0) {
                     throw std::runtime_error("uninitialized array used");
                 }
@@ -441,15 +495,18 @@ namespace metaSMT {
             }
 
             result_type operator()(arraytags::select_tag const &, result_type const &array, result_type const &index) {
+				std::cout << "arraytags::select_tag" << std::endl;
                 return throw_error(yices_application1(array, index));
             }
 
             result_type operator()(arraytags::store_tag const &, result_type const &array, result_type const &index,
                     result_type const &value) {
+				std::cout << "arraytags::store_tag" << std::endl;
                 return throw_error(yices_update1(array, index, value));
             }
 
             result_type operator()(uftags::function_var_tag const &var, boost::any) {
+				std::cout << "uftags::function_var_tag" << std::endl;
                 unsigned const num_args = var.args.size();
                 type_t *domain_sort = new type_t[num_args];
 
@@ -463,27 +520,32 @@ namespace metaSMT {
             }
 
             result_type operator()(proto::tag::function, result_type const &func_decl) {
+				std::cout << "proto::tag::function" << std::endl;
                 term_t *arg_array = 0;
                 return throw_error(yices_application(func_decl, 0, arg_array));
             }
 
             result_type operator()(proto::tag::function, result_type func_decl, result_type arg) {
+				std::cout << "proto::tag::function" << std::endl;
                 term_t arg_array[] = {arg};
                 return throw_error(yices_application(func_decl, 1, arg_array));
             }
 
             result_type operator()(proto::tag::function, result_type func_decl, result_type arg1, result_type arg2) {
+				std::cout << "proto::tag::function" << std::endl;
                 term_t arg_array[] = {arg1, arg2};
                 return throw_error(yices_application(func_decl, 2, arg_array));
             }
 
             result_type operator()(proto::tag::function, result_type func_decl, result_type arg1, result_type arg2,
                     result_type arg3) {
+				std::cout << "proto::tag::function" << std::endl;
                 term_t arg_array[] = {arg1, arg2, arg3};
                 return throw_error(yices_application(func_decl, 3, arg_array));
             }
 
             unsigned get_bv_width(result_type const &e) {
+				std::cout << "get_bv_width" << std::endl;
                 return yices_term_bitsize(e);
             }
 
@@ -564,7 +626,7 @@ namespace metaSMT {
 
             void applyAssertions0(Exprs const &expressions) {
                 for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
-                    print_term(*it);
+                    //print_term(*it);
                     if(yices_assert_formula(ctx, *it) != 0)
 					{
 						char *error = yices_error_string();
@@ -577,7 +639,7 @@ namespace metaSMT {
 
             void applyAssertions1(Exprs const &expressions) {
                 for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
-                    print_term(*it);
+                    //print_term(*it);
                     if(yices_assert_formula(ctx, *it) != 0)
 					{
 						char *error = yices_error_string();
