@@ -157,7 +157,7 @@ namespace metaSMT {
                 pushAssertions();
                 pushAssumptions();
                 smt_status_t status = yices_check_context(ctx, NULL);
-                print_status(status);
+                //print_status(status);
                 return (status == STATUS_SAT);
             }
 
@@ -532,7 +532,7 @@ namespace metaSMT {
             }
 
             void pushAssumptions() {
-                printf("pushAssumptions\n");
+                //printf("pushAssumptions\n");
 				//smt_status_t status = yices_context_status(ctx);
 				//if(status != STATUS_IDLE && status != STATUS_SAT && status != STATUS_UNKNOWN)
 				//{
@@ -557,7 +557,7 @@ namespace metaSMT {
             }
 
             void pushAssertions() {
-                printf("pushAssertions\n");
+                //printf("pushAssertions\n");
                 applyAssertions(assertions_);
                 //assertions_.clear();
             }
