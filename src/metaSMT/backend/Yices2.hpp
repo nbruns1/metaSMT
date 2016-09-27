@@ -552,37 +552,24 @@ namespace metaSMT {
                 //    applyAssertions0(assumptions_);
                 //    assumptions_.clear();
                 //}
-				applyAssertions0(assumptions_);
+				applyAssertions(assumptions_);
                 assumptions_.clear();
             }
 
             void pushAssertions() {
                 printf("pushAssertions\n");
-                applyAssertions1(assertions_);
+                applyAssertions(assertions_);
                 //assertions_.clear();
             }
 
-            void applyAssertions0(Exprs const &expressions) {
+            void applyAssertions(Exprs const &expressions) {
                 for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
-                    print_term(*it);
+                    //print_term(*it);
                     if(yices_assert_formula(ctx, *it) != 0)
 					{
 						char *error = yices_error_string();
 						std::string s;
 						s += "applyAssertions0: ";
-						s += error;
-					}
-                }
-            }
-
-            void applyAssertions1(Exprs const &expressions) {
-                for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
-                    print_term(*it);
-                    if(yices_assert_formula(ctx, *it) != 0)
-					{
-						char *error = yices_error_string();
-						std::string s;
-						s += "applyAssertions1: ";
 						s += error;
 					}
                 }
