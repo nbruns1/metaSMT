@@ -237,7 +237,7 @@ namespace metaSMT {
             }
 
             result_type operator()(predtags::distinct_tag const &, result_type a, result_type b) {
-				std::cout << "predtags::distinct_tag" << std::endl;
+				std::cout << "predtags::distinct_tag" std::endl;
                 return yices_neq(a, b);
             }
 
