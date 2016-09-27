@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE( incremental )
   BOOST_REQUIRE( solve(ctx) );
 }
 
-BOOST_AUTO_TEST_CASE( incremental1 )
+BOOST_AUTO_TEST_CASE( incremental_1 )
 {
   bitvector a = new_bitvector(32);
   bitvector b = new_bitvector(32);
@@ -96,6 +96,17 @@ BOOST_AUTO_TEST_CASE( incremental1 )
   BOOST_REQUIRE(! solve(ctx) );
   assumption(ctx,equal(bvsint(0, 32), c));
   BOOST_REQUIRE(! solve(ctx) );
+  BOOST_REQUIRE( solve(ctx) );
+}
+
+BOOST_AUTO_TEST_CASE( incremental_2 )
+{
+  bitvector var1 = new_bitvector(8);
+  bitvector var2 = new_bitvector(8);
+  
+  assumption(ctx,nequal(var1, var2));
+  assertion(ctx,bvslt(bvint(8,8),var1));
+  BOOST_REQUIRE( solve(ctx) );
   BOOST_REQUIRE( solve(ctx) );
 }
 
