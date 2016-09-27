@@ -626,7 +626,7 @@ namespace metaSMT {
 
             void applyAssertions0(Exprs const &expressions) {
                 for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
-                    //print_term(*it);
+                    print_term(*it);
                     if(yices_assert_formula(ctx, *it) != 0)
 					{
 						char *error = yices_error_string();
@@ -639,7 +639,7 @@ namespace metaSMT {
 
             void applyAssertions1(Exprs const &expressions) {
                 for (Exprs::const_iterator it = expressions.begin(), ie = expressions.end(); it != ie; ++it) {
-                    //print_term(*it);
+                    print_term(*it);
                     if(yices_assert_formula(ctx, *it) != 0)
 					{
 						char *error = yices_error_string();

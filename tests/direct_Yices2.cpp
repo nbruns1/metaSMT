@@ -8,9 +8,8 @@ struct Solver_Fixture {
   ContextType ctx;
 };
 
-//#include "test_solver.cpp"
-//#include "test_unsat.cpp"
-//#include "test_QF_UF.cpp"
-//#include "test_QF_BV.cpp"
-//#include "test_Array.cpp"
-#include "test_t4.cpp"
+#include "test_solver.cpp"
+#include "test_unsat.cpp"
+#include "test_QF_UF.cpp"
+#include "test_QF_BV.cpp"
+#include "test_Array.cpp"
