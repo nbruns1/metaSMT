@@ -72,8 +72,6 @@ add_test_executable( direct_STP direct_STP.cpp REQUIRES STP_FOUND )
 
 add_test_executable( direct_CVC4 direct_CVC4.cpp REQUIRES CVC4_FOUND )
 
-add_test_executable( direct_Yices2 direct_Yices2.cpp REQUIRES metaSMT_USE_YICES2)
-
 add_test_executable( direct_MiniSAT direct_MiniSAT.cpp
   REQUIRES MiniSat_FOUND
   PROPERTIES COMPILE_FLAGS "${MiniSat_CXXFLAGS}"
