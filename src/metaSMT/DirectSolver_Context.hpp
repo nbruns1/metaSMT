@@ -12,6 +12,7 @@
 #include "API/BoolEvaluator.hpp"
 #include "support/Options.hpp"
 
+#ifndef _WIN32
 #if __cplusplus <= 199711L
 
 #include <tr1/unordered_map>
@@ -22,6 +23,11 @@
 #include <unordered_map>
 #define unordered_map std::unordered_map
 
+#endif
+#endif
+#ifdef WIN32
+#include <unordered_map>
+#define unordered_map std::unordered_map
 #endif
 
 #include <boost/any.hpp>
