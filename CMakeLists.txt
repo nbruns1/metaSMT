@@ -93,8 +93,6 @@ set_package_info(Z3 "solver for various SMT theories")
 
 if (metaSMT_USE_YICES2)
   find_package(YICES2 QUIET)
-  list(APPEND metaSMT_LIBS ${YICES2_LIBRARIES})
-  list(APPEND metaSMT_INCLUDES ${YICES2_INCLUDE_DIR})
 else()
   set(YICES2_FOUND 0)
 endif()
@@ -208,7 +206,11 @@ else ()
   set(Doxygen_FOUND 0)
 endif ()
 
+#############################################################
+## Set LIBS, INCLUDES and metaSMT_AVAILABLE_QF_ABV_SOLVERS  #
+#############################################################
 
+set(metaSMT_AVAILABLE_QF_ABV_SOLVERS "")
 
 if(SWORD_FOUND)
   config_find(SWORD ${SWORD_DIR})
@@ -227,12 +229,14 @@ if(Boolector_FOUND)
     set(Boolector_CXXFLAGS "${Boolector_CXXFLAGS} -DmetaSMT_BOOLECTOR_1_API")
   endif()
   set(metaSMT_CXXFLAGS "${metaSMT_CXXFLAGS} ${Boolector_CXXFLAGS}")
+  list(APPEND metaSMT_AVAILABLE_QF_ABV_SOLVERS "BTOR")
 endif()
 
 if(Z3_FOUND)
   config_find(Z3 ${Z3_DIR})
   list(APPEND metaSMT_LIBS ${Z3_LIBRARIES})
   list(APPEND metaSMT_INCLUDES ${Z3_INCLUDE_DIR})
+  list(APPEND metaSMT_AVAILABLE_QF_ABV_SOLVERS "Z3")
 endif()
 
 if(STP_FOUND)
@@ -241,6 +245,7 @@ if(STP_FOUND)
   list(APPEND metaSMT_LIBS ${STP_SHARED_LIBRARY})
   message( STATUS "STP_INCLUDE_DIR: ${STP_INCLUDE_DIRS}" )
   list(APPEND metaSMT_INCLUDES ${STP_INCLUDE_DIRS})
+  list(APPEND metaSMT_AVAILABLE_QF_ABV_SOLVERS "STP")
 else()
   set( STP_FOUND 0 )
 endif()
@@ -249,6 +254,14 @@ if(CVC4_FOUND)
   config_find(CVC4 ${CVC4_DIR})
   list(APPEND metaSMT_LIBS ${CVC4_LIBRARIES})
   list(APPEND metaSMT_INCLUDES ${CVC4_INCLUDE_DIR})
+  list(APPEND metaSMT_AVAILABLE_QF_ABV_SOLVERS "CVC4")
+endif()
+
+if (YICES2_FOUND)
+  config_find(YICES2 ${YICES2_DIR})
+  list(APPEND metaSMT_LIBS ${YICES2_LIBRARIES})
+  list(APPEND metaSMT_INCLUDES ${YICES2_INCLUDE_DIR})
+  list(APPEND metaSMT_AVAILABLE_QF_ABV_SOLVERS "YICES2")
 endif()
 
 if(Aiger_FOUND)
