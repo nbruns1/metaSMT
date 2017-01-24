@@ -3,7 +3,7 @@
 build*
 root*
 cmake/*.Config.cmake
-deps
+deps*
 dependencies
 *.aux
 *.bbl
