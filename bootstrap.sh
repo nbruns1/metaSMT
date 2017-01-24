@@ -3,7 +3,7 @@ SRC_DIR=$( cd $(dirname $0) && pwd)
 
 BUILD_DIR=$PWD/build
 
-BOOST=boost-1_55_0
+BOOST=boost-1_55_0-fs
 
 ACADEMIC="
   boolector-2.2.0
@@ -114,6 +114,7 @@ DEPS=$(mk_and_abs_dir ${DEPS:-$BUILD_DIR}) &&
 if [ -z "$BOOST_ROOT" ]; then
   REQUIRES="$BOOST $REQUIRES"
   BOOST_ROOT="$DEPS/$BOOST"
+  export DEPS_BOOST=$BOOST
 fi
 
 if ! cd dependencies; then 
