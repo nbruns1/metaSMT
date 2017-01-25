@@ -2,6 +2,15 @@ language: cpp
 
 sudo: false
 
+env:
+- metaSMTConfig="--academic"                                            # boolector with lingeling and minisat
+                                                                        # yices2
+- metaSMTConfig="-b Z3-4.4.1"                                           # z3
+- metaSMTConfig="-b cvc4-1.5pre-smtcomp2016"                            # cvc4
+- metaSMTConfig="-b stp-git-basic -b cryptominisat-git -b minisat-git"  # stp with cryptominisat and minisat
+- metaSMTConfig="--non-free"                                            # sword
+- metaSMTConfig="-b aiger-20071012 -b picosat-936 -b cudd-2.4.2"        # others
+
 compiler:
   - gcc
   - clang
@@ -34,7 +43,7 @@ before_install:
   - if [[ "${CXX}" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8" DEPS="deps-gcc"; fi
 #  - if [[ "${CXX}" == "clang++" ]]; then export CXX="clang++-3.5" CC="clang-3.5" DEPS="deps-clang"; fi
   - if [[ "${CXX}" == "clang++" ]]; then export DEPS="deps-clang"; fi
-  - ./bootstrap.sh --deps ${DEPS} --free --non-free --academic -m RELEASE build/
+  - ./bootstrap.sh --deps ${DEPS} ${metaSMTConfig} -m RELEASE build/
 
 before_script:
   - cd build
