@@ -15,6 +15,17 @@ compiler:
   - gcc
   - clang
 
+matrix:
+  exclude:
+  - compiler: gcc
+    env: metaSMTConfig="-b Z3-4.4.1"
+  - compiler: gcc
+    env: metaSMTConfig="-b cvc4-1.5pre-smtcomp2016"
+  - compiler: clang
+    env: metaSMTConfig="--non-free"
+  - compiler: clang
+    env: metaSMTConfig="-b aiger-20071012 -b picosat-936 -b cudd-2.4.2"
+
 addons:
   apt:
     sources:
