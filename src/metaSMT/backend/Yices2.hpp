@@ -77,6 +77,10 @@ class Yices2Impl {
     }
     ctx_config_t *config = yices_new_config();
     yices_default_config_for_logic(config, "QF_AUFBV");
+    if (RealIncreamentalMode)
+      yices_set_config(config, "mode", "push-pop");
+    else
+      yices_set_config(config, "mode", "one-shot");
     ctx = yices_new_context(config);
     yices_free_config(config);
     ObjectCounter<Yices2Impl>::count++;
