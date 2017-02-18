@@ -13,8 +13,7 @@
 #include <boost/tuple/tuple_io.hpp>
 #include <boost/fusion/adapted/boost_tuple.hpp>
 #include <boost/fusion/adapted/std_pair.hpp>
-
-#include <gmp.h>
+#include <boost/multiprecision/cpp_int.hpp>
 
 namespace metaSMT {
 
@@ -332,13 +331,14 @@ namespace metaSMT {
 
       result_type operator() (bvtags::bvbin_tag , boost::any arg) {
         std::string s = boost::any_cast<std::string>(arg);
-        size_t const len = s.size();
-        mpz_t value;
-        mpz_init(value);
-        mpz_set_str(value, s.c_str(), 2);
-        std::string int_string( mpz_get_str(NULL, 10, value) );
-        result_type r = ctx_.bv_val(int_string.c_str(), len);
-        mpz_clear(value);
+        size_t bv_len = s.size();
+
+        using boost::multiprecision::cpp_int;
+        cpp_int value;
+        for (unsigned i = 0; i < bv_len; i++)
+          if (s[i] == '1') bit_set(value, bv_len - i - 1);
+
+        result_type r = ctx_.bv_val(value.str().c_str(), bv_len);
         return r;
       }
 
