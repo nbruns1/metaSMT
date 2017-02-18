@@ -12,17 +12,7 @@
 #include "API/BoolEvaluator.hpp"
 #include "support/Options.hpp"
 
-#if __cplusplus <= 199711L
-
-#include <tr1/unordered_map>
-#define unordered_map std::tr1::unordered_map
-
-#else
-
 #include <unordered_map>
-#define unordered_map std::unordered_map
-
-#endif
 
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -351,8 +341,7 @@ namespace metaSMT {
     using SolverContext::command;
 
     private:
-      typedef typename unordered_map<unsigned, result_type> VariableLookupT;
-#undef unordered_map
+      typedef typename std::unordered_map<unsigned, result_type> VariableLookupT;
       VariableLookupT _variables;
       Options opt;
 
