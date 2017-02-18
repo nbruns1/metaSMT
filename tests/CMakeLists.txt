@@ -5,6 +5,10 @@ include_directories(../src ${metaSMT_INCLUDES})
 add_library(boost_test boost_test.cpp)
 link_libraries(boost_test metaSMT)
 
+if (WIN32)
+  add_definitions("-DBOOST_TEST_INCLUDED") # this is to prevent boost autolink
+endif()
+
 find_program(AWK awk)
 
 function (add_all_tests prog cfile)
