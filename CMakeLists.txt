@@ -163,14 +163,6 @@ else()
 endif()
 
 if(Z3_FOUND)
-  if( GMPXX_LIBRARIES )
-    set(Z3_LIBRARIES ${Z3_LIBRARIES} ${GMPXX_LIBRARIES})
-  endif()
-
-  if( GMP_LIBRARIES )
-    set(Z3_LIBRARIES ${Z3_LIBRARIES} ${GMP_LIBRARIES})
-  endif()
- 
   find_package(OpenMP QUIET)
   find_package(Threads QUIET)
   find_library(RT_LIB rt)
