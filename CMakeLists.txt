@@ -197,11 +197,6 @@ if(Z3_FOUND)
     set(Z3_LIBRARIES ${Z3_LIBRARIES} ${RT_LIB} ${CMAKE_THREAD_LIBS_INIT})
   endif()
 
-  if (WIN32)
-    find_package(Threads REQUIRED)
-    set(Z3_LIBRARIES ${Z3_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-  endif()
-
   include(CheckCXXSourceRuns)
 
   set(CMAKE_REQUIRED_FLAGS ${Z3_CXXFLAGS})
