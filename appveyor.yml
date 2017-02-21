@@ -13,12 +13,6 @@ build:
 configuration:
   - Debug
 
-environment:
-  matrix:
-    - TESTS_ONLY: true
-    - EXAMPLES_ONLY: true
-
-
 install:
   ############################################################################
   # Install a recent CMake
