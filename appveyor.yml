@@ -1,68 +1,39 @@
-language: cpp
+# Copyright Louis Dionne 2013-2016
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
 
-sudo: false
-
-env:
-- metaSMTConfig="--academic"                                            # boolector with lingeling and minisat
-                                                                        # yices2
-- metaSMTConfig="-b Z3-4.4.1"                                           # z3
-- metaSMTConfig="-b cvc4-1.5pre-smtcomp2016"                            # cvc4
-- metaSMTConfig="-b stp-git-basic -b cryptominisat-git -b minisat-git"  # stp with cryptominisat and minisat
-- metaSMTConfig="--non-free"                                            # sword
-- metaSMTConfig="-b aiger-20071012 -b picosat-936 -b cudd-2.4.2"        # others
-
-compiler:
-  - gcc
-  - clang
-
-matrix:
-  exclude:
-  - compiler: gcc
-    env: metaSMTConfig="-b Z3-4.4.1"
-  - compiler: gcc
-    env: metaSMTConfig="-b cvc4-1.5pre-smtcomp2016"
-  - compiler: clang
-    env: metaSMTConfig="--non-free"
-  - compiler: clang
-    env: metaSMTConfig="-b aiger-20071012 -b picosat-936 -b cudd-2.4.2"
-
-addons:
-  apt:
-    sources:
-    - kalakris-cmake
-    - ubuntu-toolchain-r-test
-    - boost-latest
-#    - llvm-toolchain-precise-3.5
-    packages:
-    - cmake
-    - libboost1.55-dev
-    - g++-4.8
-    - gcc-4.8
-#    - clang-3.5
-    - libgmp-dev
-    - gperf # required by yices2
-
-cache:
-  apt: true
-  directories:
-  - deps-gcc
-  - deps-clang
-
-before_install:
-  - git clone https://github.com/agra-uni-bremen/dependencies.git
-  - export BOOST_ROOT=/usr
-  - if [[ "${CXX}" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8" DEPS="deps-gcc"; fi
-#  - if [[ "${CXX}" == "clang++" ]]; then export CXX="clang++-3.5" CC="clang-3.5" DEPS="deps-clang"; fi
-  - if [[ "${CXX}" == "clang++" ]]; then export DEPS="deps-clang"; fi
-  - ./bootstrap.sh --deps ${DEPS} ${metaSMTConfig} -m RELEASE build/
-
-before_script:
-  - cd build
-
-script: make
-
-after_success:
-  - make test
+shallow_clone: true
 
 os:
-  - linux
+  - Visual Studio 2015 Update 2
+
+build:
+  verbosity: detailed
+
+configuration:
+  - Debug
+
+environment:
+  matrix:
+    - TESTS_ONLY: true
+    - EXAMPLES_ONLY: true
+
+
+install:
+  ############################################################################
+  # Install a recent CMake
+  ############################################################################
+  - set CMAKE_URL="https://cmake.org/files/v3.4/cmake-3.4.0-win32-x86.zip"
+  - appveyor DownloadFile %CMAKE_URL% -FileName cmake.zip
+  - 7z x cmake.zip -oC:\projects\deps\cmake > nul
+  - set PATH=C:\projects\deps\cmake\bin;%PATH%
+  - cmake --version
+
+
+before_build:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+
+build_script:
+  - mkdir build
+  - cd build
+  - cmake ..
