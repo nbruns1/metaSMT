@@ -91,7 +91,6 @@ set(metaSMT_USE_Aiger off)
 set(metaSMT_USE_CW off)
 endif()
 
-
 if(metaSMT_USE_SWORD AND NOT APPLE)
   find_package(SWORD QUIET)
 else()
@@ -197,18 +196,11 @@ if(Z3_FOUND)
     set(Z3_LIBRARIES ${Z3_LIBRARIES} ${RT_LIB} ${CMAKE_THREAD_LIBS_INIT})
   endif()
 
-if (WIN32)
-    find_package(Threads REQUIRED)
-    set(Z3_LIBRARIES ${Z3_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-  endif()
-
   include(CheckCXXSourceRuns)
 
   set(CMAKE_REQUIRED_FLAGS ${Z3_CXXFLAGS})
   set(CMAKE_REQUIRED_INCLUDES ${Z3_INCLUDE_DIR})
   set(CMAKE_REQUIRED_LIBRARIES ${Z3_LIBRARIES})
-  message(${CMAKE_REQUIRED_INCLUDES})
-  message(${CMAKE_REQUIRED_LIBRARIES})
   set(CMAKE_REQUIRED_QUIET 0)
   check_CXX_source_runs("#include <z3++.h>
 int main(int argc, const char *argv[]) {
