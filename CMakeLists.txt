@@ -220,7 +220,11 @@ int main(int argc, const char *argv[]) {
   Z3_WORKS)
 
   if( NOT Z3_WORKS )
+  if(WIN32)
+    message(FATAL_ERROR "Disabling Z3 due to linking errors.")
+  else()
     message(WARNING "Disabling Z3 due to linking errors.")
+  endif()
     set( Z3_FOUND 0)
   endif()
 endif()
