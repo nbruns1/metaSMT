@@ -3,7 +3,7 @@ SRC_DIR=$( cd $(dirname $0) && pwd)
 
 BUILD_DIR=$PWD/build
 
-BOOST=boost-1_55_0-fs
+BOOST=boost-1_60_0-fs
 
 ACADEMIC="
   boolector-2.2.0
@@ -21,6 +21,10 @@ FREE="
   aiger-20071012
   picosat-936
   cudd-2.4.2
+"
+
+WINDOWS="
+  Z3-4.4.1
 "
 
 NONFREE="
