@@ -79,6 +79,7 @@ while [[ "$@" ]]; do
     --help|-h)    usage;;
     --academi*)   REQUIRES="$ACADEMIC $REQUIRES" ;;
     --free)       REQUIRES="$FREE $REQUIRES" ;;
+    --windows)       REQUIRES="$WINDOWS $REQUIRES" ;;
     --non-free)   REQUIRES="$NONFREE $REQUIRES" ;;
     --deps|-d)    DEPS="$2"; shift;;
     --install|-i) INSTALL="$2"; shift;;
