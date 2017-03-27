@@ -39,8 +39,8 @@ install:
   - appveyor DownloadFile %BOOST_URL% -FileName boost.exe
   - boost.exe /DIR="C:\projects\deps\boost" /silent
   #init submodules
-  cd C:\projetcs\metaSMT
-  git submodule update --init --recursive
+  - cd C:\projetcs\metaSMT
+  - git submodule update --init --recursive
 
 before_build:
   - call "%VS140COMNTOOLS%VsDevCmd.bat"
