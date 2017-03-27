@@ -15,10 +15,6 @@ configuration:
   - Debug
 
 install:
-  #init submodules
-  - cd c:\projects\metaSMT
-  - git status
-  - git submodule update --init --recursive
   ############################################################################
   # All external dependencies are installed in C:\projects\deps
   ############################################################################
@@ -46,6 +42,8 @@ install:
 before_build:
   - call "%VS140COMNTOOLS%VsDevCmd.bat"
   - cd C:\projects\metaSMT
+  - git status
+  - git submodule update --init --recursive
 
 
 build_script:
