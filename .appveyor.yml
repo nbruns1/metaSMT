@@ -34,6 +34,7 @@ install:
   - set Z3_URL="https://github.com/Z3Prover/z3/releases/download/z3-4.5.0/z3-4.5.0-x86-win.zip"
   - appveyor DownloadFile %Z3_URL% -FileName z3-4.5.0-x86-win.zip
   - 7z x z3-4.5.0-x86-win.zip -oC:\projects\deps > nul
+  - cp "C:\projects\metaSMT\Z3Config.cmake" "C:\projects\z3-4.5.0-x86-win"
   #Download boost
   - set BOOST_URL="https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download"
   - appveyor DownloadFile %BOOST_URL% -FileName boost.exe
