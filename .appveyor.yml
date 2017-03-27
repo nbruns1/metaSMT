@@ -16,6 +16,7 @@ configuration:
 
 install:
   #init submodules
+  - cd c:\projects\metaSMT
   - git submodule update --init --recursive
   ############################################################################
   # All external dependencies are installed in C:\projects\deps
