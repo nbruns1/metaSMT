@@ -1,7 +1,7 @@
 # Copyright Louis Dionne 2013-2017
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
-clone_folder: c:\projects\crave
+clone_folder: c:\projects\metaSMT
 
 shallow_clone: true
 
@@ -30,11 +30,15 @@ install:
   - move C:\projects\deps\cmake-* C:\projects\deps\cmake # Move to a version-agnostic directory
   - set PATH=C:\projects\deps\cmake\bin;%PATH%
   - cmake --version
+  #Dowload z3
+  - set Z3_URL="https://github.com/Z3Prover/z3/releases/download/z3-4.5.0/z3-4.5.0-x86-win.zip"
+  - appveyor DownloadFile %Z3_URL% -FileName z3-4.5.0-x86-win.zip
+  - 7z x z3-4.5.0-x86-win.zip -oC:\projects\deps > nul
 
 
 before_build:
   - call "%VS140COMNTOOLS%VsDevCmd.bat"
-  - cd C:\projects\crave
+  - cd C:\projects\metaSMT
 
 
 build_script:
