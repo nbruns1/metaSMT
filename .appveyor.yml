@@ -46,8 +46,6 @@ before_build:
 
 build_script:
   - cd
-  - git init submodules
-  - cd
   - git submodule update --init --recursive
   - mkdir build
   - cd build
