@@ -42,8 +42,8 @@ install:
 before_build:
   - call "%VS140COMNTOOLS%VsDevCmd.bat"
   - cd C:\projects\metaSMT
-  - git status
-  - git submodule update --init --recursive
+  #- git status
+  #- git submodule update --init --recursive
 
 
 build_script:
