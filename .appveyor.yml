@@ -13,16 +13,6 @@ build:
 configuration:
   - Debug
 
-branches:
-  except:
-    - /pr\/.+/
-
-environment:
-  matrix:
-    - TESTS_ONLY: true
-    - EXAMPLES_ONLY: true
-
-
 install:
   ############################################################################
   # All external dependencies are installed in C:\projects\deps
