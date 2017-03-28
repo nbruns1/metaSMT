@@ -53,4 +53,4 @@ build_script:
   - cp build.bat build\build.bat
   - cd build
   - set PATH=C:\projects\deps\boost\lib32-msvc-14.0;%PATH%
-  - ./build.bat
+  - build.bat
