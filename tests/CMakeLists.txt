@@ -9,12 +9,12 @@ if (WIN32)
   add_definitions("-DBOOST_TEST_INCLUDED") # this is to prevent boost autolink
 endif()
 
-find_program(PYTHON phython)
+find_program(AWK awk)
 
 function (add_all_tests prog cfile)
   cmake_parse_arguments(opts "" "" "ENVIRONMENT;ARGS" ${ARGN})
   execute_process( COMMAND
-    ${PYTHON} search_tests.py ${cfile}
+    ${AWK} -f search_tests.awk ${cfile}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE test_cases
   )
