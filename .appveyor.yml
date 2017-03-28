@@ -53,4 +53,5 @@ build_script:
   - cd build
   - set PATH=C:\projects\deps\boost\lib32-msvc-14.0;%PATH%
   - cmake .. -DBOOST_ROOT="C:\projects\deps\boost" -DZ3_DIR="C:\projects\deps\z3-4.5.0-x86-win"
+  - type CMakeFiles/CMakeError.log
 
