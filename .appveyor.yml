@@ -40,6 +40,7 @@ install:
   - set BOOST_URL="https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download"
   - appveyor DownloadFile %BOOST_URL% -FileName boost.exe
   - boost.exe /DIR="C:\projects\deps\boost" /silent
+  - set PATH=C:\projects\deps\boost\lib32-msvc-14.0;%PATH%
 
 before_build:
   - call "%VS140COMNTOOLS%VsDevCmd.bat"
@@ -49,11 +50,6 @@ before_build:
 
 
 build_script:
-  - cd
   - mkdir build
-  - cp build.bat build\build.bat
   - cd build
-  - set PATH=C:\projects\deps\boost\lib32-msvc-14.0;%PATH%
-  - build.bat
-  - appveyor PushArtifact CMakeFiles/CMakeError.log
-  - echo %PATH%
+  - cmake .. -DBoost_USE_STATIC_LIBS=ON -DBOOST_ROOT="C:\projects\deps\boost" -DZ3_DIR="C:\projects\deps\z3-4.5.0-x86-win"
