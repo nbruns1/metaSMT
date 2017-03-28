@@ -9,18 +9,25 @@ if (WIN32)
   add_definitions("-DBOOST_TEST_INCLUDED") # this is to prevent boost autolink
 endif()
 
-find_program(Phython python)
+find_program(AWK awk)
+
 function (add_all_tests prog cfile)
+  cmake_parse_arguments(opts "" "" "ENVIRONMENT;ARGS" ${ARGN})
   execute_process( COMMAND
-    ${Phython} search_tests.py ${cfile}
+    ${AWK} -f search_tests.awk ${cfile}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE test_cases
   )
-  
+
   string(REPLACE "\n" ";" test_cases "${test_cases}")
+
   foreach(test  ${test_cases})
-    add_test("${prog}/${test}" ${prog} -t ${test})
-    set_tests_properties ("${prog}/${test}" PROPERTIES TIMEOUT ${CRAVE_TIMEOUT})
+    #message(STATUS "${prog}/${test} ${prog} -t ${test}")
+    add_test("${prog}/${test}" ${prog} -t ${test} ${opts_ARGS})
+    set_tests_properties ("${prog}/${test}" PROPERTIES TIMEOUT ${TIMEOUT})
+    if(opts_ENVIRONMENT)
+      set_tests_properties("${prog}/${test}" PROPERTIES ENVIRONMENT ${opts_ENVIRONMENT})
+    endif()
   endforeach(test)
 endfunction(add_all_tests)
 
