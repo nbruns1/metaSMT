@@ -54,3 +54,4 @@ build_script:
   - cd build
   - set PATH=C:\projects\deps\boost\lib32-msvc-14.0;%PATH%
   - build.bat
+  - appveyor PushArtifact CMakeFiles/CMakeError.log
