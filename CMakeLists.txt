@@ -183,7 +183,7 @@ endif()
 
 if(Z3_FOUND)
   find_package(OpenMP QUIET)
-  if (OpenMP_FOUND)
+  if (OpenMP_FOUND AND 0)
     set(Z3_CXXFLAGS "${OpenMP_CXX_FLAGS}")
     message(STATUS "Use Z3 with OpenMP")
   else()
