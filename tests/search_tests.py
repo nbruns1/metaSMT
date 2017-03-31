@@ -24,7 +24,7 @@ def findTestCases(str):
     testCasesList = []
     for matchNum, match in enumerate(matches):
         matchNum = matchNum + 1
-        testCasesList .append([match.group()[21:], match.start() ,  match.end()])
+        testCasesList .append([match.group()[21:], match.start() ,  match.end()].strip())
     return testCasesList
     
 def findIncludedFiles(file):
