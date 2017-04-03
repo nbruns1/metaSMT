@@ -4,11 +4,12 @@ import sys
 import re
 import os
 
+#Extract the name of the test suite which is contained in str.
 def getTestSuiteName(str):
     regex = r"BOOST_FIXTURE_TEST_SUITE\([^,]+"
     names =re.search(regex, str)
     return (names.group()[25:])
-    
+# Find the positions of all the test suites which are contained in str.
 def findTestSuites(str):
     regex = r"BOOST_FIXTURE_TEST_SUITE\([^)]+\)[\s,\S]+BOOST_AUTO_TEST_SUITE_END\(\)"
     matches = re.finditer(regex, str)
@@ -17,7 +18,7 @@ def findTestSuites(str):
         matchNum = matchNum + 1
         testSuiteList .append([getTestSuiteName(match.group()), match.start() ,  match.end()])
     return testSuiteList
-
+# Find the positions of all the test cases which are contained in str.
 def findTestCases(str):
     regex = r"BOOST_AUTO_TEST_CASE\([^)]+"
     matches = re.finditer(regex, str)
@@ -26,7 +27,7 @@ def findTestCases(str):
         matchNum = matchNum + 1
         testCasesList .append([match.group()[21:].strip(), match.start() ,  match.end()])
     return testCasesList
-    
+# Find the test-includes, which are contained in str.   
 def findIncludedFiles(file):
     folder = os.path.dirname(os.path.realpath(file))
     sourcefile = open(file,"r") 
@@ -40,13 +41,19 @@ def findIncludedFiles(file):
         includeFilePath = folder+"/"+includeFile
         fileList.append(includeFilePath)
     return fileList
+#main function
+# Check right number of arguments.
 if len(sys.argv) != 2:
     print("not the right number of arguments")
     sys.exit();
+# Save file name of the test file.
 sourcefileName = sys.argv[1]
 fileList = findIncludedFiles(sourcefileName)
+# Iterate over all included test files and include their included test files
 for x in fileList:
     fileList += findIncludedFiles(x)
+
+# Iterate over all test files and extract the names of the test suites and test cases
 for x in fileList:
     file = open(x, "r")
     fileContent = file.read()
