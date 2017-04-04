@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 2.8.9)
 
 option(metaSMT_REQUIRE_CXX11 "make C++11 a requirement" on)
 
+if ( NOT metaSMT_REQUIRE_CXX11 AND WIN32 )
+  message(FATAL_ERROR "Windows build requires CXX11")
+endif()
+
 include(CheckCXXCompilerFlag)
 
 if (metaSMT_REQUIRE_CXX11)

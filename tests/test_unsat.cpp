@@ -1,6 +1,20 @@
-#if __cplusplus <= 199711L
+#ifdef _MSC_VER
+
+#if _MSC_VER < 1900
+#define DISABLE_UNSAT_TESTS
+#endif
+
+#elif __cplusplus <= 199711L
+
+#define DISABLE_UNSAT_TESTS
+
+#endif
+
+
+#ifdef DISABLE_UNSAT_TESTS
 
 #pragma message("Disable test_unsat testcases which require C++11")
+#undef DISABLE_UNSAT_TESTS
 
 #else
 
