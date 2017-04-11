@@ -35,8 +35,13 @@ namespace metaSMT {
       Boolector()
       {
         _btor = boolector_new();
+#ifndef metaSMT_BOOLECTOR_2_NEW_API
         boolector_set_opt(_btor, "model_gen", 1);
         boolector_set_opt(_btor, "incremental", 1);
+#else
+        boolector_set_opt(_btor, BTOR_OPT_MODEL_GEN, 1);
+        boolector_set_opt(_btor, BTOR_OPT_INCREMENTAL, 1);
+#endif
       }
 
       ~Boolector() {
@@ -114,9 +119,23 @@ namespace metaSMT {
           return boolector_sat(_btor) == BOOLECTOR_SAT;
         }
 
+#ifdef metaSMT_BOOLECTOR_2_NEW_API
+
+#define _bv_sort(w) boolector_bitvec_sort(_btor, (w))
+#define _array_sort(e, i) boolector_array_sort(_btor, _bv_sort(i), _bv_sort(e))
+#define _bool_sort boolector_bool_sort(_btor)
+
+#else
+
+#define _bv_sort(w) w
+#define _array_sort(e, i) e, i
+#define _bool_sort 1
+
+#endif
+
         result_type operator() (predtags::var_tag const & , boost::any )
         {
-          return ptr(boolector_var(_btor, 1, NULL));
+          return ptr(boolector_var(_btor, _bool_sort , NULL));
         }
 
         result_type operator() (predtags::false_tag , boost::any ) {
@@ -133,7 +152,7 @@ namespace metaSMT {
 
         result_type operator() (bvtags::var_tag const & var, boost::any ) {
           assert ( var.width != 0 );
-          return ptr(boolector_var(_btor, var.width, NULL));
+          return ptr(boolector_var(_btor, _bv_sort(var.width), NULL));
         }
 
         result_type operator() (bvtags::bit0_tag , boost::any ) {
@@ -162,7 +181,7 @@ namespace metaSMT {
             }
             return ptr( boolector_const(_btor, val.c_str()) );
           } else {
-            return ptr(boolector_unsigned_int(_btor, value , width ));
+            return ptr(boolector_unsigned_int(_btor, value , _bv_sort(width) ));
           }
         }
 
@@ -185,7 +204,7 @@ namespace metaSMT {
             }
             return ptr( boolector_const(_btor, val.c_str()) );
           } else {
-            return ptr( boolector_int(_btor, value, width) );
+            return ptr( boolector_int(_btor, value, _bv_sort(width)) );
           }
         }
 
@@ -286,7 +305,7 @@ namespace metaSMT {
         result_type operator() (arraytags::array_var_tag const & var
                                 , boost::any )
         {
-          return ptr(boolector_array(_btor, var.elem_width, var.index_width, NULL));
+          return ptr(boolector_array(_btor, _array_sort(var.elem_width, var.index_width), NULL));
         }
 
         result_type operator() (arraytags::select_tag const &
