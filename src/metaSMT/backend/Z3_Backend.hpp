@@ -14,6 +14,7 @@
 #include <boost/fusion/adapted/boost_tuple.hpp>
 #include <boost/fusion/adapted/std_pair.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
+#include <cstdint>
 
 namespace metaSMT {
 
@@ -145,7 +146,7 @@ namespace metaSMT {
         }
 
         assert(r.is_bv());
-        unsigned long long val = 0;
+        uint64_t val = 0;
         if (Z3_get_numeral_uint64(ctx_, r, &val)){
 	 return result_wrapper(val, r.get_sort().bv_size());}
 
