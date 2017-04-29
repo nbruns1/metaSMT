@@ -95,7 +95,7 @@ namespace metaSMT {
 
 
   template< typename Context, typename BooleanType >
-    std::vector< std::vector<unsigned> > analyze_conflicts ( Context & ctx, std::map<unsigned, BooleanType> s, typename Context::result_type c, std::vector<std::vector<unsigned> > results) {
+    std::vector< std::vector<uint64_t> > analyze_conflicts ( Context & ctx, std::map<uint64_t, BooleanType> s, typename Context::result_type c, std::vector<std::vector<uint64_t> > results) {
       using namespace boost::fusion;
 
       typedef std::pair<unsigned, BooleanType> Si_Pair;
@@ -120,11 +120,11 @@ namespace metaSMT {
       if(sv.size() == 1)
       {
         // the only constraint is the reasons for the conflict
-        results.push_back( std::vector<unsigned> (1 /*size*/, 0 /*constraint*/) );
+        results.push_back( std::vector<uint64_t> (1 /*size*/, 0 /*constraint*/) );
         return results;
       }
       
-      std::map<unsigned, BooleanType> conflicts;
+      std::map<uint64_t, BooleanType> conflicts;
       analyze_multiple_conflict(ctx, c, s, conflicts, results);
 
       return results;
@@ -134,12 +134,12 @@ namespace metaSMT {
     void analyze_multiple_conflict(
         Context & ctx
       , typename Context::result_type c
-      , std::map<unsigned, BooleanType> const & enable_vars
-      , std::map<unsigned, BooleanType> const & confl_vars
-      , std::vector<std::vector<unsigned> > &results
+      , std::map<uint64_t, BooleanType> const & enable_vars
+      , std::map<uint64_t, BooleanType> const & confl_vars
+      , std::vector<std::vector<uint64_t> > &results
       ) 
     {
-        typedef std::pair<unsigned, BooleanType> Si_Pair;
+        typedef std::pair<uint64_t, BooleanType> Si_Pair;
 
         std::vector<BooleanType> sv;
 
@@ -162,7 +162,7 @@ namespace metaSMT {
         assumption(ctx, custom_c);
         if( !solve(ctx) ) {
           // confl_vars is a complete conflict
-          std::vector<unsigned> result;
+          std::vector<uint64_t> result;
           //BOOST_FOREACH( Si_Pair si, confl_vars)
           for( Si_Pair si : confl_vars) {
             result.push_back(si.first);
@@ -180,11 +180,11 @@ namespace metaSMT {
 
           if (!solve(ctx)) continue;
 
-          std::map<unsigned, BooleanType> custom_enab = enable_vars;
-          std::map<unsigned, BooleanType> custom_conf = confl_vars;
+          std::map<uint64_t, BooleanType> custom_enab = enable_vars;
+          std::map<uint64_t, BooleanType> custom_conf = confl_vars;
 
           //sammel alle abgeschalteten si in conflicting
-          std::map<unsigned, BooleanType> conflicting;
+          std::map<uint64_t, BooleanType> conflicting;
           //BOOST_FOREACH(Si_Pair si, enable_vars)
           for(Si_Pair si : enable_vars)
           {
