@@ -416,8 +416,8 @@ namespace metaSMT {
       }
 
       result_type operator() (bvtags::extract_tag const &,
-                              uint64_t upper,
-                              uint64_t lower,
+                              unsigned long upper,
+                              unsigned long lower,
                               result_type const &e) {
         return z3::to_expr(ctx_,
           Z3_mk_extract(ctx_, upper, lower, z3::expr(e)));
