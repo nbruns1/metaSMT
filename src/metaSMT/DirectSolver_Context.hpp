@@ -54,7 +54,7 @@ namespace metaSMT {
         , Expr2 bw
     ) {
       const uint64_t val   = proto::value(value);
-      const unsigned width = proto::value(bw);
+      const uint64_t width = proto::value(bw);
 
       return SolverContext::operator() ( tag,
         boost::any(boost::make_tuple(val, width))
@@ -68,7 +68,7 @@ namespace metaSMT {
         , Expr2 bw
     ) {
       const int64_t val            = proto::value(value);
-      const unsigned width = proto::value(bw);
+      const uint64_t width = proto::value(bw);
 
       return  SolverContext::operator() ( tag, 
         boost::any(boost::make_tuple(val, width))
