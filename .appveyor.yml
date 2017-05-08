@@ -15,6 +15,12 @@ build:
 configuration:
   - Debug
 
+# specify custom environment variables
+environment:
+  MSVC_DEFAULT_OPTIONS: ON
+  BOOST_ROOT: C:\Libraries\boost_1_60_0
+BOOST_LIBRARYDIR: C:\Libraries\boost_1_60_0\lib32-msvc-14.0
+
 install:
   ############################################################################
   # All external dependencies are installed in C:\projects\deps
@@ -38,10 +44,10 @@ install:
   - cp "C:\projects\metaSMT\Z3Config.cmake" "C:\projects\deps\z3-4.5.0-x86-win"
   - set PATH=C:\projects\deps\z3-4.5.0-x86-win\bin;%PATH%
   #Download boost
-  - set BOOST_URL="https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download"
-  - appveyor DownloadFile %BOOST_URL% -FileName boost.exe
-  - boost.exe /DIR="C:\projects\deps\boost" /silent
-  - set PATH=C:\projects\deps\boost\lib32-msvc-14.0;%PATH%
+  #- set BOOST_URL="https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download"
+  #- appveyor DownloadFile %BOOST_URL% -FileName boost.exe
+  #- boost.exe /DIR="C:\projects\deps\boost" /silent
+  - set PATH=%BOOST_LIBRARYDIR%;%PATH%
 
 before_build:
   - call "%VS140COMNTOOLS%VsDevCmd.bat"
@@ -50,6 +56,6 @@ before_build:
 build_script:
   - mkdir build
   - cd build
-  - cmake .. -DBoost_USE_STATIC_LIBS=ON -DBOOST_ROOT="C:\projects\deps\boost" -DZ3_DIR="C:\projects\deps\z3-4.5.0-x86-win" 
+  - cmake .. -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" -DBoost_USE_STATIC_LIBS="ON" -DZ3_DIR="C:\projects\deps\z3-4.5.0-x86-win" 
   - cmake --build .
   - ctest
