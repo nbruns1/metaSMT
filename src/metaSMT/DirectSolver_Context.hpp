@@ -67,7 +67,7 @@ namespace metaSMT {
         , Expr1 value
         , Expr2 bw
     ) {
-      const long val            = proto::value(value);
+      const int64_t val            = proto::value(value);
       const uint64_t width = proto::value(bw);
 
       return  SolverContext::operator() ( tag, 

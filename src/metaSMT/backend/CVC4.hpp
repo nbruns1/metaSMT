@@ -176,9 +176,9 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
-        typedef boost::tuple<long, uint64_t> Tuple;
+        typedef boost::tuple<int64_t, uint64_t> Tuple;
         Tuple tuple = boost::any_cast<Tuple>(arg);
-        long value = boost::get<0>(tuple);
+        int64_t value = boost::get<0>(tuple);
         uint64_t width = boost::get<1>(tuple);
 
         ::CVC4::BitVector bvValue (width, ::CVC4::Integer(value));

@@ -239,9 +239,9 @@ class Yices2Impl {
   }
 
   result_type operator()(bvtags::bvsint_tag, boost::any arg) {
-    typedef boost::tuple<long, uint64_t> P;
+    typedef boost::tuple<int64_t, uint64_t> P;
     P const p = boost::any_cast<P>(arg);
-    long const value = boost::get<0>(p);
+    int64_t const value = boost::get<0>(p);
     unsigned const width = boost::get<1>(p);
     return yices_bvconst_int64(width, value);
   }
