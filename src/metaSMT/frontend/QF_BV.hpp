@@ -270,11 +270,11 @@ namespace metaSMT {
       
       typedef proto::result_of::make_expr< tag::bvsint_tag, QF_BV_Domain
         , int64_t
-        , uint64_t
+        , unsigned
       > ::type bvsint_result_type;
 
       inline bvsint_result_type
-      bvsint( int64_t const & value, uint64_t const & width )
+      bvsint( int64_t const & value, unsigned const & width )
       {
         return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( value, width);
       } 
@@ -286,7 +286,7 @@ namespace metaSMT {
             boost::is_signed<Integer>
           >::type,
           bvsint_result_type >::type
-      bvint( Integer value, uint64_t const & width )
+      bvint( Integer value, unsigned const & width )
       {
         return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( (int64_t) value, width);
       }

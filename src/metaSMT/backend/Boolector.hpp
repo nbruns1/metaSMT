@@ -167,10 +167,10 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::bvsint_tag , boost::any arg ) {
-          typedef boost::tuple<int64_t, uint64_t> P;
+          typedef boost::tuple<int64_t, unsigned> P;
           P const p = boost::any_cast<P>(arg);
           int64_t value = boost::get<0>(p);
-          uint64_t const width = boost::get<1>(p);
+          unsigned const width = boost::get<1>(p);
 
           if (  value > std::numeric_limits<int>::max()
              || value < std::numeric_limits<int>::min()
