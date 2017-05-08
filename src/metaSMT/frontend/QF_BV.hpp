@@ -297,7 +297,7 @@ namespace metaSMT {
             boost::mpl::not_<boost::is_signed<Integer> >
           >::type,
           bvuint_result_type >::type
-      bvint( Integer value, uint64_t const & width )
+      bvint( Integer value, unsigned const & width )
       {
         return proto::make_expr< tag::bvuint_tag, QF_BV_Domain >( (uint64_t) value, width);
       }

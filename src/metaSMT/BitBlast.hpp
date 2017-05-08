@@ -746,11 +746,11 @@ namespace metaSMT {
         }
         
         result_type operator() (bvtags::bvuint_tag , boost::any arg ) {
-          typedef boost::tuple<uint64_t, uint64_t> P;
+          typedef boost::tuple<uint64_t, unsigned> P;
           P p = boost::any_cast<P>(arg);
           //std::cout << "bvuint "<< p << std::endl;
           uint64_t value = boost::get<0>(p);
-          uint64_t width = boost::get<1>(p);
+          unsigned width = boost::get<1>(p);
         
           bv_result ret (width);
           result_base one  = _solver(predtags::true_tag (), boost::any());
@@ -799,7 +799,7 @@ namespace metaSMT {
           for(unsigned i = 0; i < a.size(); ++i)
           {
             result_type index = (*this)(bvtags::bvuint_tag()
-                ,boost::any(boost::tuple<uint64_t, uint64_t>(i,a.size())));
+                ,boost::any(boost::tuple<uint64_t, unsigned>(i,a.size())));
             ret = (*this)(ite, 
                 (*this)(predtags::equal_tag(), value, index)
               , shiftR(a, i, zero)
@@ -820,7 +820,7 @@ namespace metaSMT {
           for(unsigned i = 0; i < a.size(); ++i)
           {
             result_type index = (*this)(bvtags::bvuint_tag()
-                ,boost::any(boost::tuple<uint64_t, uint64_t>(i,a.size())));
+                ,boost::any(boost::tuple<uint64_t, unsigned>(i,a.size())));
             ret = (*this)(ite, 
                 (*this)(predtags::equal_tag(), value, index)
               , shiftL(a, i)
@@ -840,7 +840,7 @@ namespace metaSMT {
           for(unsigned i = 0; i < a.size(); ++i)
           {
             result_type index = (*this)(bvtags::bvuint_tag()
-                ,boost::any(boost::tuple<uint64_t, uint64_t>(i,a.size())));
+                ,boost::any(boost::tuple<uint64_t, unsigned>(i,a.size())));
             ret = (*this)(ite, 
                 (*this)(predtags::equal_tag(), value, index)
               , shiftR(a, i, a.back())
