@@ -66,7 +66,7 @@ namespace metaSMT {
       using namespace logic::Array;
 
       const unsigned width = c.index_width_;
-      uint64_t index_limit = 1ul << width;
+      uint64_t index_limit = static_cast<uint64_t>(1ul) << width;
 
       typename Context::result_type result = evaluate( ctx, True );
 
