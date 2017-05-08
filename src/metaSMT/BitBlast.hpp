@@ -890,7 +890,7 @@ namespace metaSMT {
         };
 
         result_type operator() (bvtags::extract_tag const & 
-            , uint64_t upper, uint64_t lower
+            , unsigned long upper, unsigned long lower
             , result_type e
         ) {
           bv_result ret(upper-lower+1);
