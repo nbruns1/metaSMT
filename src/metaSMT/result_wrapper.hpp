@@ -368,7 +368,7 @@ namespace metaSMT {
         )
       { }
       result_wrapper( uint64_t value, uint64_t width )
-      : r( boost::dynamic_bitset<uint64_t>(width, value) )
+      : r( boost::dynamic_bitset<>(width, value) )
       { }
 
       operator std::vector<bool> () const {
