@@ -314,7 +314,7 @@ namespace metaSMT {
       }
 
       result_type operator() (bvtags::bvuint_tag const &, boost::any const &arg) {
-        typedef boost::tuple<uint64_t, unsigned> P;
+        typedef boost::tuple<uint64_t, uint64_t> P;
         P const p = boost::any_cast<P>(arg);
         uint64_t const value = boost::get<0>(p);
         unsigned const width = boost::get<1>(p);
