@@ -350,7 +350,7 @@ namespace metaSMT {
         , std::vector<bool>
         , std::string
         , boost::logic::tribool
-        , boost::dynamic_bitset<> 
+        , boost::dynamic_bitset<uint64_t> 
         > result_types_list;
       typedef boost::make_variant_over<result_types_list>::type result_type;
 
