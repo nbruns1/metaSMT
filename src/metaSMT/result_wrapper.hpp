@@ -383,9 +383,9 @@ namespace metaSMT {
         return boost::apply_visitor(as_string(), r);
       }
 
-      operator boost::dynamic_bitset<> () const {
+      operator boost::dynamic_bitset<uint64_t> () const {
         std::vector<boost::logic::tribool> val = *this;
-        boost::dynamic_bitset<> ret(val.size());
+        boost::dynamic_bitset<uint64_t> ret(val.size());
         for (unsigned i = 0; i < val.size(); ++i) {
           ret[i]=val[i];
         }
