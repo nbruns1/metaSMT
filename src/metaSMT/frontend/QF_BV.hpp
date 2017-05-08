@@ -91,8 +91,8 @@ namespace metaSMT {
       struct QF_BV_BitVector_Constant
         : proto::or_<
             proto::binary_expr < tag::bvuint_tag
-              , proto::terminal< proto::convertible_to< unsigned long > >
-              , proto::terminal< proto::convertible_to< unsigned long > >
+              , proto::terminal< proto::convertible_to< uint64_t > >
+              , proto::terminal< proto::convertible_to< uint64_t > >
             >
           , proto::binary_expr < tag::bvsint_tag
               , proto::terminal< proto::convertible_to<          long > >
@@ -258,12 +258,12 @@ namespace metaSMT {
 
       // constant creation
       typedef proto::result_of::make_expr< tag::bvuint_tag, QF_BV_Domain
-        , unsigned long
-        , unsigned long
+        , uint64_t
+        , uint64_t
       > ::type bvuint_result_type;
 
       inline bvuint_result_type
-      bvuint( unsigned long const & value, unsigned long const & width )
+      bvuint( uint64_t const & value, uint64_t const & width )
       {
         return proto::make_expr< tag::bvuint_tag, QF_BV_Domain>(value, width);
       } 
@@ -286,7 +286,7 @@ namespace metaSMT {
             boost::is_signed<Integer>
           >::type,
           bvsint_result_type >::type
-      bvint( Integer value, unsigned long const & width )
+      bvint( Integer value, uint64_t const & width )
       {
         return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( (long) value, width);
       }
@@ -297,9 +297,9 @@ namespace metaSMT {
             boost::mpl::not_<boost::is_signed<Integer> >
           >::type,
           bvuint_result_type >::type
-      bvint( Integer value, unsigned long const & width )
+      bvint( Integer value, uint64_t const & width )
       {
-        return proto::make_expr< tag::bvuint_tag, QF_BV_Domain >( (unsigned long) value, width);
+        return proto::make_expr< tag::bvuint_tag, QF_BV_Domain >( (uint64_t) value, width);
       }
 
        
