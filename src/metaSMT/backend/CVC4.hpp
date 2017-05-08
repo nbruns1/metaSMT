@@ -167,19 +167,19 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
-        typedef boost::tuple<unsigned long, unsigned long> Tuple;
+        typedef boost::tuple<uint64_t, uint64_t> Tuple;
         Tuple tuple = boost::any_cast<Tuple>(arg);
-        unsigned long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
+        uint64_t value = boost::get<0>(tuple);
+        uint64_t width = boost::get<1>(tuple);
 
         return exprManager_.mkConst(::CVC4::BitVector(width, value));
       }
 
       result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
-        typedef boost::tuple<long, unsigned long> Tuple;
+        typedef boost::tuple<long, uint64_t> Tuple;
         Tuple tuple = boost::any_cast<Tuple>(arg);
         long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
+        uint64_t width = boost::get<1>(tuple);
 
         ::CVC4::BitVector bvValue (width, ::CVC4::Integer(value));
         return exprManager_.mkConst(bvValue);
@@ -204,7 +204,7 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::extract_tag const &
-        , unsigned long upper, unsigned long lower
+        , uint64_t upper, uint64_t lower
         , result_type e)
       {
         ::CVC4::BitVectorExtract bvOp (upper, lower);
@@ -213,7 +213,7 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::zero_extend_tag const &
-        , unsigned long width
+        , uint64_t width
         , result_type e)
       {
         ::CVC4::BitVectorZeroExtend bvOp (width);
@@ -222,7 +222,7 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::sign_extend_tag const &
-        , unsigned long width
+        , uint64_t width
         , result_type e)
       {
         ::CVC4::BitVectorSignExtend bvOp (width);

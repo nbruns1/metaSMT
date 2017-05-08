@@ -58,8 +58,8 @@ namespace metaSMT {
           , proto::or_<
               proto::binary_expr<tag::concat_tag, QF_BV_Grammar, QF_BV_Grammar>
             , proto::binary_expr<tag::extract_tag, QF_BV_Grammar, QF_BV_Grammar>
-            , proto::binary_expr<tag::zero_extend_tag, QF_BV_Grammar, unsigned long>
-            , proto::binary_expr<tag::sign_extend_tag, QF_BV_Grammar, unsigned long>
+            , proto::binary_expr<tag::zero_extend_tag, QF_BV_Grammar, uint64_t>
+            , proto::binary_expr<tag::sign_extend_tag, QF_BV_Grammar, uint64_t>
             >
           // shifting
           , proto::or_<
@@ -225,11 +225,11 @@ namespace metaSMT {
       // extract operator
       template< typename Expr>
       inline typename proto::result_of::make_expr< tag::extract_tag, QF_BV_Domain
-        , unsigned long const & // from
-        , unsigned long const & // length
+        , uint64_t const & // from
+        , uint64_t const & // length
         , Expr const &          // Expr
       > ::type
-      extract( unsigned long const & from, unsigned long const & width, Expr const &   e)
+      extract( uint64_t const & from, uint64_t const & width, Expr const &   e)
       {
         return proto::make_expr< tag::extract_tag, QF_BV_Domain>(boost::cref(from), boost::cref(width), boost::cref(e));
       } 
@@ -237,10 +237,10 @@ namespace metaSMT {
       // zero_extend operator
       template< typename Expr>
       inline typename proto::result_of::make_expr< tag::zero_extend_tag, QF_BV_Domain
-        , unsigned long const & // length
+        , uint64_t const & // length
         , Expr const &          // Expr
       > ::type
-      zero_extend ( unsigned long const & howMany, Expr const &   e)
+      zero_extend ( uint64_t const & howMany, Expr const &   e)
       {
         return proto::make_expr< tag::zero_extend_tag, QF_BV_Domain>( boost::cref(howMany), boost::cref(e));
       } 
@@ -248,10 +248,10 @@ namespace metaSMT {
       // sign_extend operator
       template< typename Expr>
       inline typename proto::result_of::make_expr< tag::sign_extend_tag, QF_BV_Domain
-        , unsigned long const & // length
+        , uint64_t const & // length
         , Expr const &          // Expr
       > ::type
-      sign_extend ( unsigned long const & howMany, Expr const &   e)
+      sign_extend ( uint64_t const & howMany, Expr const &   e)
       {
         return proto::make_expr< tag::sign_extend_tag, QF_BV_Domain>( boost::cref(howMany), boost::cref(e));
       } 

@@ -314,16 +314,16 @@ namespace metaSMT {
       }
 
       result_type operator() (bvtags::bvuint_tag const &, boost::any const &arg) {
-        typedef boost::tuple<unsigned long, unsigned long> P;
+        typedef boost::tuple<uint64_t, uint64_t> P;
         P const p = boost::any_cast<P>(arg);
-        unsigned long const value = boost::get<0>(p);
+        uint64_t const value = boost::get<0>(p);
         unsigned const width = boost::get<1>(p);
         Z3_sort ty = Z3_mk_bv_sort(ctx_, width);
         return z3::to_expr(ctx_, Z3_mk_unsigned_int64(ctx_, value, ty));
       }
 
       result_type operator() (bvtags::bvsint_tag const &, boost::any const &arg) {
-        typedef boost::tuple<long, unsigned long> P;
+        typedef boost::tuple<long, uint64_t> P;
         P const p = boost::any_cast<P>(arg);
         long const value = boost::get<0>(p);
         unsigned const width = boost::get<1>(p);
@@ -416,21 +416,21 @@ namespace metaSMT {
       }
 
       result_type operator() (bvtags::extract_tag const &,
-                              unsigned long upper,
-                              unsigned long lower,
+                              uint64_t upper,
+                              uint64_t lower,
                               result_type const &e) {
         return z3::to_expr(ctx_,
           Z3_mk_extract(ctx_, upper, lower, z3::expr(e)));
       }
 
       result_type operator() (bvtags::zero_extend_tag const &,
-                              unsigned long width,
+                              uint64_t width,
                               result_type e) {
         return z3::to_expr(ctx_, Z3_mk_zero_ext(ctx_, width, z3::expr(e)));
       }
 
       result_type operator() (bvtags::sign_extend_tag const &, 
-                              unsigned long width,
+                              uint64_t width,
                               result_type e) {
         return z3::to_expr(ctx_, Z3_mk_sign_ext(ctx_, width, z3::expr(e)));
       }

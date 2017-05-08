@@ -145,18 +145,18 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::bvuint_tag , boost::any arg ) {
-          typedef boost::tuple<unsigned long, unsigned long> P;
+          typedef boost::tuple<uint64_t, uint64_t> P;
           P p = boost::any_cast<P>(arg);
           //std::cout << "bvuint "<< p << std::endl;
-          unsigned long value = boost::get<0>(p);
-          unsigned long width = boost::get<1>(p);
+          uint64_t value = boost::get<0>(p);
+          uint64_t width = boost::get<1>(p);
 
           if ( value > std::numeric_limits<unsigned>::max() ) {
             std::string val (width, '0');
 
             std::string::reverse_iterator sit = val.rbegin();
 
-            for (unsigned long i = 0; i < width; i++, ++sit) {
+            for (uint64_t i = 0; i < width; i++, ++sit) {
               *sit = (value & 1ul) ? '1':'0';
               value >>= 1;
             }
@@ -167,10 +167,10 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::bvsint_tag , boost::any arg ) {
-          typedef boost::tuple<long, unsigned long> P;
+          typedef boost::tuple<long, uint64_t> P;
           P const p = boost::any_cast<P>(arg);
           long value = boost::get<0>(p);
-          unsigned long const width = boost::get<1>(p);
+          uint64_t const width = boost::get<1>(p);
 
           if (  value > std::numeric_limits<int>::max()
              || value < std::numeric_limits<int>::min()
@@ -179,7 +179,7 @@ namespace metaSMT {
 
             std::string::reverse_iterator sit = val.rbegin();
 
-            for (unsigned long i = 0; i < width; i++, ++sit) {
+            for (uint64_t i = 0; i < width; i++, ++sit) {
               *sit = (value & 1l) ? '1':'0';
               value >>= 1;
             }
@@ -263,21 +263,21 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::extract_tag const &
-            , unsigned long upper, unsigned long lower
+            , uint64_t upper, uint64_t lower
             , result_type e)
         {
           return ptr(boolector_slice(_btor, e, upper, lower));
         }
 
         result_type operator() (bvtags::zero_extend_tag const &
-            , unsigned long width
+            , uint64_t width
             , result_type e)
         {
           return ptr(boolector_uext(_btor, e, width));
         }
 
         result_type operator() (bvtags::sign_extend_tag const &
-            , unsigned long width
+            , uint64_t width
             , result_type e)
         {
           return ptr(boolector_sext(_btor, e, width));

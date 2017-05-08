@@ -123,7 +123,7 @@ namespace metaSMT {
         case BITVECTOR_TYPE:
           {
             unsigned const width = getBVLength(cex);
-            if (width <= sizeof(unsigned long long) * 8) {
+            if (width <= sizeof(uint64_t long) * 8) {
               return result_wrapper(getBVUnsignedLongLong(cex), width);
             } else {
               std::string str = exprString(cex);
@@ -202,16 +202,16 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
-        typedef boost::tuple<unsigned long, unsigned long> Tuple;
+        typedef boost::tuple<uint64_t, uint64_t> Tuple;
         Tuple tuple = boost::any_cast<Tuple>(arg);
-        unsigned long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
+        uint64_t value = boost::get<0>(tuple);
+        uint64_t width = boost::get<1>(tuple);
 
-        if ( width > 8*sizeof(unsigned long) ) {
+        if ( width > 8*sizeof(uint64_t) ) {
           std::string val (width, '0');
 
           std::string::reverse_iterator sit = val.rbegin();
-          for (unsigned long i = 0; i < width; i++, ++sit) {
+          for (uint64_t i = 0; i < width; i++, ++sit) {
             *sit = (value & 1ul) ? '1':'0';
             value >>= 1;
           }
@@ -223,26 +223,26 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
-        typedef boost::tuple<long, unsigned long> Tuple;
+        typedef boost::tuple<long, uint64_t> Tuple;
         Tuple tuple = boost::any_cast<Tuple>(arg);
         long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
+        uint64_t width = boost::get<1>(tuple);
 
-        if ( width > 8*sizeof(unsigned long)
+        if ( width > 8*sizeof(uint64_t)
              || value > std::numeric_limits<long int>::max()
              || value < std::numeric_limits<long int>::min()
         ) {
           std::string val (width, '0');
 
           std::string::reverse_iterator sit = val.rbegin();
-          for (unsigned long i = 0; i < width; i++, ++sit) {
+          for (uint64_t i = 0; i < width; i++, ++sit) {
             *sit = (value & 1l) ? '1':'0';
             value >>= 1;
           }
           return ptr(vc_bvConstExprFromStr(vc, val.c_str()));
         }
         else {
-          return ptr(vc_bvConstExprFromLL(vc, width, static_cast<unsigned long>(value)));
+          return ptr(vc_bvConstExprFromLL(vc, width, static_cast<uint64_t>(value)));
         }
       }
 
@@ -340,13 +340,13 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::extract_tag const &
-        , unsigned long upper, unsigned long lower
+        , uint64_t upper, uint64_t lower
         , result_type e) {
         return ptr(vc_bvExtract(vc, e, upper, lower));
       }
 
       result_type operator()( bvtags::zero_extend_tag const &
-        , unsigned long width
+        , uint64_t width
         , result_type e) {
         std::string s(width, '0');
         Expr zeros = ptr(vc_bvConstExprFromStr(vc, s.c_str()));
@@ -354,9 +354,9 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::sign_extend_tag const &
-        , unsigned long width
+        , uint64_t width
         , result_type e) {
-        unsigned long const current_width = getBVLength(e);
+        uint64_t const current_width = getBVLength(e);
         return ptr(vc_bvSignExtend(vc, e, current_width + width));
       }
 

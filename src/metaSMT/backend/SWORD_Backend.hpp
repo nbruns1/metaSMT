@@ -90,7 +90,7 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::bvuint_tag , boost::any arg ) {
-          typedef boost::tuple<unsigned long, unsigned long> P;
+          typedef boost::tuple<uint64_t, uint64_t> P;
           P p = boost::any_cast<P>(arg);
           //printf("bvuint\n");
           return _sword.addConstant(boost::get<1>(p), boost::get<0>(p));
@@ -98,10 +98,10 @@ namespace metaSMT {
 
         result_type operator() (bvtags::bvsint_tag , boost::any arg ) {
           //printf("bvsint\n");
-          typedef boost::tuple<long, unsigned long> Tuple;
+          typedef boost::tuple<long, uint64_t> Tuple;
           Tuple const tuple = boost::any_cast<Tuple>(arg);
           long value = boost::get<0>(tuple);
-          unsigned long const width = boost::get<1>(tuple);
+          uint64_t const width = boost::get<1>(tuple);
 
           if (    value > std::numeric_limits<int>::max()
                || value < std::numeric_limits<int>::min()
@@ -109,31 +109,31 @@ namespace metaSMT {
              ) {
             std::string val(width, '0');
             std::string::reverse_iterator it = val.rbegin();
-            for ( unsigned long u = 0; u < width; ++u, ++it ) {
+            for ( uint64_t u = 0; u < width; ++u, ++it ) {
               *it = (value & 1l) ? '1' : '0';
               value >>= 1;
             }
             return _sword.addBinConstant(val);
           }
-          return _sword.addConstant(width, static_cast<unsigned long>(value) );
+          return _sword.addConstant(width, static_cast<uint64_t>(value) );
         }
 
         result_type operator() (bvtags::extract_tag const & 
-            , unsigned long upper, unsigned long lower
+            , uint64_t upper, uint64_t lower
             , result_type e)
         {
           return _sword.addExtract(e, upper, lower);
         }
 
         result_type operator() (bvtags::zero_extend_tag const & 
-            , unsigned long width
+            , uint64_t width
             , result_type e)
         {
           return _sword.addZeroExtend(e, width);
         }
 
         result_type operator() (bvtags::sign_extend_tag const & 
-            , unsigned long width
+            , uint64_t width
             , result_type e)
         {
           return _sword.addSignExtend(e, width);
