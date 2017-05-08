@@ -292,7 +292,7 @@ namespace metaSMT {
       result_type operator() ( boost::dynamic_bitset<> const & val ) const
       {
         const bool issigned = boost::is_signed<Integer>::value;
-        if( !issigned && sizeof(Integer) <= sizeof(uint64_t) ) {
+        if( !issigned && sizeof(Integer) <= sizeof(unsigned long) ) {
           return static_cast<result_type>( val.to_ulong() );
         } else {
           Integer ret = 0;
