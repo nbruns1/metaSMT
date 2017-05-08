@@ -211,7 +211,7 @@ namespace metaSMT {
         return s;
       }
 
-      result_type operator() ( boost::dynamic_bitset<uint64_t> const & val ) const
+      result_type operator() ( boost::dynamic_bitset<> const & val ) const
       {
         std::string s(val.size(), '\0');
         boost::to_string(val, s);
