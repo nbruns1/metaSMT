@@ -259,11 +259,11 @@ namespace metaSMT {
       // constant creation
       typedef proto::result_of::make_expr< tag::bvuint_tag, QF_BV_Domain
         , uint64_t
-        , uint64_t
+        , unsigned
       > ::type bvuint_result_type;
 
       inline bvuint_result_type
-      bvuint( uint64_t const & value, uint64_t const & width )
+      bvuint( uint64_t const & value, unsigned const & width )
       {
         return proto::make_expr< tag::bvuint_tag, QF_BV_Domain>(value, width);
       } 
