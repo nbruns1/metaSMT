@@ -95,8 +95,8 @@ namespace metaSMT {
               , proto::terminal< proto::convertible_to< uint64_t > >
             >
           , proto::binary_expr < tag::bvsint_tag
-              , proto::terminal< proto::convertible_to<          long > >
-              , proto::terminal< proto::convertible_to< unsigned long > >
+              , proto::terminal< proto::convertible_to<          int64_t > >
+              , proto::terminal< proto::convertible_to< uint64_t > >
             >
           , proto::unary_expr < tag::bvbin_tag
               , proto::terminal< proto::convertible_to< std::string > >
@@ -269,12 +269,12 @@ namespace metaSMT {
       } 
       
       typedef proto::result_of::make_expr< tag::bvsint_tag, QF_BV_Domain
-        , long
-        , unsigned long
+        , int64_t
+        , uint64_t
       > ::type bvsint_result_type;
 
       inline bvsint_result_type
-      bvsint( long const & value, long unsigned const & width )
+      bvsint( int64_t const & value, uint64_t const & width )
       {
         return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( value, width);
       } 
@@ -288,7 +288,7 @@ namespace metaSMT {
           bvsint_result_type >::type
       bvint( Integer value, uint64_t const & width )
       {
-        return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( (long) value, width);
+        return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( (int64_t) value, width);
       }
           
       template< typename Integer > 
