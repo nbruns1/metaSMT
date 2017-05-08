@@ -229,7 +229,7 @@ namespace metaSMT {
         , unsigned long const & // length
         , Expr const &          // Expr
       > ::type
-      extract( uint64_t const & from, unsigned long const & width, Expr const &   e)
+      extract( unsigned long const & from, unsigned long const & width, Expr const &   e)
       {
         return proto::make_expr< tag::extract_tag, QF_BV_Domain>(boost::cref(from), boost::cref(width), boost::cref(e));
       } 
