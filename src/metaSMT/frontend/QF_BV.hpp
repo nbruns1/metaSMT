@@ -58,7 +58,7 @@ namespace metaSMT {
           , proto::or_<
               proto::binary_expr<tag::concat_tag, QF_BV_Grammar, QF_BV_Grammar>
             , proto::binary_expr<tag::extract_tag, QF_BV_Grammar, QF_BV_Grammar>
-            , proto::binary_expr<tag::zero_extend_tag, QF_BV_Grammar, uint64_t>
+            , proto::binary_expr<tag::zero_extend_tag, QF_BV_Grammar, unsigned long>
             , proto::binary_expr<tag::sign_extend_tag, QF_BV_Grammar, uint64_t>
             >
           // shifting
@@ -237,10 +237,10 @@ namespace metaSMT {
       // zero_extend operator
       template< typename Expr>
       inline typename proto::result_of::make_expr< tag::zero_extend_tag, QF_BV_Domain
-        , uint64_t const & // length
+        , unsigned long const & // length
         , Expr const &          // Expr
       > ::type
-      zero_extend ( uint64_t const & howMany, Expr const &   e)
+      zero_extend ( unsigned long const & howMany, Expr const &   e)
       {
         return proto::make_expr< tag::zero_extend_tag, QF_BV_Domain>( boost::cref(howMany), boost::cref(e));
       } 
