@@ -367,7 +367,7 @@ namespace metaSMT {
         : boost::logic::tribool(boost::logic::indeterminate))
         )
       { }
-      result_wrapper( unsigned long value, unsigned long width )
+      result_wrapper( uint64_t value, unsigned long width )
       : r( boost::dynamic_bitset<>(width, value) )
       { }
 
