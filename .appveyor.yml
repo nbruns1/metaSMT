@@ -39,9 +39,9 @@ install:
   - set PATH=C:\projects\deps\z3-4.5.0-x86-win\bin;%PATH%
   #Download boost
   - set BOOST_URL="https://sourceforge.net/projects/boost/files/boost-binaries/1.60.0/boost_1_60_0-msvc-14.0-32.exe/download"
-  - #appveyor DownloadFile %BOOST_URL% -FileName boost.exe
-  - #boost.exe /DIR="C:\projects\deps\boost" /silent
-  - set PATH=C:\Libraries\boost_1_60_0\lib32-msvc-14.0;%PATH%
+  - appveyor DownloadFile %BOOST_URL% -FileName boost.exe
+  - boost.exe /DIR="C:\projects\deps\boost" /silent
+  - set PATH=C:\projects\deps\boost\lib32-msvc-14.0;%PATH%
 
 before_build:
   - call "%VS140COMNTOOLS%VsDevCmd.bat"
