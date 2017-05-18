@@ -146,7 +146,7 @@ namespace metaSMT {
         }
 
         assert(r.is_bv());
-        uint64_t val = 0;
+        unsigned __int64 val = 0;
         if (Z3_get_numeral_uint64(ctx_, r, &val)){
 	 return result_wrapper(val, r.get_sort().bv_size());}
 
