@@ -1951,7 +1951,7 @@ BOOST_AUTO_TEST_CASE( constant_69bit )
 BOOST_AUTO_TEST_CASE( signed_constant_64bit )
 {
   unsigned const w = 64;
-  long value = std::numeric_limits<long>::max();
+  uint64_t value = std::numeric_limits<long>::max();
   bitvector x = new_bitvector(w);
 
   assumption(ctx, equal(x, bvsint(value, w)));
@@ -1960,7 +1960,7 @@ BOOST_AUTO_TEST_CASE( signed_constant_64bit )
   std::string xs = read_value(ctx, x);
   BOOST_CHECK_EQUAL(xs, "0111111111111111111111111111111111111111111111111111111111111111");
 
-  long xd = read_value(ctx, x);
+  uint64_t xd = read_value(ctx, x);
   BOOST_CHECK_EQUAL(xd, value);
 
   assumption(ctx, equal(x, bvsint(value-123, w)));
@@ -1969,7 +1969,7 @@ BOOST_AUTO_TEST_CASE( signed_constant_64bit )
   xd = read_value(ctx, x);
   BOOST_CHECK_EQUAL(xd, value-123);
 
-  value = std::numeric_limits<long>::min();
+  value = std::numeric_limits<uint64_t>::min();
 
   assumption(ctx, equal(x, bvsint(value, w)));
   BOOST_REQUIRE( solve(ctx) );
