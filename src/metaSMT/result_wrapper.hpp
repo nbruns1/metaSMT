@@ -231,8 +231,7 @@ namespace metaSMT {
 
       result_type operator() ( bool b ) const {
         if (boost::is_signed<Integer>::value) {
-            int64_t tmp = -static_cast<int64_t>(b);
-          return static_cast<Integer>(tmp);
+          return -(Integer)b;
         } else {
           return b;
         }
