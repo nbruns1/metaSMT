@@ -252,6 +252,7 @@ namespace metaSMT {
       {
         Integer ret = 0;
         bool isSigned = boost::is_signed<Integer>::value && val.back();
+        std::cout << "isSigned: " << isSigned << std::endl;
         if( isSigned ) ret = -1 ;
         for (unsigned i = 0; i < val.size(); ++i) {
           ret ^= Integer( (static_cast<bool>((*this)(val[i]))^isSigned ? 1 : 0)) << i;
@@ -263,6 +264,7 @@ namespace metaSMT {
       {
         Integer ret = 0;
         bool isSigned = boost::is_signed<Integer>::value && val.back();
+        std::cout << "isSigned: " << isSigned << std::endl;
         if( isSigned ) ret = -1 ;
         for (unsigned i = 0; i < val.size(); ++i) {
           ret ^= Integer( val[i]^isSigned ? 1 : 0) << i;
@@ -293,11 +295,13 @@ namespace metaSMT {
       result_type operator() ( boost::dynamic_bitset<uint64_t> const & val ) const
       {
         const bool issigned = boost::is_signed<Integer>::value;
+        std::cout << "isSigned: " << isSigned << std::endl;
         if( !issigned && sizeof(Integer) <= sizeof(unsigned long) ) {
           return static_cast<result_type>( val.to_ulong() );
         } else {
           Integer ret = 0;
           bool isSigned = boost::is_signed<Integer>::value && val[val.size()-1];
+          std::cout << "isSigned: " << isSigned << std::endl;
           if( isSigned ) ret = -1 ;
           for (unsigned i = 0; i < val.size(); ++i) {
             ret ^= Integer( val[i]^isSigned ? 1 : 0) << i;
