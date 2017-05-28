@@ -374,8 +374,8 @@ namespace metaSMT {
         this->r = r;
         std::cout << "result_wrapper_size:" << r.size() << std::endl;
         uint64_t ret = 0;
-          for (unsigned i = 0; i < val.size(); ++i) {
-            ret ^= uint64_t( val[i]^isSigned ? 1 : 0) << i;
+          for (unsigned i = 0; i < r.size(); ++i) {
+            ret ^= uint64_t( r[i]^isSigned ? 1 : 0) << i;
           }
         std::cout << "real_value: " << value << "copy_value: " << ret << std:.endl;
       }
