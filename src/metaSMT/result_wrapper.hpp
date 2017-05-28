@@ -308,8 +308,7 @@ namespace metaSMT {
           std::cout << "isSigned: " << isSigned << std::endl;
           if( isSigned ) ret = static_cast<Integer>(-1) ;
           for (unsigned i = 0; i < val.size(); ++i) {
-            bool isSignedTmp = isSigned ? static_cast<bool>(1) : static_cast<bool>(0);
-            ret ^= static_cast<Integer>( static_cast<bool>(val[i])^isSignedTmp) << i;
+            ret ^= (val[i]^isSigned) << i;
           }
           std::cout << "ret: " << ret << std::endl;
           return ret;
