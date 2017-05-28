@@ -378,8 +378,8 @@ namespace metaSMT {
             ret ^= uint64_t(r[i]^isSigned ? 1 : 0) << i;
           }
         uint64_t ret2 = 0;
-        for (unsigned i = 0; i < val.size(); ++i) {
-            ret ^= Integer( val[i]^!isSigned ? 1 : 0) << i;
+        for (unsigned i = 0; i < r.size(); ++i) {
+            ret ^= uint64_t( r[i]^!isSigned ? 1 : 0) << i;
           }
         std::cout << "size:" << r.size() << "real_value: " << value << " signed_copy_value: " << ret << " unsigned_copy_value: " << ret2 << std::endl;
       }
