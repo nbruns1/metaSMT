@@ -212,7 +212,7 @@ namespace metaSMT {
         return s;
       }
 
-      result_type operator() ( boost::dynamic_bitset<> const & val ) const
+      result_type operator() ( boost::dynamic_bitset<uint64_t> const & val ) const
       {
         std::string s(val.size(), '\0');
         boost::to_string(val, s);
@@ -290,7 +290,7 @@ namespace metaSMT {
         return ret;
       }
 
-      result_type operator() ( boost::dynamic_bitset<> const & val ) const
+      result_type operator() ( boost::dynamic_bitset<uint64_t> const & val ) const
       {
         const bool issigned = boost::is_signed<Integer>::value;
         if( !issigned && sizeof(Integer) <= sizeof(unsigned long) ) {
@@ -391,9 +391,9 @@ namespace metaSMT {
         return boost::apply_visitor(as_string(), r);
       }
 
-      operator boost::dynamic_bitset<> () const {
+      operator boost::dynamic_bitset<uint64_t> () const {
         std::vector<boost::logic::tribool> val = *this;
-        boost::dynamic_bitset<> ret(val.size());
+        boost::dynamic_bitset<uint64_t> ret(val.size());
         for (unsigned i = 0; i < val.size(); ++i) {
           ret[i]=val[i];
         }
