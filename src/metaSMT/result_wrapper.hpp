@@ -370,7 +370,7 @@ namespace metaSMT {
       { }
       result_wrapper( uint64_t value, unsigned long width )
       { 
-        auto r = boost::dynamic_bitset<>(width, value);
+        auto r = boost::dynamic_bitset<uint64_t>(width, value);
         this->r = r;
         uint64_t ret = 0;
           for (unsigned i = 0; i < r.size(); ++i) {
