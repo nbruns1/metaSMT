@@ -373,11 +373,9 @@ namespace metaSMT {
         auto r = boost::dynamic_bitset<>(width, value);
         this->r = r;
         std::cout << "result_wrapper_size:" << r.size() << std::endl;
-        Integer ret = 0;
-          bool isSigned = boost::is_signed<Integer>::value && val[val.size()-1];
-          if( isSigned ) ret = -1 ;
+        uint64_t ret = 0;
           for (unsigned i = 0; i < val.size(); ++i) {
-            ret ^= Integer( val[i]^isSigned ? 1 : 0) << i;
+            ret ^= uint64_t( val[i]^isSigned ? 1 : 0) << i;
           }
         std::cout << "real_value: " << value << "copy_value: " << ret << std:.endl;
       }
