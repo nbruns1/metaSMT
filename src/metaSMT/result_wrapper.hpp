@@ -10,6 +10,7 @@
 #include <boost/optional.hpp>
 #include <boost/function.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <iostream>
 
 #include <vector>
 
