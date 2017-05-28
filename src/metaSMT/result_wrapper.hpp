@@ -14,6 +14,8 @@
 
 #include <vector>
 
+#pragma warning (disable : 4800)
+
 namespace metaSMT {
   /** 
    * return value wrapper
