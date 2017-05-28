@@ -15,6 +15,7 @@
 #include <vector>
 
 #pragma warning (disable : 4800)
+#pragma warning (disable : 4146)
 
 namespace metaSMT {
   /** 
