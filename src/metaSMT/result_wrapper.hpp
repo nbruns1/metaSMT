@@ -307,6 +307,7 @@ namespace metaSMT {
           for (unsigned i = 0; i < val.size(); ++i) {
             ret ^= Integer( val[i]^isSigned ? 1 : 0) << i;
           }
+          std::cout << "ret: " << ret << std::endl;
           return ret;
         }
       }
