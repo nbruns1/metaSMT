@@ -375,9 +375,9 @@ namespace metaSMT {
         std::cout << "result_wrapper_size:" << r.size() << std::endl;
         uint64_t ret = 0;
           for (unsigned i = 0; i < r.size(); ++i) {
-            ret ^= uint64_t( r[i]) << i;
+            ret ^= uint64_t(r[i]) << i;
           }
-        std::cout << "real_value: " << value << "copy_value: " << ret << std:.endl;
+        //std::cout << "real_value: " << value << "copy_value: " << ret << std:.endl;
       }
 
       operator std::vector<bool> () const {
