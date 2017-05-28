@@ -369,7 +369,9 @@ namespace metaSMT {
       { }
       result_wrapper( uint64_t value, unsigned long width )
       : r( boost::dynamic_bitset<>(width, value) )
-      { }
+      { 
+        std::cout << "result_wrapper_size:" << r.size() << std::endl;
+      }
 
       operator std::vector<bool> () const {
         return boost::apply_visitor(as_vector_bool(), r);
