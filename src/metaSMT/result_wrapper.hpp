@@ -268,7 +268,7 @@ namespace metaSMT {
         Integer ret = 0;
         bool isSigned = boost::is_signed<Integer>::value && val.back();
         std::cout << "isSigned: " << isSigned << std::endl;
-        if( isSigned ) ret = -1 ;
+        if( isSigned ) ret = static_cast<Integer>(-1);
         for (unsigned i = 0; i < val.size(); ++i) {
           ret ^= Integer( val[i]^isSigned ? 1 : 0) << i;
         }
