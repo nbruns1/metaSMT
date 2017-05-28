@@ -421,7 +421,7 @@ BOOST_AUTO_TEST_CASE( minus_one_from_string32 )
 
 BOOST_AUTO_TEST_CASE( from_dynamic_bitset )
 {
-	boost::dynamic_bitset<> bs(8, 255);
+	boost::dynamic_bitset<uint64_t> bs(8, 255);
 	result_wrapper rw(bs);
 
   unsigned i = rw;
@@ -440,7 +440,7 @@ BOOST_AUTO_TEST_CASE( from_dynamic_bitset )
 
 BOOST_AUTO_TEST_CASE( minus_one_from_dynamic_bitset )
 {
-	boost::dynamic_bitset<> bs(8, -1);
+	boost::dynamic_bitset<uint64_t> bs(8, -1);
 	result_wrapper rw(bs);
 
   int32_t i = rw;
@@ -449,7 +449,7 @@ BOOST_AUTO_TEST_CASE( minus_one_from_dynamic_bitset )
 
 BOOST_AUTO_TEST_CASE( negative_from_dynamic_bitset )
 {
-	boost::dynamic_bitset<> bs(8, -65);
+	boost::dynamic_bitset<uint64_t> bs(8, -65);
 	result_wrapper rw(bs);
 
   int32_t i = rw;
