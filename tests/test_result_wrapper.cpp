@@ -57,8 +57,8 @@ void check_conversion_XXX( result_wrapper const & rw)
   signed char sc = rw;
   BOOST_REQUIRE_EQUAL( sc, 0);
 
-  dynamic_bitset<> bs = rw;
-  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(3, 0u));
+  dynamic_bitset<uint64_t> bs = rw;
+  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<uint64_t>(3, 0u));
 }
 
 void check_conversion_0_in_8bit( result_wrapper const & rw)
@@ -95,8 +95,8 @@ void check_conversion_0_in_8bit( result_wrapper const & rw)
   BOOST_REQUIRE_EQUAL( sc, 0);
 
 
-  dynamic_bitset<> bs = rw;
-  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(8, 0u));
+  dynamic_bitset<uint64_t> bs = rw;
+  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<uint64_t>(8, 0u));
 }
 
 void check_conversion_1_in_8bit( result_wrapper const & rw)
@@ -134,8 +134,8 @@ void check_conversion_1_in_8bit( result_wrapper const & rw)
   BOOST_REQUIRE_EQUAL( sc, 1);
 
 
-  dynamic_bitset<> bs = rw;
-  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(8, 1u));
+  dynamic_bitset<uint64_t> bs = rw;
+  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<uint64_t>(8, 1u));
 }
 
 void check_conversion_128_in_8bit( result_wrapper const & rw)
@@ -172,8 +172,8 @@ void check_conversion_128_in_8bit( result_wrapper const & rw)
   unsigned long ul = rw.operator unsigned long();
   BOOST_REQUIRE_EQUAL( ul, 128ul);
 
-  dynamic_bitset<> bs = rw;
-  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(8, 128u));
+  dynamic_bitset<uint64_t> bs = rw;
+  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<uint64_t>(8, 128u));
 
 }
 
@@ -202,8 +202,8 @@ void check_conversion_ULONG_MAX_in_64bit( result_wrapper const &rw ) {
   unsigned long ul = rw;
   BOOST_REQUIRE_EQUAL( ul, value );
 
-  dynamic_bitset<> bs = rw;
-  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(64, value));
+  dynamic_bitset<uint64_t> bs = rw;
+  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<uint64_t>(64, value));
 }
 
 void check_conversion_13_in_8bit( result_wrapper const & rw)
@@ -242,8 +242,8 @@ void check_conversion_13_in_8bit( result_wrapper const & rw)
   unsigned long ul = rw;
   BOOST_REQUIRE_EQUAL( ul, 13ul);
 
-  dynamic_bitset<> bs = rw;
-  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(8, 13u));
+  dynamic_bitset<uint64_t> bs = rw;
+  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<uint64_t>(8, 13u));
 
 }
 
@@ -282,8 +282,8 @@ void check_conversion_true( result_wrapper const & rw)
   signed char sc = rw;
   BOOST_REQUIRE_EQUAL( (int)sc, -1);
 
-  dynamic_bitset<> bs = rw;
-  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(1, 1u));
+  dynamic_bitset<uint64_t> bs = rw;
+  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<uint64_t>(1, 1u));
 }
 
 void check_conversion_false( result_wrapper const & rw)
@@ -321,8 +321,8 @@ void check_conversion_false( result_wrapper const & rw)
   unsigned long ul = rw;
   BOOST_REQUIRE_EQUAL( ul, 0ul);
 
-  dynamic_bitset<> bs = rw;
-  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<>(1, 0u));
+  dynamic_bitset<uint64_t> bs = rw;
+  BOOST_REQUIRE_EQUAL(bs, dynamic_bitset<uint64_t>(1, 0u));
 }
 
 BOOST_FIXTURE_TEST_SUITE(test_result_wrapper, Fixture )
@@ -430,12 +430,12 @@ BOOST_AUTO_TEST_CASE( from_dynamic_bitset )
   unsigned long il = rw;
   BOOST_REQUIRE_EQUAL(il, 255);
 
-  check_conversion_1_in_8bit( result_wrapper(dynamic_bitset<>(8, 1)) );
-  check_conversion_128_in_8bit( result_wrapper(dynamic_bitset<>(8, 128)) );
-  check_conversion_13_in_8bit( result_wrapper( dynamic_bitset<>(8,13)) );
-  check_conversion_0_in_8bit( result_wrapper( dynamic_bitset<>(8,0)) );
-  check_conversion_true ( result_wrapper(dynamic_bitset<>(1, 1)) );
-  check_conversion_false( result_wrapper(dynamic_bitset<>(1, 0)) );
+  check_conversion_1_in_8bit( result_wrapper(dynamic_bitset<uint64_t>(8, 1)) );
+  check_conversion_128_in_8bit( result_wrapper(dynamic_bitset<uint64_t>(8, 128)) );
+  check_conversion_13_in_8bit( result_wrapper( dynamic_bitset<uint64_t>(8,13)) );
+  check_conversion_0_in_8bit( result_wrapper( dynamic_bitset<uint64_t>(8,0)) );
+  check_conversion_true ( result_wrapper(dynamic_bitset<uint64_t>(1, 1)) );
+  check_conversion_false( result_wrapper(dynamic_bitset<uint64_t>(1, 0)) );
 }
 
 BOOST_AUTO_TEST_CASE( minus_one_from_dynamic_bitset )

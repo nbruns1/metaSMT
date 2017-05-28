@@ -340,8 +340,8 @@ BOOST_AUTO_TEST_CASE( read_value_eq_t )
   BOOST_CHECK_EQUAL( xvt.at(0), yvt.at(0) );
   
   // dynamic_bitset
-  dynamic_bitset<> xd = read_value(ctx, x);
-  dynamic_bitset<> yd = read_value(ctx, y);
+  dynamic_bitset<uint64_t> xd = read_value(ctx, x);
+  dynamic_bitset<uint64_t> yd = read_value(ctx, y);
   BOOST_CHECK_EQUAL( xd.size(), 1u );
   BOOST_CHECK_EQUAL( yd.size(), 1u );
   BOOST_CHECK_EQUAL( xd[0], yvt[0] );
@@ -388,8 +388,8 @@ BOOST_AUTO_TEST_CASE( read_value_t )
   BOOST_CHECK_NE( xvt.at(0), yvt.at(0) );
 
   // dynamic_bitset
-  dynamic_bitset<> xd = read_value(ctx, x);
-  dynamic_bitset<> yd = read_value(ctx, y);
+  dynamic_bitset<uint64_t> xd = read_value(ctx, x);
+  dynamic_bitset<uint64_t> yd = read_value(ctx, y);
   BOOST_CHECK_EQUAL( xd.size(), 1u );
   BOOST_CHECK_EQUAL( yd.size(), 1u );
   BOOST_CHECK_NE( xd[0], yvt[0] );
@@ -460,7 +460,7 @@ BOOST_AUTO_TEST_CASE( bvnand_t )
   bitvector x = new_bitvector(w);
   bitvector y = new_bitvector(w);
   bitvector z = new_bitvector(w);
-  dynamic_bitset<> xd, yd, zd;
+  dynamic_bitset<uint64_t> xd, yd, zd;
 
   BOOST_REQUIRE( solve(ctx) );
 
@@ -482,7 +482,7 @@ BOOST_AUTO_TEST_CASE( bvor_t )
   bitvector x = new_bitvector(2);
   bitvector y = new_bitvector(2);
   bitvector z = new_bitvector(2);
-  dynamic_bitset<> xd, yd, zd;
+  dynamic_bitset<uint64_t> xd, yd, zd;
 
   BOOST_REQUIRE( solve(ctx) );
 
@@ -504,7 +504,7 @@ BOOST_AUTO_TEST_CASE( bvxor_t )
   bitvector x = new_bitvector(2);
   bitvector y = new_bitvector(2);
   bitvector z = new_bitvector(2);
-  dynamic_bitset<> xd, yd, zd;
+  dynamic_bitset<uint64_t> xd, yd, zd;
 
   BOOST_REQUIRE( solve(ctx) );
 
@@ -527,7 +527,7 @@ BOOST_AUTO_TEST_CASE( bvnor_t )
   bitvector x = new_bitvector(2);
   bitvector y = new_bitvector(2);
   bitvector z = new_bitvector(2);
-  dynamic_bitset<> xd, yd, zd;
+  dynamic_bitset<uint64_t> xd, yd, zd;
 
   BOOST_REQUIRE( solve(ctx) );
 
@@ -550,7 +550,7 @@ BOOST_AUTO_TEST_CASE( bvxnor_t )
   bitvector x = new_bitvector(2);
   bitvector y = new_bitvector(2);
   bitvector z = new_bitvector(2);
-  dynamic_bitset<> xd, yd, zd;
+  dynamic_bitset<uint64_t> xd, yd, zd;
 
   BOOST_REQUIRE( solve(ctx) );
 
