@@ -278,7 +278,7 @@ namespace metaSMT {
       result_type operator() ( std::string const & val ) const
       {
         Integer ret = 0;
-        if( boost::is_signed<Integer>::value && val[0] == '1' ) ret = -1;
+        if( boost::is_signed<Integer>::value && val[0] == '1' ) ret = static_cast<Integer>(-1);
         for (std::string::const_iterator ite = val.begin();  ite != val.end(); ++ite)
         {
           ret <<=1;
