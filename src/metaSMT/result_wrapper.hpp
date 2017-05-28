@@ -281,7 +281,7 @@ namespace metaSMT {
         if( boost::is_signed<Integer>::value && val[0] == '1' ) ret = static_cast<Integer>(-1);
         for (std::string::const_iterator ite = val.begin();  ite != val.end(); ++ite)
         {
-          ret <<=1;
+          ret <<= static_cast<Integer>(1);
           switch ( *ite ) {
             case '0':
               break;
