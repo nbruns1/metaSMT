@@ -369,8 +369,9 @@ namespace metaSMT {
         )
       { }
       result_wrapper( uint64_t value, unsigned long width )
-      : r( boost::dynamic_bitset<>(width, value) )
       { 
+        auto r = boost::dynamic_bitset<>(width, value);
+        this->r = r;
         std::cout << "result_wrapper_size:" << r.size() << std::endl;
       }
 
