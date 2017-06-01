@@ -220,6 +220,7 @@ namespace metaSMT {
         std::string s(val.size(), '\0');
         boost::to_string(val, s);
         s.begin(), s.end();
+        std::cout << "result_type operator() "<< s << " size: " << val.size() << std::endl;
         return s;
       }
 
