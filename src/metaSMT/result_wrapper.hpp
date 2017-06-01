@@ -224,7 +224,7 @@ namespace metaSMT {
         std::cout << "bitset:";
         for(unsigned i = 0; i<val.size();i++)
         {
-          std::cout << v[i];
+          std::cout << val[i];
         }
         std::cout << std::endl;
         return s;
