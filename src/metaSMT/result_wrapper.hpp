@@ -384,7 +384,7 @@ namespace metaSMT {
         for (unsigned i = 0; i < r.size(); ++i) {
             ret2 ^= uint64_t( r[i]^!isSigned ? 1 : 0) << i;
           }
-        std::cout << "size:" << r.size() << "real_value: " << value << " signed_copy_value: " << ret << " unsigned_copy_value: " << ret2 << std::endl;
+        //std::cout << "size:" << r.size() << "real_value: " << value << " signed_copy_value: " << ret << " unsigned_copy_value: " << ret2 << std::endl;
       }
 
       operator std::vector<bool> () const {
