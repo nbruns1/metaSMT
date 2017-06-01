@@ -215,8 +215,10 @@ namespace metaSMT {
         return s;
       }
 
+      /*
       result_type operator() ( boost::dynamic_bitset<uint64_t> const & val ) const
       {
+        
         std::string s(val.size(), '\0');
         boost::to_string(val, s);
         s.begin(), s.end();
@@ -228,6 +230,17 @@ namespace metaSMT {
         }
         std::cout << std::endl;
         return s;
+      }*/
+
+      result_type operator() ( boost::dynamic_bitset<uint64_t> const & val ) const
+      {
+          std::string s(val.size(),'0')
+          bool isSigned = boost::is_signed<Integer>::value && val[val.size()-1];
+          for (unsigned i = 0; i < val.size(); ++i) {
+            ret[i] ^= (val[i]^isSigned);
+          }
+          return ret;
+        }
       }
 
     };
