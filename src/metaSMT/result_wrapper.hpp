@@ -237,7 +237,7 @@ namespace metaSMT {
           std::string s(val.size(),'0')
           bool isSigned = boost::is_signed<Integer>::value && val[val.size()-1];
           for (unsigned i = 0; i < val.size(); ++i) {
-            ret[i] ^= (val[i]^isSigned);
+            s[i] = '0'+(val[i]^isSigned);
           }
           return ret;
         }
