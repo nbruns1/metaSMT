@@ -239,8 +239,7 @@ namespace metaSMT {
           for (unsigned i = 0; i < val.size(); ++i) {
             s[i] = '0'+(val[i]^isSigned);
           }
-          return ret;
-        }
+          return s;
       }
 
     };
