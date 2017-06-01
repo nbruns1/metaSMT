@@ -1925,8 +1925,9 @@ BOOST_AUTO_TEST_CASE( constant_64bit )
   assumption(ctx, equal(x, bvuint(value, w)));
   BOOST_REQUIRE( solve(ctx) );
 
-  uint64_t xd = read_value(ctx, x);
-  std::string xs = read_value(ctx, x);
+  result_wrapper tmp = read_value(ctx,x);
+  uint64_t xd = tmp;
+  std::string xs = tmp;
   BOOST_CHECK_EQUAL(xd, value);
   BOOST_CHECK_EQUAL(xs, "1111111111111111111111111111111111111111111111111111111111111111");
 
