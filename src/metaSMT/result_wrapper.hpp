@@ -234,7 +234,7 @@ namespace metaSMT {
 
       result_type operator() ( boost::dynamic_bitset<uint64_t> const & val ) const
       {
-          std::string s(val.size(),'0')
+          std::string s(val.size(),'0');
           for (unsigned i = 0; i < val.size(); ++i) {
             s[i] = '0'+(val[i]);
           }
