@@ -222,9 +222,9 @@ namespace metaSMT {
         s.begin(), s.end();
         std::cout << "result_type operator() "<< s << " size: " << val.size() << std::endl;
         std::cout << "bitset:";
-        for(bool v : val)
+        for(unsigned i = 0; i<val.size();i++)
         {
-          std::cout << v;
+          std::cout << v[i];
         }
         std::cout << std::endl;
         return s;
