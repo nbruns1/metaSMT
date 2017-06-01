@@ -221,6 +221,12 @@ namespace metaSMT {
         boost::to_string(val, s);
         s.begin(), s.end();
         std::cout << "result_type operator() "<< s << " size: " << val.size() << std::endl;
+        std::cout << "bitset:";
+        for(bool v : val)
+        {
+          std::cout << v;
+        }
+        std::cout << std::endl;
         return s;
       }
 
