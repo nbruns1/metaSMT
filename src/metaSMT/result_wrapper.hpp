@@ -235,9 +235,8 @@ namespace metaSMT {
       result_type operator() ( boost::dynamic_bitset<uint64_t> const & val ) const
       {
           std::string s(val.size(),'0')
-          bool isSigned = boost::is_signed<Integer>::value && val[val.size()-1];
           for (unsigned i = 0; i < val.size(); ++i) {
-            s[i] = '0'+(val[i]^isSigned);
+            s[i] = '0'+(val[i]);
           }
           return s;
       }
