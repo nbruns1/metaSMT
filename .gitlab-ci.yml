@@ -1,0 +1,46 @@
+before_script:
+  - apt-get -qq update
+  - apt-get -qq -y upgrade
+  - apt-get install -qq -y build-essential cmake git wget unzip zlib1g-dev python
+  - NUM_JOBS=$[`nproc`-1]
+  - if [ "$NUM_JOBS" -lt 1 ]; then NUM_JOBS=1; fi
+
+### templates for docker images
+.ubuntu16: &ubuntu16
+  image: ubuntu:xenial
+  tags:
+  - docker
+
+.ubuntu14: &ubuntu14
+  image: ubuntu:trusty
+  tags:
+  - docker
+
+.debian8: &debian8
+  image: debian:jessie
+  tags:
+  - docker
+
+### template and jobs for the default build that should be testes on all images
+.build_default:
+  script: &build_default
+  - git clone https://github.com/agra-uni-bremen/dependencies.git
+  - ./bootstrap.sh -d deps -m RELEASE build --build boolector-2.4.1 --build lingeling-bbc-9230380-161217 --build minisat-git
+  - cd build
+  - make -j $NUM_JOBS
+  - ctest --output-on-failure --output-log tests.log || true
+  - NUM_FAILED=`grep -o -E '[0-9]+ tests failed' tests.log | grep -o -E '[0-9]+'`
+  - if [ "$NUM_FAILED" -gt 10 ]; then echo "Too many failures ($NUM_FAILED)"; exit 1; fi
+
+build_default_ubuntu16:
+  <<: *ubuntu16
+  script: *build_default
+
+build_default_ubuntu14:
+  <<: *ubuntu14
+  script: *build_default
+
+build_default_debian8:
+  <<: *debian8
+  script: *build_default
+
