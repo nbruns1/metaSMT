@@ -167,10 +167,10 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
-        typedef boost::tuple<uint64_t, uint64_t> Tuple;
+        typedef boost::tuple<uint64_t, unsigned> Tuple;
         Tuple tuple = boost::any_cast<Tuple>(arg);
         uint64_t value = boost::get<0>(tuple);
-        uint64_t width = boost::get<1>(tuple);
+        unsigned width = boost::get<1>(tuple);
 
         return exprManager_.mkConst(::CVC4::BitVector(width, value));
       }

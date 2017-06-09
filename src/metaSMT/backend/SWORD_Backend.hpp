@@ -90,7 +90,7 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::bvuint_tag , boost::any arg ) {
-          typedef boost::tuple<uint64_t, uint64_t> P;
+          typedef boost::tuple<uint64_t, unsigned> P;
           P p = boost::any_cast<P>(arg);
           //printf("bvuint\n");
           return _sword.addConstant(boost::get<1>(p), boost::get<0>(p));

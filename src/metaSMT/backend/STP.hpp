@@ -202,16 +202,16 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
-        typedef boost::tuple<uint64_t, uint64_t> Tuple;
+        typedef boost::tuple<uint64_t, unsigned> Tuple;
         Tuple tuple = boost::any_cast<Tuple>(arg);
         uint64_t value = boost::get<0>(tuple);
-        uint64_t width = boost::get<1>(tuple);
+        unsigned width = boost::get<1>(tuple);
 
         if ( width > 8*sizeof(uint64_t) ) {
           std::string val (width, '0');
 
           std::string::reverse_iterator sit = val.rbegin();
-          for (uint64_t i = 0; i < width; i++, ++sit) {
+          for (unsigned i = 0; i < width; i++, ++sit) {
             *sit = (value & 1ul) ? '1':'0';
             value >>= 1;
           }

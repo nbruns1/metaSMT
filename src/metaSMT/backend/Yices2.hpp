@@ -231,10 +231,10 @@ class Yices2Impl {
   result_type operator()(bvtags::bvudiv_tag, result_type a, result_type b) { return yices_bvdiv(a, b); }
 
   result_type operator()(bvtags::bvuint_tag, boost::any arg) {
-    typedef boost::tuple<uint64_t, uint64_t> Tuple;
+    typedef boost::tuple<uint64_t, unsigned> Tuple;
     Tuple tuple = boost::any_cast<Tuple>(arg);
     uint64_t value = boost::get<0>(tuple);
-    uint64_t width = boost::get<1>(tuple);
+    unsigned width = boost::get<1>(tuple);
     return yices_bvconst_uint64(width, value);
   }
 
