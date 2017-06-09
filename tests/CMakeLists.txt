@@ -20,8 +20,9 @@ endif()
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     OUTPUT_VARIABLE test_cases
   )
+  message(FATAL_ERROR ${test_cases})
   string(REPLACE "\n" ";" test_cases "${test_cases}")
-
+  
   foreach(test  ${test_cases})
     #message(STATUS "${prog}/${test} ${prog} -t ${test}")
     add_test("${prog}/${test}" ${prog} -t ${test} ${opts_ARGS})
