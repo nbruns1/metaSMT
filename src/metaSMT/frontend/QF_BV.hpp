@@ -58,8 +58,8 @@ namespace metaSMT {
           , proto::or_<
               proto::binary_expr<tag::concat_tag, QF_BV_Grammar, QF_BV_Grammar>
             , proto::binary_expr<tag::extract_tag, QF_BV_Grammar, QF_BV_Grammar>
-            , proto::binary_expr<tag::zero_extend_tag, QF_BV_Grammar, uint64_t>
-            , proto::binary_expr<tag::sign_extend_tag, QF_BV_Grammar, uint64_t>
+            , proto::binary_expr<tag::zero_extend_tag, QF_BV_Grammar, unsigned>
+            , proto::binary_expr<tag::sign_extend_tag, QF_BV_Grammar, unsigned>
             >
           // shifting
           , proto::or_<
