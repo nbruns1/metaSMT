@@ -346,7 +346,7 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::zero_extend_tag const &
-        , uint64_t width
+        , unsigned width
         , result_type e) {
         std::string s(width, '0');
         Expr zeros = ptr(vc_bvConstExprFromStr(vc, s.c_str()));
@@ -354,7 +354,7 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::sign_extend_tag const &
-        , uint64_t width
+        , unsigned width
         , result_type e) {
         uint64_t const current_width = getBVLength(e);
         return ptr(vc_bvSignExtend(vc, e, current_width + width));

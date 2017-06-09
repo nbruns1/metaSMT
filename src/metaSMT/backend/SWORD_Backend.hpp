@@ -126,14 +126,14 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::zero_extend_tag const & 
-            , uint64_t width
+            , unsigned width
             , result_type e)
         {
           return _sword.addZeroExtend(e, width);
         }
 
         result_type operator() (bvtags::sign_extend_tag const & 
-            , uint64_t width
+            , unsigned width
             , result_type e)
         {
           return _sword.addSignExtend(e, width);

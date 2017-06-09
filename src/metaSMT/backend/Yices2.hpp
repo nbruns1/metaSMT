@@ -280,11 +280,11 @@ class Yices2Impl {
     return throw_error(yices_bvextract(e, lower, upper));
   }
 
-  result_type operator()(bvtags::zero_extend_tag const &, uint64_t width, result_type e) {
+  result_type operator()(bvtags::zero_extend_tag const &, unsigned width, result_type e) {
     return throw_error(yices_zero_extend(e, width));
   }
 
-  result_type operator()(bvtags::sign_extend_tag const &, uint64_t width, result_type e) {
+  result_type operator()(bvtags::sign_extend_tag const &, unsigned width, result_type e) {
     return throw_error(yices_sign_extend(e, width));
   }
 
