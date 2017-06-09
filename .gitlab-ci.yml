@@ -8,7 +8,7 @@ before_script:
 ### templates for docker images
 
 .ubuntu16-32: &ubuntu32
-  image: 32bit/ubuntu:16.04
+  image: m0elnx/ubuntu-32bit:latest
   tags:
   - docker
 
