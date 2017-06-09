@@ -48,7 +48,7 @@ build_z3:
   <<: *ubuntu14
   script:
   - git clone https://github.com/agra-uni-bremen/dependencies.git
-  - ./bootstrap.sh -d deps --systemc -b z3 build
+  - ./bootstrap.sh -d deps -m RELEASE build -b z3
   - cd build
   - make -j $NUM_JOBS
   - ctest --output-on-failure --output-log tests.log || true
