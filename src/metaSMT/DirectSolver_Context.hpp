@@ -13,13 +13,11 @@
 #include "support/Options.hpp"
 
 #if __cplusplus <= 199711L
-
 #include <boost/unordered_map.hpp>
 #define unordered_map boost::unordered_map
-
 #else
-
 #include <unordered_map>
+#endif
 
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
