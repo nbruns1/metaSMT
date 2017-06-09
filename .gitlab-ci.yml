@@ -25,7 +25,7 @@ before_script:
 .build_default:
   script: &build_default
   - git clone https://github.com/agra-uni-bremen/dependencies.git
-  - ./bootstrap.sh -d deps -m RELEASE build --build boolector-2.4.1 --build lingeling-bbc-9230380-161217 --build minisat-git --build Z3-4.4.1
+  - ./bootstrap.sh -d deps -m RELEASE build --build boolector-2.4.1 --build lingeling-bbc-9230380-161217 --build minisat-git
   - cd build
   - make -j $NUM_JOBS
   - ctest --output-on-failure --output-log tests.log || true
@@ -44,3 +44,13 @@ build_default_debian8:
   <<: *debian8
   script: *build_default
 
+build_z3:
+  <<: *ubuntu16
+  script:
+  - ./bootstrap.sh -d deps --systemc -b cudd -b z3 build
+  - cd build
+  - make -j $NUM_JOBS
+  - ctest --output-on-failure --output-log tests.log || true
+  - NUM_FAILED=`grep -o -E '[0-9]+ tests failed' tests.log | grep -o -E '[0-9]+'`
+  - if [ "$NUM_FAILED" -gt 10 ]; then echo "Too many failures ($NUM_FAILED)"; exit 1; fi
+  allow_failure: true
