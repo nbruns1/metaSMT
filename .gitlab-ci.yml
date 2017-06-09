@@ -1,11 +1,7 @@
 before_script:
   - apt-get -qq update
   - apt-get -qq -y upgrade
-<<<<<<< HEAD
   - apt-get install -qq -y build-essential cmake git wget unzip zlib1g-dev python
-=======
-  - apt-get install -qq -y build-essential cmake git wget unzip zlib1g-dev
->>>>>>> qf_abv
   - NUM_JOBS=$[`nproc`-1]
   - if [ "$NUM_JOBS" -lt 1 ]; then NUM_JOBS=1; fi
 
