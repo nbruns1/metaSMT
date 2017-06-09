@@ -13,13 +13,13 @@ namespace metaSMT {
     // n is variable n
     // -m is variable n negated
     struct lit_tag { 
-      int id; 
+      int64_t id; 
       template<typename STREAM>
       friend STREAM & operator<< (STREAM & out, lit_tag const & self)
       {  out << "sat_lit[" << self.id  << "]"; return out; }
       bool operator< (lit_tag const & other) const { return id < other.id; }
       lit_tag operator- () const { lit_tag l = { -id }; return l; }
-      int var() const {return id >= 0 ? id: -id; }
+      int64_t var() const {return id >= 0 ? id: -id; }
     };
 
     struct c_tag { 
