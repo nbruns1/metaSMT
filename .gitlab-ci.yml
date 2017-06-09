@@ -6,6 +6,12 @@ before_script:
   - if [ "$NUM_JOBS" -lt 1 ]; then NUM_JOBS=1; fi
 
 ### templates for docker images
+
+.ubuntu16-32: &ubuntu32
+  image: 32bit/ubuntu:16.04
+  tags:
+  - docker
+
 .ubuntu16: &ubuntu16
   image: ubuntu:xenial
   tags:
@@ -46,6 +52,18 @@ build_default_debian8:
 
 build_z3:
   <<: *ubuntu14
+  script:
+  - git clone https://github.com/agra-uni-bremen/dependencies.git
+  - ./bootstrap.sh -d deps -m RELEASE build --build Z3-4.5.0
+  - cd build
+  - make -j $NUM_JOBS
+  - ctest --output-on-failure --output-log tests.log || true
+  - NUM_FAILED=`grep -o -E '[0-9]+ tests failed' tests.log | grep -o -E '[0-9]+'`
+  - if [ "$NUM_FAILED" -gt 10 ]; then echo "Too many failures ($NUM_FAILED)"; exit 1; fi
+  allow_failure: true
+
+build_z3-32bit:
+  <<: *ubuntu32
   script:
   - git clone https://github.com/agra-uni-bremen/dependencies.git
   - ./bootstrap.sh -d deps -m RELEASE build --build Z3-4.5.0
