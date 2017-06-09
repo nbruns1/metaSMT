@@ -6,15 +6,15 @@ BUILD_DIR=$PWD/build
 BOOST=boost-1_60_0-fs
 
 ACADEMIC="
-  boolector-2.2.0
-  lingeling-ayv-86bf266-140429
+  boolector-2.4.1
+  lingeling-bbc-9230380-161217
   minisat-git
-  yices-2.5.1
+  yices-2.5.2
 "
 
 FREE="
-  Z3-4.4.1
-  cvc4-1.5pre-smtcomp2016
+  Z3-4.5.0
+  cvc4-smtcomp2015-stable
   stp-git-basic
   cryptominisat-git
   minisat-git

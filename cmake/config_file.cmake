@@ -118,6 +118,14 @@ function( generate_config_files )
     ${PROJECT_BINARY_DIR}/metaSMT.pc
   	DESTINATION lib/pkgconfig/)
 
+  ## create metaSMT script to set LD_LIBRARY_PATH
+  string(REPLACE ";" ":" _RPATH "${CMAKE_INSTALL_RPATH}")
+  file(WRITE ${PROJECT_BINARY_DIR}/metaSMTLibPath.env
+    "export LD_LIBRARY_PATH=${_RPATH}:\$LD_LIBRARY_PATH")
+  INSTALL( FILES
+    ${PROJECT_BINARY_DIR}/metaSMTLibPath.env
+    DESTINATION share/metaSMT)
+
 endfunction( generate_config_files )
 
 

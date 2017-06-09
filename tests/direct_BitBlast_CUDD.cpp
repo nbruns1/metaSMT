@@ -6,7 +6,7 @@
 using namespace metaSMT::solver;
 using namespace metaSMT;
 struct Solver_Fixture {
-  typedef DirectSolver_Context<BitBlast<CUDD_Context>> ContextType;
+  typedef DirectSolver_Context<BitBlast<CUDD_Context> > ContextType;
   ContextType ctx ;
 };
 

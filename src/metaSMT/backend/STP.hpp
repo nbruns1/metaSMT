@@ -12,6 +12,7 @@ extern "C" {
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <list>
+#include <cstdio>
 
 namespace metaSMT {
   namespace solver {
@@ -49,7 +50,7 @@ namespace metaSMT {
       }
 
       void assertion( result_type e ) {
-        assertions.push_back( e );
+        vc_assertFormula(vc, e);
       }
 
       void assumption( result_type e ) {
@@ -68,25 +69,19 @@ namespace metaSMT {
         , TIMEOUT = 3
         };
 
-        Expr e = ptr(vc_trueExpr( vc ));
-        for ( Exprs::const_iterator it = assertions.begin(), ie = assertions.end();
-              it != ie; ++it ) {
-          e = ptr(vc_andExpr(vc, e, *it));
-        }
-        for ( Exprs::const_iterator it = assumptions.begin(), ie = assumptions.end();
-              it != ie; ++it ) {
-          e = ptr(vc_andExpr(vc, e, *it));
+        if (!assumptions.empty()) {
+          vc_push(vc);
+          for ( Exprs::const_iterator it = assumptions.begin(), ie = assumptions.end();
+            it != ie; ++it ) {
+            vc_assertFormula(vc, *it);
+          }
         }
 
-        // negate formula
-        e = ptr(vc_notExpr(vc, e));
-        // vc_printExpr(vc, e);
-
-        vc_push( vc );
         bool sat = false;
-        switch ( vc_query(vc, e) ) {
+        // check (F -> false)
+        switch ( vc_query(vc, vc_falseExpr(vc)) ) {
         case VALID:
-          // negated formula is tautologie
+          // implies (not F) is valid
           sat = false;
           break;
         case INVALID:
@@ -97,9 +92,11 @@ namespace metaSMT {
           assert( false && "STP solver returns neither SAT nor UNSAT!");
           // exception
         }
-        vc_pop( vc );
-        // std::cerr << "SAT? " << sat << '\n';
-        assumptions.clear();
+
+        if (!assumptions.empty()) {
+          vc_pop( vc );
+          assumptions.clear();
+        }
 
         return sat;
       }
@@ -532,7 +529,6 @@ namespace metaSMT {
       void command ( STP const & ) { }
 
       VC vc;
-      Exprs assertions;
       Exprs assumptions;
       Exprs exprs;
     }; // STP

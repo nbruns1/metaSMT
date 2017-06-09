@@ -1,3 +1,9 @@
+#if __cplusplus <= 199711L
+
+#pragma message("Disable test_unsat testcases which require C++11")
+
+#else
+
 #include <boost/test/unit_test.hpp>
 #include <string>
 
@@ -572,4 +578,5 @@ BOOST_AUTO_TEST_CASE( unsolve_conflict_vec)
 
 BOOST_AUTO_TEST_SUITE_END() //Solver
 
+#endif
 //  vim: ft=cpp:ts=2:sw=2:expandtab

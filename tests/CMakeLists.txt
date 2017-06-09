@@ -2,6 +2,19 @@ include(CMakeParseArguments)
 
 include_directories(../src ${metaSMT_INCLUDES})
 
+# From v1.59.0 Boost.Test does not require RTTI
+if (${Boost_VERSION} VERSION_LESS 105900)
+  message( STATUS "Compile metaSMT tests with RTTI" )
+else()
+  CHECK_CXX_COMPILER_FLAG("-fno-rtti" COMPILER_SUPPORTS_FNO_RTTI)
+  if (COMPILER_SUPPORTS_FNO_RTTI)
+    add_definitions(-fno-rtti)
+    message( STATUS "Compile metaSMT tests without RTTI" )
+  else()
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} does not support -fno-rtti, compile metaSMT tests with RTTI")
+  endif()
+endif()
+
 add_library(boost_test boost_test.cpp)
 link_libraries(boost_test metaSMT)
 
@@ -77,7 +90,13 @@ add_test_executable( direct_Z3 direct_Z3.cpp REQUIRES Z3_FOUND )
 
 add_test_executable( direct_STP direct_STP.cpp REQUIRES STP_FOUND )
 
-add_test_executable( direct_CVC4 direct_CVC4.cpp REQUIRES CVC4_FOUND )
+if (NOT CVC4_CXXFLAGS)
+  set(CVC4_CXXFLAGS "-DCVC4_DUMMY_FLAG")
+endif()
+add_test_executable( direct_CVC4 direct_CVC4.cpp
+  REQUIRES CVC4_FOUND
+  PROPERTIES COMPILE_FLAGS "${CVC4_CXXFLAGS}"
+  )
 
 add_test_executable( direct_MiniSAT direct_MiniSAT.cpp
   REQUIRES MiniSat_FOUND
@@ -99,4 +118,5 @@ add_test_executable( direct_Aiger_MiniSAT direct_Aiger_MiniSAT.cpp
 
 add_test_executable( direct_Aiger_PicoSAT direct_Aiger_PicoSAT.cpp
   REQUIRES PicoSAT_FOUND Aiger_FOUND )
+
 # vim: ts=2 sw=2 et

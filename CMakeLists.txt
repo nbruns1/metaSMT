@@ -1,12 +1,17 @@
 PROJECT(metaSMT)
 cmake_minimum_required(VERSION 2.8.9)
 
+option(metaSMT_REQUIRE_CXX11 "make C++11 a requirement" on)
+
 include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-if(COMPILER_SUPPORTS_CXX11)
-	add_definitions(-std=c++11)
-else()
-	message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} does not support -std=c++11. Please use a different C++ compiler.")
+
+if (metaSMT_REQUIRE_CXX11)
+  CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+  if(COMPILER_SUPPORTS_CXX11)
+    add_definitions(-std=c++11)
+  else()
+    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} does not support -std=c++11. Please use a different C++ compiler.")
+  endif()
 endif()
 
 include(CheckIncludeFileCXX)
@@ -18,10 +23,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules )
 
 set(Boost_NO_BOOST_CMAKE true)
 set(Boost_NO_SYSTEM_PATHS true)
-find_package(Boost)
+find_package(Boost REQUIRED)
 
-if(NOT ${Boost_FOUND})
-  message(FATAL_ERROR "Boost could not be found.")
+# From v1.57.0 Boost.Any does not require RTTI
+if (${Boost_VERSION} VERSION_LESS 105700)
+  message( STATUS "metaSMT requires RTTI" )
+  set(metaSMT_REQUIRE_RTTI true)
+else()
+  message( STATUS "metaSMT does not require RTTI" )
+  set(metaSMT_REQUIRE_RTTI false)
 endif()
 
 # From v1.57.0 Boost.Any does not require RTTI
@@ -183,9 +193,12 @@ else()
 endif()
 
 if(Z3_FOUND)
-  find_package(OpenMP QUIET)
-  if (OpenMP_FOUND)
-    set(Z3_CXXFLAGS "${OpenMP_CXX_FLAGS}")
+  find_package(OpenMP)
+  if (OPENMP_FOUND)
+    set(Z3_CXXFLAGS ${OpenMP_CXX_FLAGS})
+    if (UNIX)
+      list(APPEND Z3_LIBRARIES ${OpenMP_CXX_FLAGS})
+    endif()
     message(STATUS "Use Z3 with OpenMP")
   else()
     message(STATUS "Use Z3 without OpenMP")
@@ -231,6 +244,13 @@ if(CVC4_FOUND)
     set(CVC4_LIBRARIES ${CVC4_LIBRARIES} ${GMP_LIBRARIES})
   endif()
 
+  if(EXISTS "${CVC4_INCLUDE_DIR}/cvc4/expr/kind.h")
+    file(STRINGS ${CVC4_INCLUDE_DIR}/cvc4/expr/kind.h CVC4_KIND_IFF REGEX "IFF")
+    if (NOT CVC4_KIND_IFF)
+      message(STATUS "CVC4 version without boolean operator IFF")
+      set(CVC4_CXXFLAGS "-DCVC4_WITHOUT_KIND_IFF")
+    endif()
+  endif()
 endif()
 
 
@@ -245,6 +265,7 @@ endif ()
 #############################################################
 
 set(metaSMT_AVAILABLE_QF_ABV_SOLVERS "")
+set(metaSMT_INCLUDES ${Boost_INCLUDE_DIRS})
 
 if(SWORD_FOUND)
   config_find(SWORD ${SWORD_DIR})
@@ -274,7 +295,7 @@ if(Z3_FOUND)
   config_find(Z3 ${Z3_DIR})
   list(APPEND metaSMT_LIBS ${Z3_LIBRARIES})
   list(APPEND metaSMT_INCLUDES ${Z3_INCLUDE_DIR})
-  list(APPEND metaSMT_CXXFLAGS ${Z3_CXXFLAGS})
+  set(metaSMT_CXXFLAGS "${metaSMT_CXXFLAGS} ${Z3_CXXFLAGS}")
   list(APPEND metaSMT_AVAILABLE_QF_ABV_SOLVERS "Z3")
 endif()
 
@@ -293,6 +314,7 @@ if(CVC4_FOUND)
   config_find(CVC4 ${CVC4_DIR})
   list(APPEND metaSMT_LIBS ${CVC4_LIBRARIES})
   list(APPEND metaSMT_INCLUDES ${CVC4_INCLUDE_DIR})
+  set(metaSMT_CXXFLAGS "${metaSMT_CXXFLAGS} ${CVC4_CXXFLAGS}")
   list(APPEND metaSMT_AVAILABLE_QF_ABV_SOLVERS "CVC4")
 endif()
 

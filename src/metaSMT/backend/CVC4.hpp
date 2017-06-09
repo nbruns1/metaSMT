@@ -233,11 +233,15 @@ namespace metaSMT {
       result_type operator()( predtags::equal_tag const &
                              , result_type a
                              , result_type b) {
+#ifndef CVC4_WITHOUT_KIND_IFF
         if (a.getType().isBoolean() && b.getType().isBoolean() ) {
           return exprManager_.mkExpr(::CVC4::kind::IFF, a, b);
         } else {
           return exprManager_.mkExpr(::CVC4::kind::EQUAL, a, b);
         }
+#else
+        return exprManager_.mkExpr(::CVC4::kind::EQUAL, a, b);
+#endif
       }
 
       result_type operator()( predtags::nequal_tag const &

@@ -9,7 +9,7 @@ using namespace metaSMT::solver;
 using namespace metaSMT;
 struct Solver_Fixture
 {
-  typedef DirectSolver_Context<BitBlast<SAT_Clause<PicoSAT>>> ContextType;
+  typedef DirectSolver_Context<BitBlast<SAT_Clause<PicoSAT> > > ContextType;
   ContextType ctx;
 };
 

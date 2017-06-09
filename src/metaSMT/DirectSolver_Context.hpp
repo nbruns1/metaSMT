@@ -12,6 +12,13 @@
 #include "API/BoolEvaluator.hpp"
 #include "support/Options.hpp"
 
+#if __cplusplus <= 199711L
+
+#include <boost/unordered_map.hpp>
+#define unordered_map boost::unordered_map
+
+#else
+
 #include <unordered_map>
 
 #include <boost/any.hpp>
