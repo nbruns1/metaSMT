@@ -654,7 +654,7 @@ namespace metaSMT {
           return bv_result(1,ret);
        }
 
-       result_type operator() ( bvtags::zero_extend_tag, unsigned width, result_type arg1 ) 
+       result_type operator() ( bvtags::zero_extend_tag, uint64_t width, result_type arg1 ) 
        {
           bv_result a = boost::get<bv_result>(arg1);
           bv_result tmp(a.size()+width,_solver(predtags::false_tag(),boost::any()));
@@ -663,7 +663,7 @@ namespace metaSMT {
           return tmp;
        }
        
-       result_type operator() ( bvtags::sign_extend_tag, unsigned width, result_type arg1 ) 
+       result_type operator() ( bvtags::sign_extend_tag, uint64_t width, result_type arg1 ) 
        {
           bv_result a = boost::get<bv_result>(arg1);
           assert(!a.empty());

@@ -424,13 +424,13 @@ namespace metaSMT {
       }
 
       result_type operator() (bvtags::zero_extend_tag const &,
-                              unsigned width,
+                              uint64_t width,
                               result_type e) {
         return z3::to_expr(ctx_, Z3_mk_zero_ext(ctx_, width, z3::expr(e)));
       }
 
       result_type operator() (bvtags::sign_extend_tag const &, 
-                              unsigned width,
+                              uint64_t width,
                               result_type e) {
         return z3::to_expr(ctx_, Z3_mk_sign_ext(ctx_, width, z3::expr(e)));
       }
