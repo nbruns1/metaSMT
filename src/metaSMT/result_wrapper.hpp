@@ -2,16 +2,18 @@
 
 #include <boost/mpl/vector.hpp>
 #include <boost/variant.hpp>
-#include <boost/concept_check.hpp>
 #include <boost/logic/tribool.hpp>
 #include <boost/dynamic_bitset.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_signed.hpp>
 #include <boost/optional.hpp>
 #include <boost/function.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
+#include <limits>
 #include <vector>
+
+#pragma warning (disable : 4800)
+#pragma warning (disable : 4146)
 
 namespace metaSMT {
   /** 
@@ -62,16 +64,6 @@ namespace metaSMT {
         }
         return ret;
       }
-
-      template<typename T, typename T2>
-      result_type operator() ( boost::dynamic_bitset<T, T2> const & t ) const {
-        result_type ret (t.size());
-        for (unsigned i = 0; i < t.size(); ++i) {
-          ret[i] = t[i];
-        }
-        return ret;
-      }
-
     };
 
     struct as_tribool 
@@ -87,14 +79,6 @@ namespace metaSMT {
           ret = ret||t[i];
         }
         return ret;
-      }
-
-      template<typename T, typename T2>
-      result_type operator() ( boost::dynamic_bitset<T, T2> const & t ) const {
-        for (unsigned i = 0; i < t.size(); ++i) {
-          if (t[i]) return true;
-        }
-        return false;
       }
 
       result_type operator() (bool b ) const {
@@ -158,15 +142,6 @@ namespace metaSMT {
          ret[i] = (s[s.size() - i -1] == '1');
         return ret;
       }
-
-      template<typename T, typename T2>
-      result_type operator() ( boost::dynamic_bitset<T, T2> const & t ) const {
-        result_type ret (t.size());
-        for (unsigned i = 0; i < t.size(); ++i) {
-          ret[i] = t[i];
-        }
-        return ret;
-      }
     };
 
     struct as_string
@@ -210,105 +185,6 @@ namespace metaSMT {
         }
         return s;
       }
-
-      result_type operator() ( boost::dynamic_bitset<> const & val ) const
-      {
-        std::string s(val.size(), '\0');
-        boost::to_string(val, s);
-        s.begin(), s.end();
-        return s;
-      }
-
-    };
-
-    template<typename Integer>
-    struct as_integer {
-
-      typedef Integer result_type;
-      typedef boost::optional< boost::function0<bool> > Rng;
-
-      as_integer ( Rng rng ) : _rng(rng) {}
-
-      result_type operator() ( bool b ) const {
-        if (boost::is_signed<Integer>::value) {
-          return -(Integer)b;
-        } else {
-          return b;
-        }
-      }
-
-      result_type operator() ( boost::logic::tribool const & b ) const {
-        if(_rng && boost::logic::indeterminate(b))
-          return random_bit();
-        else if (boost::is_signed<Integer>::value) {
-          return b ? -1 : 0;
-        } else {
-          return b ? 1 :0;
-        }
-      }
-
-      result_type operator() ( std::vector< boost::logic::tribool > const & val ) const
-      {
-        Integer ret = 0;
-        bool isSigned = boost::is_signed<Integer>::value && val.back();
-        if( isSigned ) ret = -1 ;
-        for (unsigned i = 0; i < val.size(); ++i) {
-          ret ^= Integer( ((bool)(*this)(val[i]))^isSigned ? 1 : 0) << i;
-        }
-        return ret;
-      }
-
-      result_type operator() ( std::vector< bool > const & val ) const
-      {
-        Integer ret = 0;
-        bool isSigned = boost::is_signed<Integer>::value && val.back();
-        if( isSigned ) ret = -1 ;
-        for (unsigned i = 0; i < val.size(); ++i) {
-          ret ^= Integer( val[i]^isSigned ? 1 : 0) << i;
-        }
-        return ret;
-      }
-
-      result_type operator() ( std::string const & val ) const
-      {
-        Integer ret = 0;
-        if( boost::is_signed<Integer>::value && val[0] == '1' ) ret = -1;
-        for (std::string::const_iterator ite = val.begin();  ite != val.end(); ++ite)
-        {
-          ret <<=1;
-          switch ( *ite ) {
-            case '0':
-              break;
-            case '1':
-              ret |= Integer(1);
-              break;
-            default:
-              ret |= Integer( _rng && random_bit());
-          }
-        }
-        return ret;
-      }
-
-      result_type operator() ( boost::dynamic_bitset<> const & val ) const
-      {
-        const bool issigned = boost::is_signed<Integer>::value;
-        if( !issigned && sizeof(Integer) <= sizeof(unsigned long) ) {
-          return static_cast<result_type>( val.to_ulong() );
-        } else {
-          Integer ret = 0;
-          bool isSigned = boost::is_signed<Integer>::value && val[val.size()-1];
-          if( isSigned ) ret = -1 ;
-          for (unsigned i = 0; i < val.size(); ++i) {
-            ret ^= Integer( val[i]^isSigned ? 1 : 0) << i;
-          }
-          return ret;
-        }
-      }
-
-      bool random_bit() const {
-        return (*_rng)();
-      }
-      Rng _rng;
     };
 
     struct check_if_X
@@ -350,7 +226,6 @@ namespace metaSMT {
         , std::vector<bool>
         , std::string
         , boost::logic::tribool
-        , boost::dynamic_bitset<> 
         > result_types_list;
       typedef boost::make_variant_over<result_types_list>::type result_type;
 
@@ -367,9 +242,20 @@ namespace metaSMT {
         : boost::logic::tribool(boost::logic::indeterminate))
         )
       { }
-      result_wrapper( unsigned long value, unsigned long width )
-      : r( boost::dynamic_bitset<>(width, value) )
-      { }
+
+      result_wrapper( uint64_t value, unsigned width ) {
+        std::string s(width, '0');
+        for (unsigned i = 0; i < width; i++)
+          if ((value >> i) & 1) s[width - i - 1] = '1';
+        r = s;
+      }
+
+      template<typename T1, typename T2>
+      result_wrapper( boost::dynamic_bitset<T1, T2> const & bs ) {
+        std::string s;
+        boost::to_string(bs, s);
+        r = s;
+      }
 
       operator std::vector<bool> () const {
         return boost::apply_visitor(as_vector_bool(), r);
@@ -383,9 +269,10 @@ namespace metaSMT {
         return boost::apply_visitor(as_string(), r);
       }
 
-      operator boost::dynamic_bitset<> () const {
-        std::vector<boost::logic::tribool> val = *this;
-        boost::dynamic_bitset<> ret(val.size());
+      template<typename T1, typename T2>
+      operator boost::dynamic_bitset<T1, T2> () const {
+        std::vector<bool> val = *this;
+        boost::dynamic_bitset<T1, T2> ret(val.size());
         for (unsigned i = 0; i < val.size(); ++i) {
           ret[i]=val[i];
         }
@@ -406,10 +293,43 @@ namespace metaSMT {
         return *this;
       }
 
+      bool random_bit() const {
+        return (*_rng)();
+      }
+
+      /**
+       * For signed type with smaller bit-width than needed, the sign is kept and the rest is truncated.
+       * The result of this operator might thus be different from the compiler's behavior as a signed
+       * downcast is implementation-defined.
+       */
       template< typename Integer> 
       operator Integer () const {
-        //BOOST_CONCEPT_ASSERT(( boost::Integer<Integer> ));
-        return boost::apply_visitor(as_integer<Integer>(_rng), r);
+        Integer ret = 0;
+        std::string val = *this;
+        if( boost::is_signed<Integer>::value && val[0] == '1' ) ret = static_cast<Integer>(-1);
+        unsigned cnt = 0;
+        for (std::string::const_iterator ite = val.begin(); ite != val.end(); ++ite)
+        {
+          ret <<= static_cast<Integer>(1);
+          switch ( *ite ) {
+            case '0':
+              break;
+            case '1':
+              ret |= Integer(1);
+              break;
+            default:
+              ret |= Integer( _rng && random_bit());
+          }
+          if (++cnt > std::numeric_limits<Integer>::digits) break;
+        }
+        return ret;
+      }
+
+      operator bool () const {
+        boost::logic::tribool b = *this;
+        if (b) return true;
+        else if (!b) return false;
+        else return _rng && random_bit();
       } 
 
       operator boost::logic::tribool () const {
