@@ -26,6 +26,10 @@ namespace metaSMT {
      * @brief The STP backend
      */
     class STP {
+    private:
+      typedef boost::tuple<uint64_t, unsigned>  bvuint_tuple;
+      typedef boost::tuple< int64_t, unsigned>  bvsint_tuple;
+
     public:
       typedef Expr result_type;
       typedef std::list< Expr > Exprs;
@@ -199,17 +203,16 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
-        typedef boost::tuple<unsigned long, unsigned long> Tuple;
-        Tuple tuple = boost::any_cast<Tuple>(arg);
-        unsigned long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
+        uint64_t value;
+        unsigned width;
+        boost::tie(value, width) = boost::any_cast<bvuint_tuple>(arg);
 
-        if ( width > 8*sizeof(unsigned long) ) {
+        if ( width > 8*sizeof(unsigned long long) ) {
           std::string val (width, '0');
 
           std::string::reverse_iterator sit = val.rbegin();
-          for (unsigned long i = 0; i < width; i++, ++sit) {
-            *sit = (value & 1ul) ? '1':'0';
+          for (unsigned i = 0; i < width; i++, ++sit) {
+            *sit = (value & 1ull) ? '1':'0';
             value >>= 1;
           }
           return ptr(vc_bvConstExprFromStr(vc, val.c_str()));
@@ -220,26 +223,22 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
-        typedef boost::tuple<long, unsigned long> Tuple;
-        Tuple tuple = boost::any_cast<Tuple>(arg);
-        long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
+        int64_t value;
+        unsigned width;
+        boost::tie(value, width) = boost::any_cast<bvsint_tuple>(arg);
 
-        if ( width > 8*sizeof(unsigned long)
-             || value > std::numeric_limits<long int>::max()
-             || value < std::numeric_limits<long int>::min()
-        ) {
+        if ( width > 8*sizeof(unsigned long long) ) {
           std::string val (width, '0');
 
           std::string::reverse_iterator sit = val.rbegin();
-          for (unsigned long i = 0; i < width; i++, ++sit) {
-            *sit = (value & 1l) ? '1':'0';
+          for (unsigned i = 0; i < width; i++, ++sit) {
+            *sit = (value & 1ll) ? '1':'0';
             value >>= 1;
           }
           return ptr(vc_bvConstExprFromStr(vc, val.c_str()));
         }
         else {
-          return ptr(vc_bvConstExprFromLL(vc, width, static_cast<unsigned long>(value)));
+          return ptr(vc_bvConstExprFromLL(vc, width, static_cast<unsigned long long>(value)));
         }
       }
 
@@ -337,13 +336,13 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::extract_tag const &
-        , unsigned long upper, unsigned long lower
+        , unsigned upper, unsigned lower
         , result_type e) {
         return ptr(vc_bvExtract(vc, e, upper, lower));
       }
 
       result_type operator()( bvtags::zero_extend_tag const &
-        , unsigned long width
+        , unsigned width
         , result_type e) {
         std::string s(width, '0');
         Expr zeros = ptr(vc_bvConstExprFromStr(vc, s.c_str()));
@@ -351,9 +350,9 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::sign_extend_tag const &
-        , unsigned long width
+        , unsigned width
         , result_type e) {
-        unsigned long const current_width = getBVLength(e);
+        unsigned const current_width = getBVLength(e);
         return ptr(vc_bvSignExtend(vc, e, current_width + width));
       }
 

@@ -8,7 +8,7 @@
 #include <boost/mpl/integral_c.hpp>
 #include <boost/mpl/map/map50.hpp>
 #include <boost/any.hpp>
-#include <iostream>
+#include <boost/tuple/tuple.hpp>
 #include <cstdio>
 
 
@@ -25,6 +25,10 @@ namespace metaSMT {
      * @brief SWORD backend
      */
     class SWORD_Backend {
+      private:
+        typedef boost::tuple<uint64_t, unsigned>  bvuint_tuple;
+        typedef boost::tuple< int64_t, unsigned>  bvsint_tuple;
+
       private:
         template <SWORD::OPCODE OC>
         struct SWORD_Op : public boost::mpl::integral_c<SWORD::OPCODE, OC> {};
@@ -90,18 +94,26 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::bvuint_tag , boost::any arg ) {
-          typedef boost::tuple<unsigned long, unsigned long> P;
-          P p = boost::any_cast<P>(arg);
-          //printf("bvuint\n");
-          return _sword.addConstant(boost::get<1>(p), boost::get<0>(p));
+          uint64_t value;
+          unsigned width;
+          boost::tie(value, width) = boost::any_cast<bvuint_tuple>(arg);
+
+          if (value > std::numeric_limits<unsigned long>::max()) {
+            std::string val(width, '0');
+            std::string::reverse_iterator it = val.rbegin();
+            for ( unsigned u = 0; u < width; ++u, ++it ) {
+              *it = (value & 1ul) ? '1' : '0';
+              value >>= 1;
+            }
+            return _sword.addBinConstant(val);
+          }
+          return _sword.addConstant(width, static_cast<unsigned long>(value));
         }
 
         result_type operator() (bvtags::bvsint_tag , boost::any arg ) {
-          //printf("bvsint\n");
-          typedef boost::tuple<long, unsigned long> Tuple;
-          Tuple const tuple = boost::any_cast<Tuple>(arg);
-          long value = boost::get<0>(tuple);
-          unsigned long const width = boost::get<1>(tuple);
+          int64_t value;
+          unsigned width;
+          boost::tie(value, width) = boost::any_cast<bvsint_tuple>(arg);
 
           if (    value > std::numeric_limits<int>::max()
                || value < std::numeric_limits<int>::min()
@@ -109,7 +121,7 @@ namespace metaSMT {
              ) {
             std::string val(width, '0');
             std::string::reverse_iterator it = val.rbegin();
-            for ( unsigned long u = 0; u < width; ++u, ++it ) {
+            for ( unsigned u = 0; u < width; ++u, ++it ) {
               *it = (value & 1l) ? '1' : '0';
               value >>= 1;
             }
@@ -119,21 +131,21 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::extract_tag const & 
-            , unsigned long upper, unsigned long lower
+            , unsigned upper, unsigned lower
             , result_type e)
         {
           return _sword.addExtract(e, upper, lower);
         }
 
         result_type operator() (bvtags::zero_extend_tag const & 
-            , unsigned long width
+            , unsigned width
             , result_type e)
         {
           return _sword.addZeroExtend(e, width);
         }
 
         result_type operator() (bvtags::sign_extend_tag const & 
-            , unsigned long width
+            , unsigned width
             , result_type e)
         {
           return _sword.addSignExtend(e, width);
@@ -142,7 +154,7 @@ namespace metaSMT {
 
         template <typename TagT>
         result_type operator() (TagT tag, boost::any ) {
-          std::cout << tag << std::endl;
+          // std::cout << tag << std::endl;
           return NULL;
         }
 

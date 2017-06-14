@@ -66,11 +66,11 @@ namespace metaSMT {
       using namespace logic::Array;
 
       const unsigned width = c.index_width_;
-      unsigned long index_limit = 1ul << width;
+      uint64_t index_limit = static_cast<uint64_t>(1ul) << width;
 
       typename Context::result_type result = evaluate( ctx, True );
 
-      for ( unsigned long index = 0; index < index_limit; ++index ) {
+      for ( uint64_t index = 0; index < index_limit; ++index ) {
         result = evaluate( ctx, And( result,
 	  equal(
 	    select( c.lhs_, bvuint(index, width) ),
@@ -95,11 +95,11 @@ namespace metaSMT {
       using namespace logic::Array;
 
       const unsigned width = c.index_width_;
-      unsigned long index_limit = 1ul << width;
+      uint64_t index_limit = static_cast<uint64_t>(1ul) << width;
 
       typename Context::result_type result = evaluate( ctx, False );
 
-      for ( unsigned long index = 0; index < index_limit; ++index ) {
+      for ( uint64_t index = 0; index < index_limit; ++index ) {
         result = evaluate( ctx, Or( result,
 	  nequal(
 	    select( c.lhs_, bvuint(index, width) ),

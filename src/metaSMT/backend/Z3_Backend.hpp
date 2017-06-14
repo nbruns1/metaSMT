@@ -11,9 +11,8 @@
 #include <boost/mpl/map/map40.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_io.hpp>
-#include <boost/fusion/adapted/boost_tuple.hpp>
-#include <boost/fusion/adapted/std_pair.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
+#include <limits>
 
 namespace metaSMT {
 
@@ -80,6 +79,9 @@ namespace metaSMT {
     } // detail
 
     class Z3_Backend {
+    private:
+      typedef boost::tuple<uint64_t, unsigned>  bvuint_tuple;
+      typedef boost::tuple< int64_t, unsigned>  bvsint_tuple;
     public:
       struct result_type {
         // first type in variant has to be default constructable
@@ -146,7 +148,8 @@ namespace metaSMT {
 
         assert(r.is_bv());
         unsigned long long val = 0;
-        if (Z3_get_numeral_uint64(ctx_, r, &val)) return result_wrapper(val, r.get_sort().bv_size());
+        if (Z3_get_numeral_uint64(ctx_, r, &val) && val <= std::numeric_limits<uint64_t>::max())
+          return result_wrapper(val, r.get_sort().bv_size());
 
         std::string str = Z3_ast_to_string(ctx_, r);
         assert(str.find("#b") == 0);
@@ -312,19 +315,17 @@ namespace metaSMT {
       }
 
       result_type operator() (bvtags::bvuint_tag const &, boost::any const &arg) {
-        typedef boost::tuple<unsigned long, unsigned long> P;
-        P const p = boost::any_cast<P>(arg);
-        unsigned long const value = boost::get<0>(p);
-        unsigned const width = boost::get<1>(p);
+        uint64_t value;
+        unsigned width;
+        boost::tie(value, width) = boost::any_cast<bvuint_tuple>(arg);
         Z3_sort ty = Z3_mk_bv_sort(ctx_, width);
         return z3::to_expr(ctx_, Z3_mk_unsigned_int64(ctx_, value, ty));
       }
 
       result_type operator() (bvtags::bvsint_tag const &, boost::any const &arg) {
-        typedef boost::tuple<long, unsigned long> P;
-        P const p = boost::any_cast<P>(arg);
-        long const value = boost::get<0>(p);
-        unsigned const width = boost::get<1>(p);
+        int64_t value;
+        unsigned width;
+        boost::tie(value, width) = boost::any_cast<bvsint_tuple>(arg);
         Z3_sort ty = Z3_mk_bv_sort(ctx_, width);
         return z3::to_expr(ctx_, Z3_mk_int64(ctx_, value, ty));
       }
@@ -414,21 +415,21 @@ namespace metaSMT {
       }
 
       result_type operator() (bvtags::extract_tag const &,
-                              unsigned long upper,
-                              unsigned long lower,
+                              unsigned upper,
+                              unsigned lower,
                               result_type const &e) {
         return z3::to_expr(ctx_,
           Z3_mk_extract(ctx_, upper, lower, z3::expr(e)));
       }
 
       result_type operator() (bvtags::zero_extend_tag const &,
-                              unsigned long width,
+                              unsigned width,
                               result_type e) {
         return z3::to_expr(ctx_, Z3_mk_zero_ext(ctx_, width, z3::expr(e)));
       }
 
       result_type operator() (bvtags::sign_extend_tag const &, 
-                              unsigned long width,
+                              unsigned width,
                               result_type e) {
         return z3::to_expr(ctx_, Z3_mk_sign_ext(ctx_, width, z3::expr(e)));
       }

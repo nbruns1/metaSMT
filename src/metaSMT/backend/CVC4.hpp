@@ -53,6 +53,10 @@ namespace metaSMT {
      * @brief The CVC4 backend
      */
     class CVC4 {
+    private:
+      typedef boost::tuple<uint64_t, unsigned>  bvuint_tuple;
+      typedef boost::tuple< int64_t, unsigned>  bvsint_tuple;
+
     public:
       typedef ::CVC4::Expr result_type;
       typedef std::list< ::CVC4::Expr > Exprs;
@@ -167,20 +171,16 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::bvuint_tag , boost::any arg ) {
-        typedef boost::tuple<unsigned long, unsigned long> Tuple;
-        Tuple tuple = boost::any_cast<Tuple>(arg);
-        unsigned long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
-
+        uint64_t value;
+        unsigned width;
+        boost::tie(value, width) = boost::any_cast<bvuint_tuple>(arg);
         return exprManager_.mkConst(::CVC4::BitVector(width, value));
       }
 
       result_type operator()( bvtags::bvsint_tag , boost::any arg ) {
-        typedef boost::tuple<long, unsigned long> Tuple;
-        Tuple tuple = boost::any_cast<Tuple>(arg);
-        long value = boost::get<0>(tuple);
-        unsigned long width = boost::get<1>(tuple);
-
+        int64_t value;
+        unsigned width;
+        boost::tie(value, width) = boost::any_cast<bvsint_tuple>(arg);
         ::CVC4::BitVector bvValue (width, ::CVC4::Integer(value));
         return exprManager_.mkConst(bvValue);
       }
@@ -204,7 +204,7 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::extract_tag const &
-        , unsigned long upper, unsigned long lower
+        , unsigned upper, unsigned lower
         , result_type e)
       {
         ::CVC4::BitVectorExtract bvOp (upper, lower);
@@ -213,7 +213,7 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::zero_extend_tag const &
-        , unsigned long width
+        , unsigned width
         , result_type e)
       {
         ::CVC4::BitVectorZeroExtend bvOp (width);
@@ -222,7 +222,7 @@ namespace metaSMT {
       }
 
       result_type operator()( bvtags::sign_extend_tag const &
-        , unsigned long width
+        , unsigned width
         , result_type e)
       {
         ::CVC4::BitVectorSignExtend bvOp (width);

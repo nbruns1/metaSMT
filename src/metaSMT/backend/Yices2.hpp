@@ -51,6 +51,10 @@ int ObjectCounter<T>::count = 0;
 
 template <bool RealIncreamentalMode = false>
 class Yices2Impl {
+ private:
+  typedef boost::tuple<uint64_t, unsigned>  bvuint_tuple;
+  typedef boost::tuple< int64_t, unsigned>  bvsint_tuple;
+
  public:
   typedef term_t result_type;
   typedef std::list<term_t> Exprs;
@@ -231,18 +235,16 @@ class Yices2Impl {
   result_type operator()(bvtags::bvudiv_tag, result_type a, result_type b) { return yices_bvdiv(a, b); }
 
   result_type operator()(bvtags::bvuint_tag, boost::any arg) {
-    typedef boost::tuple<unsigned long, unsigned long> Tuple;
-    Tuple tuple = boost::any_cast<Tuple>(arg);
-    unsigned long value = boost::get<0>(tuple);
-    unsigned long width = boost::get<1>(tuple);
+    uint64_t value;
+    unsigned width;
+    boost::tie(value, width) = boost::any_cast<bvuint_tuple>(arg);
     return yices_bvconst_uint64(width, value);
   }
 
   result_type operator()(bvtags::bvsint_tag, boost::any arg) {
-    typedef boost::tuple<long, unsigned long> P;
-    P const p = boost::any_cast<P>(arg);
-    long const value = boost::get<0>(p);
-    unsigned const width = boost::get<1>(p);
+    int64_t value;
+    unsigned width;
+    boost::tie(value, width) = boost::any_cast<bvsint_tuple>(arg);
     return yices_bvconst_int64(width, value);
   }
 
@@ -276,15 +278,15 @@ class Yices2Impl {
     return throw_error(yices_bvconcat2(a, b));
   }
 
-  result_type operator()(bvtags::extract_tag const &, unsigned long upper, unsigned long lower, result_type e) {
+  result_type operator()(bvtags::extract_tag const &, unsigned upper, unsigned lower, result_type e) {
     return throw_error(yices_bvextract(e, lower, upper));
   }
 
-  result_type operator()(bvtags::zero_extend_tag const &, unsigned long width, result_type e) {
+  result_type operator()(bvtags::zero_extend_tag const &, unsigned width, result_type e) {
     return throw_error(yices_zero_extend(e, width));
   }
 
-  result_type operator()(bvtags::sign_extend_tag const &, unsigned long width, result_type e) {
+  result_type operator()(bvtags::sign_extend_tag const &, unsigned width, result_type e) {
     return throw_error(yices_sign_extend(e, width));
   }
 

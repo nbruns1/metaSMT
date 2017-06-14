@@ -8,7 +8,6 @@ extern "C" {
 #include <boolector.h>
 }
 
-#include <iostream>
 #include <boost/mpl/map/map40.hpp>
 #include <boost/any.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -28,6 +27,10 @@ namespace metaSMT {
      * @brief The Boolector backend 
      */
     class Boolector {
+    private:
+      typedef boost::tuple<uint64_t, unsigned>  bvuint_tuple;
+      typedef boost::tuple< int64_t, unsigned>  bvsint_tuple;
+
 #ifndef metaSMT_BOOLECTOR_1_API
     public:
       typedef BoolectorNode* result_type;
@@ -164,18 +167,16 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::bvuint_tag , boost::any arg ) {
-          typedef boost::tuple<unsigned long, unsigned long> P;
-          P p = boost::any_cast<P>(arg);
-          //std::cout << "bvuint "<< p << std::endl;
-          unsigned long value = boost::get<0>(p);
-          unsigned long width = boost::get<1>(p);
+          uint64_t value;
+          unsigned width;
+          boost::tie(value, width) = boost::any_cast<bvuint_tuple>(arg);
 
           if ( value > std::numeric_limits<unsigned>::max() ) {
             std::string val (width, '0');
 
             std::string::reverse_iterator sit = val.rbegin();
 
-            for (unsigned long i = 0; i < width; i++, ++sit) {
+            for (unsigned i = 0; i < width; i++, ++sit) {
               *sit = (value & 1ul) ? '1':'0';
               value >>= 1;
             }
@@ -186,10 +187,9 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::bvsint_tag , boost::any arg ) {
-          typedef boost::tuple<long, unsigned long> P;
-          P const p = boost::any_cast<P>(arg);
-          long value = boost::get<0>(p);
-          unsigned long const width = boost::get<1>(p);
+          int64_t value;
+          unsigned width;
+          boost::tie(value, width) = boost::any_cast<bvsint_tuple>(arg);
 
           if (  value > std::numeric_limits<int>::max()
              || value < std::numeric_limits<int>::min()
@@ -198,7 +198,7 @@ namespace metaSMT {
 
             std::string::reverse_iterator sit = val.rbegin();
 
-            for (unsigned long i = 0; i < width; i++, ++sit) {
+            for (unsigned i = 0; i < width; i++, ++sit) {
               *sit = (value & 1l) ? '1':'0';
               value >>= 1;
             }
@@ -282,21 +282,21 @@ namespace metaSMT {
         }
 
         result_type operator() (bvtags::extract_tag const &
-            , unsigned long upper, unsigned long lower
+            , unsigned upper, unsigned lower
             , result_type e)
         {
           return ptr(boolector_slice(_btor, e, upper, lower));
         }
 
         result_type operator() (bvtags::zero_extend_tag const &
-            , unsigned long width
+            , unsigned width
             , result_type e)
         {
           return ptr(boolector_uext(_btor, e, width));
         }
 
         result_type operator() (bvtags::sign_extend_tag const &
-            , unsigned long width
+            , unsigned width
             , result_type e)
         {
           return ptr(boolector_sext(_btor, e, width));
@@ -423,7 +423,7 @@ namespace metaSMT {
             >::type opcode;
           return ptr(opcode::exec(_btor, a, b));
           } else {
-            std::cout << "unknown operator: " << tag << std::endl;
+            //std::cout << "unknown operator: " << tag << std::endl;
 
             assert(false && "unknown operator");
             return ptr(boolector_false(_btor));

@@ -58,8 +58,8 @@ namespace metaSMT {
           , proto::or_<
               proto::binary_expr<tag::concat_tag, QF_BV_Grammar, QF_BV_Grammar>
             , proto::binary_expr<tag::extract_tag, QF_BV_Grammar, QF_BV_Grammar>
-            , proto::binary_expr<tag::zero_extend_tag, QF_BV_Grammar, unsigned long>
-            , proto::binary_expr<tag::sign_extend_tag, QF_BV_Grammar, unsigned long>
+            , proto::binary_expr<tag::zero_extend_tag, QF_BV_Grammar, uint64_t>
+            , proto::binary_expr<tag::sign_extend_tag, QF_BV_Grammar, uint64_t>
             >
           // shifting
           , proto::or_<
@@ -91,12 +91,12 @@ namespace metaSMT {
       struct QF_BV_BitVector_Constant
         : proto::or_<
             proto::binary_expr < tag::bvuint_tag
-              , proto::terminal< proto::convertible_to< unsigned long > >
-              , proto::terminal< proto::convertible_to< unsigned long > >
+              , proto::terminal< proto::convertible_to< uint64_t > >
+              , proto::terminal< proto::convertible_to< uint64_t > >
             >
           , proto::binary_expr < tag::bvsint_tag
-              , proto::terminal< proto::convertible_to<          long > >
-              , proto::terminal< proto::convertible_to< unsigned long > >
+              , proto::terminal< proto::convertible_to<  int64_t > >
+              , proto::terminal< proto::convertible_to< uint64_t > >
             >
           , proto::unary_expr < tag::bvbin_tag
               , proto::terminal< proto::convertible_to< std::string > >
@@ -225,11 +225,11 @@ namespace metaSMT {
       // extract operator
       template< typename Expr>
       inline typename proto::result_of::make_expr< tag::extract_tag, QF_BV_Domain
-        , unsigned long const & // from
-        , unsigned long const & // length
+        , unsigned const & // from
+        , unsigned const & // length
         , Expr const &          // Expr
       > ::type
-      extract( unsigned long const & from, unsigned long const & width, Expr const &   e)
+      extract( unsigned const & from, unsigned const & width, Expr const &   e)
       {
         return proto::make_expr< tag::extract_tag, QF_BV_Domain>(boost::cref(from), boost::cref(width), boost::cref(e));
       } 
@@ -237,10 +237,10 @@ namespace metaSMT {
       // zero_extend operator
       template< typename Expr>
       inline typename proto::result_of::make_expr< tag::zero_extend_tag, QF_BV_Domain
-        , unsigned long const & // length
+        , unsigned const & // length
         , Expr const &          // Expr
       > ::type
-      zero_extend ( unsigned long const & howMany, Expr const &   e)
+      zero_extend ( unsigned const & howMany, Expr const &   e)
       {
         return proto::make_expr< tag::zero_extend_tag, QF_BV_Domain>( boost::cref(howMany), boost::cref(e));
       } 
@@ -248,33 +248,33 @@ namespace metaSMT {
       // sign_extend operator
       template< typename Expr>
       inline typename proto::result_of::make_expr< tag::sign_extend_tag, QF_BV_Domain
-        , unsigned long const & // length
+        , unsigned const & // length
         , Expr const &          // Expr
       > ::type
-      sign_extend ( unsigned long const & howMany, Expr const &   e)
+      sign_extend ( unsigned const & howMany, Expr const &   e)
       {
         return proto::make_expr< tag::sign_extend_tag, QF_BV_Domain>( boost::cref(howMany), boost::cref(e));
       } 
 
       // constant creation
       typedef proto::result_of::make_expr< tag::bvuint_tag, QF_BV_Domain
-        , unsigned long
-        , unsigned long
+        , uint64_t
+        , unsigned
       > ::type bvuint_result_type;
 
       inline bvuint_result_type
-      bvuint( unsigned long const & value, unsigned long const & width )
+      bvuint( uint64_t const & value, unsigned const & width )
       {
         return proto::make_expr< tag::bvuint_tag, QF_BV_Domain>(value, width);
       } 
       
       typedef proto::result_of::make_expr< tag::bvsint_tag, QF_BV_Domain
-        , long
-        , unsigned long
+        , int64_t
+        , unsigned
       > ::type bvsint_result_type;
 
       inline bvsint_result_type
-      bvsint( long const & value, long unsigned const & width )
+      bvsint( int64_t const & value, unsigned const & width )
       {
         return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( value, width);
       } 
@@ -286,9 +286,9 @@ namespace metaSMT {
             boost::is_signed<Integer>
           >::type,
           bvsint_result_type >::type
-      bvint( Integer value, unsigned long const & width )
+      bvint( Integer value, unsigned const & width )
       {
-        return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( (long) value, width);
+        return proto::make_expr< tag::bvsint_tag, QF_BV_Domain >( (int64_t) value, width);
       }
           
       template< typename Integer > 
@@ -297,9 +297,9 @@ namespace metaSMT {
             boost::mpl::not_<boost::is_signed<Integer> >
           >::type,
           bvuint_result_type >::type
-      bvint( Integer value, unsigned long const & width )
+      bvint( Integer value, unsigned const & width )
       {
-        return proto::make_expr< tag::bvuint_tag, QF_BV_Domain >( (unsigned long) value, width);
+        return proto::make_expr< tag::bvuint_tag, QF_BV_Domain >( (uint64_t) value, width);
       }
 
        
