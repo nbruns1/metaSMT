@@ -1919,13 +1919,13 @@ BOOST_AUTO_TEST_CASE( variable_equality )
 BOOST_AUTO_TEST_CASE( constant_64bit )
 {
   unsigned const w = 64;
-  unsigned long const value = std::numeric_limits<unsigned long>::max();
+  uint64_t const value = std::numeric_limits<uint64_t>::max();
   bitvector x = new_bitvector(w);
 
   assumption(ctx, equal(x, bvuint(value, w)));
   BOOST_REQUIRE( solve(ctx) );
 
-  unsigned long xd = read_value(ctx, x);
+  uint64_t xd = read_value(ctx, x);
   std::string xs = read_value(ctx, x);
   BOOST_CHECK_EQUAL(xd, value);
   BOOST_CHECK_EQUAL(xs, "1111111111111111111111111111111111111111111111111111111111111111");
@@ -1951,7 +1951,7 @@ BOOST_AUTO_TEST_CASE( constant_69bit )
 BOOST_AUTO_TEST_CASE( signed_constant_64bit )
 {
   unsigned const w = 64;
-  long value = std::numeric_limits<long>::max();
+  int64_t value = std::numeric_limits<int64_t>::max();
   bitvector x = new_bitvector(w);
 
   assumption(ctx, equal(x, bvsint(value, w)));
@@ -1960,7 +1960,7 @@ BOOST_AUTO_TEST_CASE( signed_constant_64bit )
   std::string xs = read_value(ctx, x);
   BOOST_CHECK_EQUAL(xs, "0111111111111111111111111111111111111111111111111111111111111111");
 
-  long xd = read_value(ctx, x);
+  int64_t xd = read_value(ctx, x);
   BOOST_CHECK_EQUAL(xd, value);
 
   assumption(ctx, equal(x, bvsint(value-123, w)));
@@ -1969,7 +1969,7 @@ BOOST_AUTO_TEST_CASE( signed_constant_64bit )
   xd = read_value(ctx, x);
   BOOST_CHECK_EQUAL(xd, value-123);
 
-  value = std::numeric_limits<long>::min();
+  value = std::numeric_limits<int64_t>::min();
 
   assumption(ctx, equal(x, bvsint(value, w)));
   BOOST_REQUIRE( solve(ctx) );

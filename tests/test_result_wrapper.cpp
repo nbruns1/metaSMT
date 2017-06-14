@@ -5,6 +5,7 @@
 #include <boost/test/unit_test.hpp>
 #include <string>
 #include <limits>
+#include <bitset>
 
 using namespace metaSMT;
 using boost::dynamic_bitset;
@@ -187,10 +188,11 @@ void check_conversion_ULONG_MAX_in_64bit( result_wrapper const &rw ) {
   BOOST_REQUIRE_EQUAL( boolean, true );
 
   std::string s = rw;
-  BOOST_REQUIRE_EQUAL( s, "1111111111111111111111111111111111111111111111111111111111111111" );
+  BOOST_REQUIRE_EQUAL( s, std::bitset<64>(value).to_string() );
 
-  vector<bool> a, b(64, true);
-  a = rw.operator std::vector<bool>();
+  vector<bool> a = rw.operator std::vector<bool>();
+  vector<bool> b;
+  for (unsigned i = 0; i < 64; i++) b.push_back((value >> i) & 1);
   BOOST_REQUIRE_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 
   vector<tribool> tb = rw.operator std::vector<boost::logic::tribool>();
