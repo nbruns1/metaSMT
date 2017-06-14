@@ -245,8 +245,10 @@ namespace metaSMT {
 
       result_wrapper( uint64_t value, unsigned width ) {
         std::string s(width, '0');
-        for (unsigned i = 0; i < width; i++)
-          if ((value >> i) & 1) s[width - i - 1] = '1';
+        for (unsigned i = 0; i < width; i++) {
+          if (value & 1) s[width - i - 1] = '1';
+          value >>= 1;
+        }
         r = s;
       }
 
@@ -307,11 +309,13 @@ namespace metaSMT {
         Integer ret = 0;
         std::string val = *this;
         if( boost::is_signed<Integer>::value && val[0] == '1' ) ret = static_cast<Integer>(-1);
-        unsigned cnt = 0;
-        for (std::string::const_iterator ite = val.begin(); ite != val.end(); ++ite)
+        unsigned first = 0;
+        if (std::numeric_limits<Integer>::digits < val.size()) // downcasting
+          first = val.size() - std::numeric_limits<Integer>::digits;
+        for (unsigned i = 0; i < val.size() && i < std::numeric_limits<Integer>::digits; ++i)
         {
           ret <<= static_cast<Integer>(1);
-          switch ( *ite ) {
+          switch ( val[first + i] ) {
             case '0':
               break;
             case '1':
@@ -320,7 +324,6 @@ namespace metaSMT {
             default:
               ret |= Integer( _rng && random_bit());
           }
-          if (++cnt > std::numeric_limits<Integer>::digits) break;
         }
         return ret;
       }
