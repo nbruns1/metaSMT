@@ -31,7 +31,10 @@ variables:
   - apt-get install -qq -y build-essential cmake git wget unzip zlib1g-dev python
   - NUM_JOBS=$[`nproc`-1]
   - if [ "$NUM_JOBS" -lt 1 ]; then NUM_JOBS=1; fi
-  - git clone https://github.com/agra-uni-bremen/dependencies.git
+  - git clone https://github.com/nbruns1/dependencies.git
+  - cd dependencies
+  - git checkout Z3Binary
+  - cd ../
   - if [ -z "$METASMT_SOLVERS" ]; then METASMT_SOLVERS=$METASMT_DEFAULT_SOLVERS; fi
   - ./bootstrap.sh -d deps -m RELEASE build $METASMT_SOLVERS
   - cd build
@@ -61,7 +64,7 @@ build_default_ubuntu16_x86:
 build_z3:
   <<: *ubuntu14
   variables:
-    METASMT_SOLVERS: "--build Z3-4.5.0"
+    METASMT_SOLVERS: "--build Z3-4.5.0-ubuntu-14.04-64"
     MAX_FAILS: "4"
   script: *build_default
 
