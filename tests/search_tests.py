@@ -53,8 +53,10 @@ fileList = findIncludedFiles(sourcefileName)
 # Iterate over all included test files and include their included test files
 for x in fileList:
     fileList += findIncludedFiles(x)
-
 # Iterate over all test files and extract the names of the test suites and test cases
+folder = os.path.dirname(os.path.realpath(sourcefileName))
+file = folder+"/"+sourcefileName
+fileList.append(file)
 for x in fileList:
     file = open(x, "r")
     fileContent = file.read()
