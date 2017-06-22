@@ -64,14 +64,14 @@ build_default_ubuntu16_x86:
 build_z3:
   <<: *ubuntu14
   variables:
-    METASMT_SOLVERS: "--build Z3-4.5.0-ubuntu-14.04-64"
+    METASMT_SOLVERS: "--build Z3-4.5.0-x86-ubuntu-14.04-x64"
     MAX_FAILS: "4"
   script: *build_default
 
 build_z3_x86:
   <<: *ubuntu16_x86
   variables:
-    METASMT_SOLVERS: "--build Z3-4.5.0-ubuntu-14.04-32"
+    METASMT_SOLVERS: "--build Z3-4.5.0-x86-ubuntu-14.04-x86"
     MAX_FAILS: "3"
   script: *build_default
 
