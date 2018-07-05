@@ -321,7 +321,11 @@ endif()
 
 if(CUDD_FOUND)
   config_find(CUDD ${CUDD_DIR})
+  if(DEFINED CUDD_LIBRARIES)
+  list(APPEND metaSMT_LIBS ${CUDD_LIBRARIES})
+  else()
   list(APPEND metaSMT_LIBS CUDD_obj CUDD_cudd CUDD_dddmp CUDD_epd CUDD_mtr CUDD_st CUDD_util)
+  endif()
   list(APPEND metaSMT_INCLUDES ${CUDD_INCLUDE_DIR} ${cudd_INCLUDE_DIRS})
 endif()
 
